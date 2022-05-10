@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const DashboardPage({
+    Key? key,
+  }) : super(key: key);
+  static const routeName = '/DashboardPage';
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -13,9 +14,6 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
