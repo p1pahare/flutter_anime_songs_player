@@ -7,10 +7,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  bubble_bottom_bar: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  icons_launcher: ^1.1.7
 flutter:
   uses-material-design: true
   # assets:
@@ -27,3 +29,11 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+flutter_icons:
+  image_path: 'lib/assets/at_comm_icon.png'
+  ios: true
+  android: true
+  windows: true
+  linux: true
+  macos: true
+  web: true
