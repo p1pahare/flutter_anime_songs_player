@@ -7,7 +7,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get: ^4.6.1
   bubble_bottom_bar: ^2.0.0
+  flutter_native_splash: ^2.1.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -37,3 +39,6 @@ flutter_icons:
   linux: true
   macos: true
   web: true
+flutter_native_splash:
+   color: "#fefefe"
+   image: lib/assets/at_comm_icon.png
