@@ -1,4 +1,8 @@
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({
@@ -11,23 +15,53 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  int currentState = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '\$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(40),
+          child: AppBar(
+            leading: Container(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12)),
+                    color: Colors.white.withAlpha(122)),
+                child: Image.asset('lib/assets/at_comm_icon.png')),
+            title: const Text("Anime Themes"),
+            centerTitle: true,
+            actions: [
+              GetBuilder<DashboardController>(
+                init: DashboardController(),
+                initState: (_) {},
+                builder: (c) {
+                  return Switch(
+                      thumbColor:
+                          MaterialStateProperty.all(Colors.grey.shade50),
+                      activeThumbImage: const AssetImage(
+                        'lib/assets/night-mode.png',
+                      ),
+                      inactiveThumbImage:
+                          const AssetImage('lib/assets/sunny-day.png'),
+                      value: c.darkMode ?? false,
+                      onChanged: c.changeDarkMode);
+                },
+              )
+            ],
+          ),
         ),
-      ),
-    );
+        bottomNavigationBar: GetBuilder<DashboardController>(
+          init: DashboardController(),
+          initState: (_) {},
+          builder: (c) {
+            return FancyBottomNavigation(tabs: [
+              TabData(iconData: Icons.dashboard_outlined, title: "Explore"),
+              TabData(iconData: Icons.search_outlined, title: "Search"),
+              TabData(iconData: Icons.queue_music_outlined, title: "Playlists")
+            ], onTabChangedListener: c.updateIndex);
+          },
+        ));
   }
 }

@@ -8,7 +8,8 @@ dependencies:
   flutter:
     sdk: flutter
   get: ^4.6.1
-  bubble_bottom_bar: ^2.0.0
+  get_storage: ^2.0.3
+  fancy_bottom_navigation: ^0.3.3
   flutter_native_splash: ^2.1.6
 dev_dependencies:
   flutter_test:
@@ -17,9 +18,8 @@ dev_dependencies:
   icons_launcher: ^1.1.7
 flutter:
   uses-material-design: true
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - lib/assets/
   # fonts:
   #   - family: Schyler
   #     fonts:
