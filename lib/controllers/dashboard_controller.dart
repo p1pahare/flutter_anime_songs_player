@@ -11,28 +11,42 @@ class DashboardController extends GetxController {
     darkMode = box.read<bool>('dark_mode') ?? false;
     changeDarkMode(darkMode);
   }
-  final darkColorScheme = const ColorScheme.dark(
-    primary: Color.fromARGB(255, 68, 137, 70),
-    secondary: Color.fromARGB(255, 227, 255, 178),
+  final darkTheme = ThemeData(
+      fontFamily: 'Pathagonia',
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: const Color.fromARGB(255, 72, 72, 72),
+      unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
+      primaryColor: const Color.fromARGB(255, 214, 143, 63),
+      primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
+      primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Colors.black,
+      ),
+      appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Pathagonia',
+          )));
+  final lightTheme = ThemeData(
+    fontFamily: 'Pathagonia',
+    brightness: Brightness.light,
+    unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
+    primaryColor: const Color.fromARGB(255, 214, 143, 63),
+    primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
+    primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+    appBarTheme: const AppBarTheme(
+        backgroundColor: Color.fromARGB(255, 214, 143, 63),
+        titleTextStyle: TextStyle(
+          color: Colors.black,
+          fontFamily: 'Pathagonia',
+        )),
   );
-  final lightColorScheme = const ColorScheme.light(
-      primary: Color.fromARGB(255, 68, 137, 70),
-      secondary: Color.fromARGB(255, 226, 172, 236));
-  final darkTextTheme = const TextTheme(
-    bodyText1: TextStyle(),
-    bodyText2: TextStyle(),
-  );
-  final lightTextTheme = const TextTheme(
-      bodyText1: TextStyle(fontSize: 16, color: Colors.pink),
-      bodyText2: TextStyle(fontSize: 16, color: Colors.pink));
+
   changeDarkMode(bool? status) async {
     darkMode = status;
     await box.write('dark_mode', status);
-    Get.changeTheme(status ?? true
-        ? ThemeData.from(
-            colorScheme: darkColorScheme,
-          )
-        : ThemeData.from(colorScheme: lightColorScheme));
+    Get.changeTheme(status ?? true ? darkTheme : lightTheme);
     update();
   }
 
