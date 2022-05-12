@@ -1,3 +1,4 @@
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: Values.title,
       debugShowCheckedModeBanner: false,
       home: const SplashPage(),
       onGenerateRoute: (settings) {

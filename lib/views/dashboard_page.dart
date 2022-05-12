@@ -1,4 +1,5 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         bottomRight: Radius.circular(12)),
                     color: Colors.white.withAlpha(122)),
                 child: Image.asset('lib/assets/at_comm_icon.png')),
-            title: const Text("Anime Themes"),
+            title: const Text(Values.title),
             centerTitle: true,
             actions: [
               GetBuilder<DashboardController>(
@@ -41,10 +42,9 @@ class _DashboardPageState extends State<DashboardPage> {
                       thumbColor:
                           MaterialStateProperty.all(Colors.grey.shade50),
                       activeThumbImage: const AssetImage(
-                        'lib/assets/night-mode.png',
+                        Values.nightModeAsset,
                       ),
-                      inactiveThumbImage:
-                          const AssetImage('lib/assets/sunny-day.png'),
+                      inactiveThumbImage: const AssetImage(Values.dayModeAsset),
                       value: c.darkMode ?? false,
                       onChanged: c.changeDarkMode);
                 },
@@ -70,10 +70,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 barBackgroundColor:
                     Theme.of(context).bottomNavigationBarTheme.backgroundColor,
                 tabs: [
-                  TabData(iconData: Icons.dashboard_outlined, title: "Explore"),
-                  TabData(iconData: Icons.search_outlined, title: "Search"),
                   TabData(
-                      iconData: Icons.queue_music_outlined, title: "Playlists")
+                      iconData: Icons.dashboard_outlined,
+                      title: Values.explore),
+                  TabData(
+                      iconData: Icons.search_outlined, title: Values.search),
+                  TabData(
+                      iconData: Icons.queue_music_outlined,
+                      title: Values.playlist)
                 ],
                 onTabChangedListener: c.updateIndex);
           },
