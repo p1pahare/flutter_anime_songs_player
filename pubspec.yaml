@@ -20,10 +20,10 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Pathagonia
+      fonts:
+        - asset: lib/assets/Pathagonia.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

@@ -56,11 +56,26 @@ class _DashboardPageState extends State<DashboardPage> {
           init: DashboardController(),
           initState: (_) {},
           builder: (c) {
-            return FancyBottomNavigation(tabs: [
-              TabData(iconData: Icons.dashboard_outlined, title: "Explore"),
-              TabData(iconData: Icons.search_outlined, title: "Search"),
-              TabData(iconData: Icons.queue_music_outlined, title: "Playlists")
-            ], onTabChangedListener: c.updateIndex);
+            return FancyBottomNavigation(
+                circleColor: Theme.of(context).primaryColor,
+                inactiveIconColor:
+                    Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                        const Color(0xffffffff),
+                activeIconColor:
+                    Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                        const Color(0xffffffff),
+                textColor:
+                    Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                        const Color(0xffffffff),
+                barBackgroundColor:
+                    Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+                tabs: [
+                  TabData(iconData: Icons.dashboard_outlined, title: "Explore"),
+                  TabData(iconData: Icons.search_outlined, title: "Search"),
+                  TabData(
+                      iconData: Icons.queue_music_outlined, title: "Playlists")
+                ],
+                onTabChangedListener: c.updateIndex);
           },
         ));
   }
