@@ -19,6 +19,10 @@ class DashboardController extends GetxController {
       primaryColor: const Color.fromARGB(255, 214, 143, 63),
       primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
       primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+      textTheme: const TextTheme(
+        bodyText2: TextStyle(
+            fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.white),
+      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.black,
       ),
@@ -35,6 +39,13 @@ class DashboardController extends GetxController {
     primaryColor: const Color.fromARGB(255, 214, 143, 63),
     primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
     primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+    ),
+    textTheme: const TextTheme(
+      bodyText2: TextStyle(
+          fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.black),
+    ),
     appBarTheme: const AppBarTheme(
         backgroundColor: Color.fromARGB(255, 214, 143, 63),
         titleTextStyle: TextStyle(
