@@ -21,11 +21,11 @@ class PlaylistPage extends GetView<PlaylistController> {
         // here you can put your custom loading indicator, but
         // by default would be Center(child:CircularProgressIndicator())
         onLoading: const Center(child: ProgressIndicatorButton()),
-        onEmpty: const Text(Values.noResults),
+        onEmpty: const Center(child: Text(Values.noResults)),
 
         // here also you can set your own error widget, but by
         // default will be an Center(child:Text(error))
-        onError: (error) => Text(error ?? ''),
+        onError: (error) => Center(child: Text(error ?? '')),
       ),
     );
   }

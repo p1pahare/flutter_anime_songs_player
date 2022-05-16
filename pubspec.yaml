@@ -11,6 +11,8 @@ dependencies:
   get_storage: ^2.0.3
   fancy_bottom_navigation: ^0.3.3
   flutter_native_splash: ^2.1.6
+  just_audio: ^0.9.21
+  just_audio_libwinmedia: ^0.0.4
   http: ^0.13.4
 dev_dependencies:
   flutter_test:

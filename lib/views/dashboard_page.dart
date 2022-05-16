@@ -6,6 +6,7 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/playlist_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
+import 'package:anime_themes_player/widgets/player_buttons.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class DashboardPage extends StatelessWidget {
             left: false,
             child: Scaffold(
                 appBar: PreferredSize(
-                  preferredSize: const Size.fromHeight(40),
+                  preferredSize: const Size.fromHeight(85),
                   child: AppBar(
                     leading: Container(
                         decoration: BoxDecoration(
@@ -66,6 +67,9 @@ class DashboardPage extends StatelessWidget {
                           value: c.darkMode ?? false,
                           onChanged: c.changeDarkMode)
                     ],
+                    bottom: PreferredSize(
+                        child: PlayerButtons(c.audioPlayer!),
+                        preferredSize: const Size.fromHeight(50)),
                   ),
                 ),
                 body: getTabFromIndex(c.selectedIndex.value),

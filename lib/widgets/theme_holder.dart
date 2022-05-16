@@ -35,6 +35,8 @@ class ThemeHolder extends StatelessWidget {
                         loadingProcess == null
                             ? child
                             : const ProgressIndicatorButton(),
+                    cacheHeight: 160,
+                    cacheWidth: 160,
                   )),
               Container(
                 width: 0.3333,

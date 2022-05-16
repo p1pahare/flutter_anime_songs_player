@@ -10,22 +10,25 @@ class ExplorePage extends GetView<ExploreController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.bringCats();
+    controller.bringCats(reload: true);
     return Container(
       color: Colors.transparent,
       child: controller.obx(
         (state) => ListView.builder(
-            itemCount: state?.length,
-            itemBuilder: ((context, index) => ThemeHolder(cat: state?[index]))),
+            controller: controller.scroll,
+            itemCount: (state!.length + 1),
+            itemBuilder: ((context, index) => index == state.length
+                ? const ProgressIndicatorButton()
+                : ThemeHolder(cat: state[index]))),
 
         // here you can put your custom loading indicator, but
         // by default would be Center(child:CircularProgressIndicator())
         onLoading: const Center(child: ProgressIndicatorButton()),
-        onEmpty: const Text(Values.noResults),
+        onEmpty: const Center(child: Text(Values.noResults)),
 
         // here also you can set your own error widget, but by
         // default will be an Center(child:Text(error))
-        onError: (error) => Text(error ?? ''),
+        onError: (error) => Center(child: Text(error ?? '')),
       ),
     );
   }
