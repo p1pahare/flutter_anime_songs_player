@@ -12,7 +12,7 @@ class NetworkCalls {
 
     var params = {
       'size': 'mid',
-      'limit': '100',
+      'limit': '10',
     };
     var query = params.entries.map((p) => '${p.key}=${p.value}').join('&');
 

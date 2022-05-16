@@ -16,23 +16,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: Values.title,
-      debugShowCheckedModeBanner: false,
-      home: const SplashPage(),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case DashboardPage.routeName:
-            return CupertinoPageRoute(builder: (context) {
-              return const DashboardPage();
-            });
-          case '/':
-          default:
-            return CupertinoPageRoute(builder: (context) {
-              return const SplashPage();
-            });
-        }
+    return GestureDetector(
+      onTap: () {
+        Get.focusScope?.unfocus();
       },
+      child: GetMaterialApp(
+        title: Values.title,
+        debugShowCheckedModeBanner: false,
+        home: const SplashPage(),
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case DashboardPage.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                return const DashboardPage();
+              });
+            case '/':
+            default:
+              return CupertinoPageRoute(builder: (context) {
+                return const SplashPage();
+              });
+          }
+        },
+      ),
     );
   }
 }

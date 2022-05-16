@@ -13,12 +13,24 @@ class DashboardController extends GetxController {
   }
   final darkTheme = ThemeData(
       fontFamily: 'Pathagonia',
-      brightness: Brightness.light,
+      iconTheme: const IconThemeData(color: Colors.white),
+      brightness: Brightness.dark,
       scaffoldBackgroundColor: const Color.fromARGB(255, 72, 72, 72),
       unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
       primaryColor: const Color.fromARGB(255, 214, 143, 63),
       primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
       primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+      inputDecorationTheme: const InputDecorationTheme(
+          labelStyle: TextStyle(
+            color: Color.fromARGB(255, 214, 143, 63),
+          ),
+          iconColor: Color.fromARGB(255, 214, 143, 63),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              style: BorderStyle.solid,
+              color: Color.fromARGB(255, 214, 143, 63),
+            ),
+          )),
       textTheme: const TextTheme(
         bodyText2: TextStyle(
             fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.white),
@@ -26,6 +38,7 @@ class DashboardController extends GetxController {
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.black,
       ),
+      cardColor: const Color.fromARGB(28, 24, 24, 24),
       appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           titleTextStyle: TextStyle(
@@ -39,6 +52,17 @@ class DashboardController extends GetxController {
     primaryColor: const Color.fromARGB(255, 214, 143, 63),
     primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
     primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+    inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(
+          color: Color.fromARGB(255, 214, 143, 63),
+        ),
+        iconColor: Color.fromARGB(255, 214, 143, 63),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            style: BorderStyle.solid,
+            color: Color.fromARGB(255, 214, 143, 63),
+          ),
+        )),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
     ),
@@ -46,6 +70,8 @@ class DashboardController extends GetxController {
       bodyText2: TextStyle(
           fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.black),
     ),
+    iconTheme: const IconThemeData(color: Colors.black),
+    cardColor: const Color.fromARGB(199, 207, 172, 126),
     appBarTheme: const AppBarTheme(
         backgroundColor: Color.fromARGB(255, 214, 143, 63),
         titleTextStyle: TextStyle(
