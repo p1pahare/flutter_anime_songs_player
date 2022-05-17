@@ -1,13 +1,12 @@
+import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../models/democat.dart';
-
-class ThemeHolder extends StatelessWidget {
-  const ThemeHolder({Key? key, this.cat}) : super(key: key);
-  final DemoCat? cat;
+class ThemeHolderForAnimemain extends StatelessWidget {
+  const ThemeHolderForAnimemain({Key? key, this.animeMain}) : super(key: key);
+  final AnimeMain? animeMain;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -28,7 +27,7 @@ class ThemeHolder extends StatelessWidget {
                           bottomLeft: Radius.circular(7))),
                   width: Get.width * 0.32,
                   child: Image.network(
-                    cat?.url ?? Values.errorImage,
+                    animeMain?.images.first.link ?? Values.errorImage,
                     height: 150,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProcess) =>
@@ -52,7 +51,7 @@ class ThemeHolder extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        cat!.id,
+                        animeMain!.name,
                         maxLines: 2,
                         overflow: TextOverflow.fade,
                         style: const TextStyle(fontSize: 18),
@@ -64,14 +63,14 @@ class ThemeHolder extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              cat!.height + " 34343434",
+                              animeMain!.season,
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              cat!.width + "34343434",
+                              animeMain!.year.toString(),
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),

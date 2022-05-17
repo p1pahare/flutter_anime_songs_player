@@ -1,7 +1,7 @@
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
-import 'package:anime_themes_player/widgets/theme_holder.dart';
+import 'package:anime_themes_player/widgets/theme_holder_for_animemain.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,7 +10,7 @@ class SearchPage extends GetView<SearchController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.bringCats(reload: true);
+    controller.searchListings(reload: true);
     return SizedBox(
       height: Get.height,
       child: SingleChildScrollView(
@@ -83,10 +83,10 @@ class SearchPage extends GetView<SearchController> {
               (state) => ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: (state!.length + 1),
+                  itemCount: (state!.length),
                   itemBuilder: ((context, index) => index == state.length
                       ? const ProgressIndicatorButton()
-                      : ThemeHolder(cat: state[index]))),
+                      : ThemeHolderForAnimemain(animeMain: state[index]))),
 
               // here you can put your custom loading indicator, but
               // by default would be Center(child:CircularProgressIndicator())
