@@ -3,32 +3,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:just_audio/just_audio.dart';
 
 class DashboardController extends GetxController {
   var selectedIndex = 0.obs;
   GetStorage box = GetStorage();
   bool? darkMode;
-  AudioPlayer? audioPlayer;
+
   DashboardController() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
     changeDarkMode(darkMode);
-    audioPlayer = AudioPlayer();
-
-    audioPlayer!
-        .setAudioSource(ConcatenatingAudioSource(children: [
-      AudioSource.uri(Uri.parse(
-          "https://themesmoeaudio.sfo2.digitaloceanspaces.com/themes/38691/OP2.mp3")),
-      AudioSource.uri(Uri.parse(
-          "https://themesmoeaudio.sfo2.digitaloceanspaces.com/themes/6573/OP.mp3")),
-      AudioSource.uri(Uri.parse(
-          "https://themesmoeaudio.sfo2.digitaloceanspaces.com/themes/37451/OP.mp3")),
-    ]))
-        .catchError((error) {
-      // catch load errors: 404, invalid url ...
-      log("An error occured $error");
-    });
+    log("initialized");
   }
   final darkTheme = ThemeData(
       fontFamily: 'Pathagonia',
@@ -109,11 +94,5 @@ class DashboardController extends GetxController {
   void updateIndex(int? index) {
     selectedIndex.value = index ?? 0;
     update();
-  }
-
-  @override
-  void dispose() {
-    audioPlayer!.dispose();
-    super.dispose();
   }
 }
