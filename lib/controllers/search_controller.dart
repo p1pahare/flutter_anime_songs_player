@@ -1,16 +1,19 @@
 import 'dart:developer';
 
+import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/democat.dart';
+import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class SearchController extends GetxController with StateMixin<List<DemoCat>> {
+class SearchController extends GetxController with StateMixin<List<dynamic>> {
   NetworkCalls networkCalls = NetworkCalls();
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
   List<DemoCat> cats = [];
+  List<dynamic> listings = [];
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
@@ -30,9 +33,7 @@ class SearchController extends GetxController with StateMixin<List<DemoCat>> {
   }
 
   void onSearch() async {
-    if (search.text.isNotEmpty) {
-      search.clear();
-    }
+    searchListings();
     update();
   }
 
@@ -40,7 +41,7 @@ class SearchController extends GetxController with StateMixin<List<DemoCat>> {
     scroll.addListener(() {
       if (scroll.position.maxScrollExtent == scroll.position.pixels) {
         currentPage++;
-        bringCats();
+        // searchListings(reload: true);
       }
     });
   }
@@ -70,11 +71,73 @@ class SearchController extends GetxController with StateMixin<List<DemoCat>> {
     }
   }
 
+  searchListings({bool reload = false}) async {
+    if (reload) listings.clear();
+    change(listings,
+        status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
+    ApiResponse apiResponse;
+    switch (searchByValue) {
+      case 0:
+        apiResponse = await networkCalls.searchAnimeMain(search.text);
+        if (apiResponse.status) {
+          listings = [
+            ...listings,
+            ...(apiResponse.data['anime'] as List<dynamic>)
+                .map((e) => AnimeMain.fromJson(e))
+                .toList()
+          ];
+        }
+        break;
+      case 1:
+        apiResponse = await networkCalls.searchAnimethemesMain(search.text);
+        if (apiResponse.status) {
+          listings = [
+            ...listings,
+            ...(apiResponse.data['animethemes'] as List<dynamic>)
+                .map((e) => Animethemes.fromJson(e))
+                .toList()
+          ];
+        }
+        break;
+      case 2:
+        apiResponse = await networkCalls.searchMyAnimeListProfile(search.text);
+        if (apiResponse.status) {
+          listings = [
+            ...listings,
+            ...(apiResponse.data as List<dynamic>)
+                .map((e) => ThemesMALANI.fromJson(e))
+                .toList()
+          ];
+        }
+        break;
+      default:
+        apiResponse = await networkCalls.searchAnilistProfile(search.text);
+        if (apiResponse.status) {
+          listings = [
+            ...listings,
+            ...(apiResponse.data as List<dynamic>)
+                .map((e) => ThemesMALANI.fromJson(e))
+                .toList()
+          ];
+        }
+    }
+    if (apiResponse.status) {
+      if (listings.isEmpty) {
+        change(cats, status: RxStatus.empty());
+      } else {
+        change(listings, status: RxStatus.success());
+      }
+    } else {
+      change(null, status: RxStatus.error(apiResponse.message));
+    }
+  }
+
   @override
   void dispose() {
     log("dispose");
     scroll.dispose();
     cats.clear();
+    listings.clear();
     super.dispose();
   }
 }

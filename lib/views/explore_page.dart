@@ -1,7 +1,7 @@
 import 'package:anime_themes_player/controllers/explore_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
-import 'package:anime_themes_player/widgets/theme_holder.dart';
+import 'package:anime_themes_player/widgets/theme_holder_for_cat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +19,7 @@ class ExplorePage extends GetView<ExploreController> {
             itemCount: (state!.length + 1),
             itemBuilder: ((context, index) => index == state.length
                 ? const ProgressIndicatorButton()
-                : ThemeHolder(cat: state[index]))),
+                : ThemeHolderForCat(cat: state[index]))),
 
         // here you can put your custom loading indicator, but
         // by default would be Center(child:CircularProgressIndicator())

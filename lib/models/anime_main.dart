@@ -160,7 +160,7 @@ class Videos {
     subbed = json['subbed'];
     lyrics = json['lyrics'];
     uncen = json['uncen'];
-    source = json['source'];
+    source = json['source']?.toString() ?? '';
     overlap = json['overlap'];
     tags = json['tags'];
     link = json['link'];
