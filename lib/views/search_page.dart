@@ -10,10 +10,11 @@ class SearchPage extends GetView<SearchController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.bringCats();
+    controller.bringCats(reload: true);
     return SizedBox(
       height: Get.height,
       child: SingleChildScrollView(
+        controller: controller.scroll,
         child: Column(
           children: [
             Container(
@@ -80,11 +81,12 @@ class SearchPage extends GetView<SearchController> {
             ),
             controller.obx(
               (state) => ListView.builder(
-                  shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state?.length,
-                  itemBuilder: ((context, index) =>
-                      ThemeHolder(cat: state?[index]))),
+                  shrinkWrap: true,
+                  itemCount: (state!.length + 1),
+                  itemBuilder: ((context, index) => index == state.length
+                      ? const ProgressIndicatorButton()
+                      : ThemeHolder(cat: state[index]))),
 
               // here you can put your custom loading indicator, but
               // by default would be Center(child:CircularProgressIndicator())

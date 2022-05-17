@@ -9,6 +9,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 class ExploreController extends GetxController with StateMixin<List<DemoCat>> {
   NetworkCalls networkCalls = NetworkCalls();
   int currentPage = 0;
+
   ScrollController scroll = ScrollController();
   List<DemoCat> cats = [];
   ExploreController() {

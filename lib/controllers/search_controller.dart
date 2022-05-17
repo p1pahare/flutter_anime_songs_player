@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/democat.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
@@ -8,6 +10,7 @@ class SearchController extends GetxController with StateMixin<List<DemoCat>> {
   NetworkCalls networkCalls = NetworkCalls();
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
+  List<DemoCat> cats = [];
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
@@ -33,19 +36,45 @@ class SearchController extends GetxController with StateMixin<List<DemoCat>> {
     update();
   }
 
-  bringCats() async {
-    change([], status: RxStatus.loading());
-    ApiResponse apiResponse = await networkCalls.getCats();
+  SearchController() {
+    scroll.addListener(() {
+      if (scroll.position.maxScrollExtent == scroll.position.pixels) {
+        currentPage++;
+        bringCats();
+      }
+    });
+  }
+  int currentPage = 0;
+
+  ScrollController scroll = ScrollController();
+
+  bringCats({bool reload = false}) async {
+    if (reload) cats.clear();
+    change(cats,
+        status: cats.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
+    ApiResponse apiResponse = await networkCalls.getCats(page: currentPage);
     if (apiResponse.status) {
-      List<DemoCat> cats = (apiResponse.data as List<dynamic>)
-          .map((e) => DemoCat.fromJson(e))
-          .toList();
+      cats = [
+        ...cats,
+        ...(apiResponse.data as List<dynamic>)
+            .map((e) => DemoCat.fromJson(e))
+            .toList()
+      ];
       if (cats.isEmpty) {
         change(cats, status: RxStatus.empty());
       }
+
       change(cats, status: RxStatus.success());
     } else {
       change(null, status: RxStatus.error(apiResponse.message));
     }
+  }
+
+  @override
+  void dispose() {
+    log("dispose");
+    scroll.dispose();
+    cats.clear();
+    super.dispose();
   }
 }
