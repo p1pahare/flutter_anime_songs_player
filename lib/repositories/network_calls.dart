@@ -3,10 +3,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:anime_themes_player/models/api_response.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkCalls {
-  Future<ApiResponse> getCats({int page = 0}) async {
+  Future<ApiResponse> getCats({int page = 1}) async {
     try {
       var headers = {
         'x-api-key': 'ef272bbf-4024-4e2b-903e-c617ec7fb8ca',
@@ -30,6 +31,146 @@ class NetworkCalls {
         "message": "Cats were called successfully",
         "data": jsonDecode(res.body)
       });
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
+
+  Future<ApiResponse> searchAnimeMain(String title,
+      {bool isUrl = false}) async {
+    try {
+      var request = http.Request(
+          'GET',
+          Uri.parse(isUrl
+              ? title
+              : 'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Anime were retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
+
+  Future<ApiResponse> searchAnimethemesMain(String title,
+      {bool isUrl = false}) async {
+    try {
+      var request = http.Request(
+          'GET',
+          Uri.parse(isUrl
+              ? title
+              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Animethemes were retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
+
+  Future<ApiResponse> searchAnilistProfile(String title) async {
+    try {
+      var request = http.Request(
+          'GET', Uri.parse('themes.moe/api/anilist/${percentEncode(title)}'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        if (body.length < 3) {
+          return ApiResponse.fromJson(
+              {"status": false, "message": "Anilist Profile not Found"});
+        }
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Anilist profile was retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
+
+  Future<ApiResponse> searchMyAnimeListProfile(String title) async {
+    try {
+      var request = http.Request(
+          'GET', Uri.parse('themes.moe/api/mal/${percentEncode(title)}'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "MyAnimeListProfile was retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
     } catch (e) {
       if (e is SocketException) {
         return ApiResponse(
