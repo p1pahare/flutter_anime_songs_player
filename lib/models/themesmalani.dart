@@ -1,5 +1,5 @@
-class ThemesMALANI {
-  ThemesMALANI({
+class ThemesMalAni {
+  ThemesMalAni({
     required this.malID,
     required this.name,
     required this.score,
@@ -16,10 +16,10 @@ class ThemesMALANI {
   late final int watchStatus;
   late final int year;
 
-  ThemesMALANI.fromJson(Map<String, dynamic> json) {
+  ThemesMalAni.fromJson(Map<String, dynamic> json) {
     malID = json['malID'];
     name = json['name'];
-    score = json['score'];
+    score = json['score'] ?? 0;
     season = json['season'];
     themes = List.from(json['themes']).map((e) => Themes.fromJson(e)).toList();
     watchStatus = json['watchStatus'];

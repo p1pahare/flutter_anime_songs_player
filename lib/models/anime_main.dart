@@ -115,9 +115,9 @@ class Animethemeentries {
 
   Animethemeentries.fromJson(Map<String, dynamic> json) {
     version = int.tryParse(json['version']?.toString() ?? '0');
-    episodes = json['episodes'];
-    nsfw = json['nsfw'];
-    spoiler = json['spoiler'];
+    episodes = json['episodes']?.toString() ?? '';
+    nsfw = json['nsfw'] ?? false;
+    spoiler = json['spoiler'] ?? false;
     videos = List.from(json['videos']).map((e) => Videos.fromJson(e)).toList();
   }
 
@@ -155,13 +155,13 @@ class Videos {
   late final String link;
 
   Videos.fromJson(Map<String, dynamic> json) {
-    resolution = json['resolution'];
-    nc = json['nc'];
-    subbed = json['subbed'];
-    lyrics = json['lyrics'];
-    uncen = json['uncen'];
+    resolution = json['resolution'] ?? 0;
+    nc = json['nc'] ?? false;
+    subbed = json['subbed'] ?? false;
+    lyrics = json['lyrics'] ?? false;
+    uncen = json['uncen'] ?? false;
     source = json['source']?.toString() ?? '';
-    overlap = json['overlap'];
+    overlap = json['overlap'] ?? '';
     tags = json['tags'];
     link = json['link'];
   }

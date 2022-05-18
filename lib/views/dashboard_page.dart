@@ -119,8 +119,8 @@ class _DashboardPageState extends State<DashboardPage> {
     return GetBuilder<DashboardController>(
         init: DashboardController(),
         initState: (_) {
-          _player = AudioPlayer();
-          _init();
+          // _player = AudioPlayer();
+          // _init();
         },
         dispose: (_) {
           _player?.dispose();
@@ -169,6 +169,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 body: getTabFromIndex(c.selectedIndex.value),
                 bottomNavigationBar: FancyBottomNavigation(
+                    initialSelection: c.selectedIndex.value,
                     circleColor: Theme.of(context).primaryColor,
                     inactiveIconColor:
                         Theme.of(context).appBarTheme.titleTextStyle?.color ??

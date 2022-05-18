@@ -1,12 +1,11 @@
-import 'package:anime_themes_player/models/anime_main.dart';
-import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ThemeHolderForAnimeMain extends StatelessWidget {
-  const ThemeHolderForAnimeMain({Key? key, this.animeMain}) : super(key: key);
-  final AnimeMain? animeMain;
+class ThemeHolderForThemesMalani extends StatelessWidget {
+  const ThemeHolderForThemesMalani({Key? key, this.themesMalAni})
+      : super(key: key);
+  final ThemesMalAni? themesMalAni;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,24 +18,6 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
           onTap: () {},
           child: Row(
             children: [
-              Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(7),
-                          bottomLeft: Radius.circular(7))),
-                  width: Get.width * 0.32,
-                  child: Image.network(
-                    animeMain?.images.first.link ?? Values.errorImage,
-                    height: 150,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProcess) =>
-                        loadingProcess == null
-                            ? child
-                            : const ProgressIndicatorButton(),
-                    cacheHeight: 160,
-                    cacheWidth: 160,
-                  )),
               Container(
                 width: 0.3333,
                 height: 150,
@@ -51,7 +32,7 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        animeMain!.name,
+                        themesMalAni!.name,
                         maxLines: 2,
                         overflow: TextOverflow.fade,
                         style: const TextStyle(fontSize: 18),
@@ -63,14 +44,14 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              animeMain!.season,
+                              themesMalAni!.season,
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              animeMain!.year.toString(),
+                              themesMalAni!.year.toString(),
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),
