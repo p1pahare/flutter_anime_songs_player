@@ -86,8 +86,8 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
-
+              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+//&filter[has]=song
       http.StreamedResponse response = await request.send();
 
       if (response.statusCode == 200) {
@@ -117,8 +117,8 @@ class NetworkCalls {
 
   Future<ApiResponse> searchAnilistProfile(String title) async {
     try {
-      var request = http.Request(
-          'GET', Uri.parse('themes.moe/api/anilist/${percentEncode(title)}'));
+      var request = http.Request('GET',
+          Uri.parse('https://themes.moe/api/anilist/${percentEncode(title)}'));
 
       http.StreamedResponse response = await request.send();
 
@@ -153,8 +153,8 @@ class NetworkCalls {
 
   Future<ApiResponse> searchMyAnimeListProfile(String title) async {
     try {
-      var request = http.Request(
-          'GET', Uri.parse('themes.moe/api/mal/${percentEncode(title)}'));
+      var request = http.Request('GET',
+          Uri.parse('https://themes.moe/api/mal/${percentEncode(title)}'));
 
       http.StreamedResponse response = await request.send();
 

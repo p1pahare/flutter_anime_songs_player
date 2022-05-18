@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/democat.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
@@ -49,6 +50,10 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
 
   ScrollController scroll = ScrollController();
 
+  initalizeLoadingStatus() {
+    change(cats, status: RxStatus.empty());
+  }
+
   bringCats({bool reload = false}) async {
     if (reload) cats.clear();
     change(cats,
@@ -71,8 +76,8 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
     }
   }
 
-  searchListings({bool reload = false}) async {
-    if (reload) listings.clear();
+  searchListings() async {
+    listings.clear();
     change(listings,
         status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
     ApiResponse apiResponse;
@@ -94,7 +99,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
           listings = [
             ...listings,
             ...(apiResponse.data['animethemes'] as List<dynamic>)
-                .map((e) => Animethemes.fromJson(e))
+                .map((e) => AnimethemesMain.fromJson(e))
                 .toList()
           ];
         }
@@ -105,7 +110,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
           listings = [
             ...listings,
             ...(apiResponse.data as List<dynamic>)
-                .map((e) => ThemesMALANI.fromJson(e))
+                .map((e) => ThemesMalAni.fromJson(e))
                 .toList()
           ];
         }
@@ -116,7 +121,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
           listings = [
             ...listings,
             ...(apiResponse.data as List<dynamic>)
-                .map((e) => ThemesMALANI.fromJson(e))
+                .map((e) => ThemesMalAni.fromJson(e))
                 .toList()
           ];
         }

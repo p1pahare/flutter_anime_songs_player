@@ -1,5 +1,5 @@
-class AnithemesMain {
-  AnithemesMain({
+class AnimethemesMain {
+  AnimethemesMain({
     required this.id,
     required this.type,
     required this.sequence,
@@ -18,10 +18,10 @@ class AnithemesMain {
   late final Song song;
   late final List<Animethemeentries> animethemeentries;
 
-  AnithemesMain.fromJson(Map<String, dynamic> json) {
+  AnimethemesMain.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     type = json['type'];
-    sequence = json['sequence'];
+    sequence = json['sequence'] ?? 0;
     group = json['group']?.toString() ?? '';
     slug = json['slug'];
     anime = Anime.fromJson(json['anime']);
@@ -135,7 +135,7 @@ class Artists {
   Artists.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     slug = json['slug'];
-    as = json['as'];
+    as = json['as'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

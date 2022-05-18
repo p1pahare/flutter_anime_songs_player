@@ -1,12 +1,13 @@
-import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ThemeHolderForAnimeMain extends StatelessWidget {
-  const ThemeHolderForAnimeMain({Key? key, this.animeMain}) : super(key: key);
-  final AnimeMain? animeMain;
+class ThemeHolderForAnimethemesMain extends StatelessWidget {
+  const ThemeHolderForAnimethemesMain({Key? key, this.animethemesMain})
+      : super(key: key);
+  final AnimethemesMain? animethemesMain;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -27,7 +28,8 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
                           bottomLeft: Radius.circular(7))),
                   width: Get.width * 0.32,
                   child: Image.network(
-                    animeMain?.images.first.link ?? Values.errorImage,
+                    animethemesMain?.anime.images.first.link ??
+                        Values.errorImage,
                     height: 150,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProcess) =>
@@ -51,7 +53,7 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        animeMain!.name,
+                        animethemesMain!.song.title,
                         maxLines: 2,
                         overflow: TextOverflow.fade,
                         style: const TextStyle(fontSize: 18),
@@ -63,14 +65,14 @@ class ThemeHolderForAnimeMain extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              animeMain!.season,
+                              animethemesMain!.anime.year.toString(),
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),
                           ),
                           Expanded(
                             child: Text(
-                              animeMain!.year.toString(),
+                              animethemesMain!.song.artists.toString(),
                               overflow: TextOverflow.fade,
                               style: const TextStyle(fontSize: 11),
                             ),

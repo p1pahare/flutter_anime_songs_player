@@ -12,6 +12,7 @@ class DashboardController extends GetxController {
   DashboardController() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
+    selectedIndex.value = box.read<int>('selected_index') ?? 0;
     changeDarkMode(darkMode);
     log("initialized");
   }
@@ -93,6 +94,8 @@ class DashboardController extends GetxController {
 
   void updateIndex(int? index) {
     selectedIndex.value = index ?? 0;
+
     update();
+    box.write('selected_index', selectedIndex.value);
   }
 }
