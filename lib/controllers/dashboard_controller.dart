@@ -95,8 +95,9 @@ class DashboardController extends GetxController {
 
   changeDarkMode(bool? status) async {
     darkMode = status;
-    await box.write('dark_mode', status);
     Get.changeTheme(status ?? true ? darkTheme : lightTheme);
+    await box.write('dark_mode', status);
+    await Future.delayed(const Duration(milliseconds: 200));
     update();
   }
 
