@@ -26,11 +26,11 @@ class ThemeHolderForAnimethemesMain extends StatelessWidget {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(7),
                           bottomLeft: Radius.circular(7))),
-                  width: Get.width * 0.32,
+                  width: Get.width * 0.26,
                   child: Image.network(
                     animethemesMain?.anime.images.first.link ??
                         Values.errorImage,
-                    height: 150,
+                    height: 95,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProcess) =>
                         loadingProcess == null
@@ -41,16 +41,16 @@ class ThemeHolderForAnimethemesMain extends StatelessWidget {
                   )),
               Container(
                 width: 0.3333,
-                height: 150,
+                height: 95,
                 margin: const EdgeInsets.only(right: 20),
                 color: Colors.brown,
               ),
               Expanded(
-                child: Center(
+                child: SizedBox(
+                  height: 95,
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         animethemesMain!.song.title,
@@ -58,33 +58,38 @@ class ThemeHolderForAnimethemesMain extends StatelessWidget {
                         overflow: TextOverflow.fade,
                         style: const TextStyle(fontSize: 18),
                       ),
-                      const SizedBox(
-                        height: 30,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          "${animethemesMain!.anime.season} ${animethemesMain!.anime.year}",
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(fontSize: 11),
+                        ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              animethemesMain!.anime.year.toString(),
-                              overflow: TextOverflow.fade,
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              animethemesMain!.song.artists.toString(),
-                              overflow: TextOverflow.fade,
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        "${animethemesMain!.song.artists.map((e) => e.name).toList()}"
+                            .replaceAll(RegExp('[^A-Za-z0-9, ]'), ''),
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(fontSize: 11),
                       ),
                     ],
                   ),
                 ),
               ),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.more_vert_outlined))
+              InkWell(
+                  onTap: () {},
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+                    child: Icon(
+                      Icons.playlist_add,
+                    ),
+                  )),
+              InkWell(
+                  onTap: () {},
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+                    child: Icon(Icons.play_circle_fill),
+                  )),
             ],
           ),
         ),

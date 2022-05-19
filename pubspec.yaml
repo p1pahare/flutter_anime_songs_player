@@ -27,9 +27,9 @@ flutter:
   assets:
     - lib/assets/
   fonts:
-    - family: Kingthings
+    - family: Castle-Rock
       fonts:
-        - asset: lib/assets/Kingthings.ttf
+        - asset: lib/assets/Castle-Rock.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
