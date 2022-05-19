@@ -182,4 +182,38 @@ class NetworkCalls {
       }
     }
   }
+
+  Future<ApiResponse> getMP3VersionOfSong(
+      String malId, String themeId, String videoUrl) async {
+    try {
+      var request = http.Request('POST',
+          Uri.parse('https://themes.moe/api/themes/$malId/$themeId/audio'));
+      request.body = videoUrl;
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "MP3 Link fetched successfully",
+          "data": body
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
 }

@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class ProgressIndicatorButton extends StatefulWidget {
-  const ProgressIndicatorButton({Key? key}) : super(key: key);
-
+  const ProgressIndicatorButton({Key? key, this.radius = 20}) : super(key: key);
+  final double radius;
   @override
   _ProgressIndicatorButtonState createState() =>
       _ProgressIndicatorButtonState();
@@ -13,8 +13,8 @@ class ProgressIndicatorButton extends StatefulWidget {
 
 class _ProgressIndicatorButtonState extends State<ProgressIndicatorButton>
     with SingleTickerProviderStateMixin {
-  final double initialRadius = 20.0;
-  double radius = 20.0;
+  late double initialRadius;
+  late double radius;
   double pi = 3.14;
   late final AnimationController _animationController =
       AnimationController(vsync: this, duration: const Duration(seconds: 2))
@@ -41,6 +41,8 @@ class _ProgressIndicatorButtonState extends State<ProgressIndicatorButton>
 
   @override
   void initState() {
+    radius = widget.radius;
+    initialRadius = widget.radius;
     super.initState();
     timer =
         Timer.periodic(const Duration(seconds: 2), (Timer t) => changeColor());

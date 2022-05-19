@@ -13,6 +13,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
   NetworkCalls networkCalls = NetworkCalls();
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
+  bool loadingSong = false;
   List<DemoCat> cats = [];
   List<dynamic> listings = [];
   Map<int, String> searchValuesMap = {
@@ -136,6 +137,17 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
     } else {
       change(null, status: RxStatus.error(apiResponse.message));
     }
+  }
+
+  Future<ApiResponse> webmToMp3(
+      String malId, String themeId, String videoUrl) async {
+    loadingSong = true;
+    update();
+    ApiResponse apiResponse =
+        await networkCalls.getMP3VersionOfSong(malId, themeId, videoUrl);
+    loadingSong = false;
+    update();
+    return apiResponse;
   }
 
   @override
