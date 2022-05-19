@@ -7,7 +7,7 @@ import 'package:anime_themes_player/models/democat.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 class SearchController extends GetxController with StateMixin<List<dynamic>> {
   NetworkCalls networkCalls = NetworkCalls();
@@ -34,6 +34,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
   }
 
   void onSearch() async {
+    Get.focusScope?.unfocus();
     searchListings();
     update();
   }
@@ -98,7 +99,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
         if (apiResponse.status) {
           listings = [
             ...listings,
-            ...(apiResponse.data['animethemes'] as List<dynamic>)
+            ...(apiResponse.data['search']['animethemes'] as List<dynamic>)
                 .map((e) => AnimethemesMain.fromJson(e))
                 .toList()
           ];

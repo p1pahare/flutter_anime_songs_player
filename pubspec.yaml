@@ -16,6 +16,7 @@ dependencies:
   just_audio_background: ^0.0.1-beta.5
   audio_session: ^0.1.6+1
   http: ^0.13.4
+  tap_to_expand: ^0.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
