@@ -150,6 +150,18 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
     return apiResponse;
   }
 
+  Future<AnimeMain?> slugToMalId(String slug) async {
+    loadingSong = true;
+    update();
+    ApiResponse apiResponse = await networkCalls.getAnimeFromSlug(slug);
+    loadingSong = false;
+    update();
+    if (apiResponse.status) {
+      return AnimeMain.fromJson(apiResponse.data['anime']);
+    }
+    return null;
+  }
+
   @override
   void dispose() {
     log("dispose");
