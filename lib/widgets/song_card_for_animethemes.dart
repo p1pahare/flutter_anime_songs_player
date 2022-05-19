@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SongCardForAnimethemes extends StatelessWidget {
   const SongCardForAnimethemes(
-      {Key? key, this.animethemes, this.animethemeentries})
+      {Key? key, this.animethemes, this.animethemeentries, this.animeMain})
       : super(key: key);
+  final AnimeMain? animeMain;
   final Animethemes? animethemes;
   final Animethemeentries? animethemeentries;
   @override
@@ -17,8 +17,7 @@ class SongCardForAnimethemes extends StatelessWidget {
       child: InkWell(
         onTap: () => log("message"),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Get.theme.bottomAppBarColor)),
+          decoration: BoxDecoration(border: Border.all()),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(

@@ -1,110 +1,98 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 class DashboardController extends GetxController {
   var selectedIndex = 0.obs;
   GetStorage box = GetStorage();
   bool? darkMode;
-
+  bool initializedWidgets = false;
   initialize() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
     selectedIndex.value = box.read<int>('selected_index') ?? 0;
     changeDarkMode(darkMode);
+    initializedWidgets = true;
+
     log("initialized");
   }
 
-  final darkTheme = ThemeData(
-      fontFamily: Values.fontFamilyName,
-      iconTheme: const IconThemeData(color: Colors.white),
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color.fromARGB(255, 72, 72, 72),
-      unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
-      primaryColor: const Color.fromARGB(255, 214, 143, 63),
-      primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
-      primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
-      inputDecorationTheme: const InputDecorationTheme(
-          labelStyle: TextStyle(
-            color: Color.fromARGB(255, 214, 143, 63),
-          ),
-          iconColor: Color.fromARGB(255, 214, 143, 63),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              style: BorderStyle.solid,
-              color: Color.fromARGB(255, 214, 143, 63),
-            ),
-          )),
-      textTheme: const TextTheme(
-        bodyText2: TextStyle(
-            fontSize: 14.0,
-            fontFamily: Values.fontFamilyName,
-            color: Colors.white),
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Colors.black,
-      ),
-      cardColor: const Color.fromARGB(255, 59, 26, 19),
-      bottomAppBarColor: const Color.fromARGB(255, 207, 172, 126),
-      appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          titleTextStyle: TextStyle(
-            color: Colors.white,
-            fontFamily: Values.fontFamilyName,
-          )));
-  final lightTheme = ThemeData(
-    fontFamily: Values.fontFamilyName,
-    brightness: Brightness.light,
-    unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
-    primaryColor: const Color.fromARGB(255, 214, 143, 63),
-    primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
-    primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
-    inputDecorationTheme: const InputDecorationTheme(
-        labelStyle: TextStyle(
-          color: Color.fromARGB(255, 214, 143, 63),
-        ),
-        iconColor: Color.fromARGB(255, 214, 143, 63),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            style: BorderStyle.solid,
-            color: Color.fromARGB(255, 214, 143, 63),
-          ),
-        )),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Colors.white,
-    ),
-    textTheme: const TextTheme(
-      bodyText2: TextStyle(
-          fontSize: 14.0,
-          fontFamily: Values.fontFamilyName,
-          color: Colors.black),
-    ),
-    iconTheme: const IconThemeData(color: Colors.black),
-    cardColor: const Color.fromARGB(255, 207, 172, 126),
-    bottomAppBarColor: const Color.fromARGB(255, 59, 26, 19),
-    appBarTheme: const AppBarTheme(
-        backgroundColor: Color.fromARGB(255, 214, 143, 63),
-        titleTextStyle: TextStyle(
-          color: Colors.black,
-          fontFamily: Values.fontFamilyName,
-        )),
-  );
-
   changeDarkMode(bool? status) async {
     darkMode = status;
-    Get.changeTheme(status ?? true ? darkTheme : lightTheme);
+    Get.changeTheme(ThemeData.from(
+        colorScheme: status ?? false
+            ? const ColorScheme.light()
+            : const ColorScheme.dark()));
     await box.write('dark_mode', status);
     await Future.delayed(const Duration(milliseconds: 200));
     update();
   }
 
-  void updateIndex(int? index) {
+  void updateIndex(int? index) async {
     selectedIndex.value = index ?? 0;
-
+    await box.write('selected_index', selectedIndex.value);
     update();
-    box.write('selected_index', selectedIndex.value);
+  }
+
+  Future<void> init(AudioEntry audioEntry) async {
+    _playlist.add(AudioSource.uri(
+      Uri.parse(audioEntry.url),
+      tag: MediaItem(
+        id: '${_nextMediaId++}',
+        album: audioEntry.album,
+        title: audioEntry.title,
+        artUri: audioEntry.art,
+      ),
+    ));
+    if (!playerLoaded) {
+      underPlayer = AudioPlayer();
+    } else {
+      await underPlayer!.stop();
+
+      await underPlayer!.seekToNext();
+      await underPlayer!.play();
+      return;
+    }
+
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    underPlayer?.playbackEventStream.listen((event) {},
+        onError: (Object e, StackTrace stackTrace) {
+      log('A stream error occurred: $e');
+    });
+    update();
+    try {
+      await underPlayer?.setAudioSource(_playlist);
+    } catch (e, stackTrace) {
+      // Catch load errors: 404, invalid url ...
+      log("Error loading playlist: $e");
+      log(stackTrace.toString());
+    }
+  }
+
+  static int _nextMediaId = 0;
+  AudioPlayer? underPlayer;
+  Future stopPlayer() async {
+    await underPlayer!.stop();
+    await underPlayer!.dispose();
+    await _playlist.clear();
+    underPlayer = null;
+    update();
+  }
+
+  final _playlist = ConcatenatingAudioSource(children: []);
+
+  bool get playerLoaded => underPlayer != null;
+  @override
+  void dispose() {
+    underPlayer?.dispose();
+    super.dispose();
   }
 }

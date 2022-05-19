@@ -1,5 +1,10 @@
 import 'dart:developer';
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/models/api_response.dart';
+import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
+import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,8 +20,7 @@ class SongCardForThemesMalAni extends StatelessWidget {
       child: InkWell(
         onTap: () => log("message"),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Get.theme.bottomAppBarColor)),
+          decoration: BoxDecoration(border: Border.all()),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -43,6 +47,8 @@ class SongCardForThemesMalAni extends StatelessWidget {
                         ),
                       ],
                     ),
+                    // uncomment in case
+                    // themes server adds artists
                     // if (animethemes!.song.artists.isNotEmpty)
                     //   Text(
                     //     "${animethemes!.song.artists.map((e) => e.name).toList()}"
@@ -61,12 +67,42 @@ class SongCardForThemesMalAni extends StatelessWidget {
                       Icons.playlist_add,
                     ),
                   )),
-              InkWell(
-                  onTap: () {},
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
-                    child: Icon(Icons.play_circle_fill),
-                  )),
+              GetBuilder<SearchController>(
+                init: SearchController(),
+                initState: (_) {},
+                builder: (_) {
+                  if (_.loadingSong) {
+                    return const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: ProgressIndicatorButton(
+                            radius: 7,
+                          ),
+                        ));
+                  }
+                  return InkWell(
+                      onTap: () async {
+                        ApiResponse apiResponse = await _.webmToMp3(
+                            themesMalAni!.malID.toString(),
+                            themes!.themeType,
+                            themes!.mirror.mirrorURL);
+                        await Get.find<DashboardController>().init(AudioEntry(
+                            album: themesMalAni!.name,
+                            title: themes!.themeName,
+                            url: apiResponse.status
+                                ? apiResponse.data
+                                : themes!.mirror.mirrorURL,
+                            urld: ''));
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
+                        child: Icon(Icons.play_circle_fill),
+                      ));
+                },
+              ),
             ],
           ),
         ),

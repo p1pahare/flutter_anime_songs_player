@@ -69,9 +69,11 @@ class PlayerButtons extends StatelessWidget {
         processingState == ProcessingState.buffering) {
       return Container(
         margin: const EdgeInsets.all(8.0),
-        width: 38.0,
-        height: 38.0,
-        child: const ProgressIndicatorButton(),
+        width: 25.0,
+        height: 25.0,
+        child: const ProgressIndicatorButton(
+          radius: 12,
+        ),
       );
     } else if (_audioPlayer.playing != true) {
       return IconButton(

@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     Get.put(ExploreController());
     Get.put(SearchController());
     Get.put(PlaylistController());
-    Get.find<DashboardController>().initialize();
+
     return GestureDetector(
       onTap: () {
         Get.focusScope?.unfocus();
