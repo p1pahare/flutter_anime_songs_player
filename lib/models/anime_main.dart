@@ -1,3 +1,5 @@
+import 'package:anime_themes_player/models/animethemes_main.dart';
+
 class AnimeMain {
   AnimeMain({
     required this.name,
@@ -85,16 +87,21 @@ class Animethemes {
 class Song {
   Song({
     required this.title,
+    required this.artists,
   });
   late final String title;
+  late final List<Artists> artists;
 
   Song.fromJson(Map<String, dynamic> json) {
     title = json['title'];
+    artists =
+        List.from(json['artists']).map((e) => Artists.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['title'] = title;
+    _data['artists'] = artists.map((e) => e.toJson()).toList();
     return _data;
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -17,7 +18,7 @@ class DashboardController extends GetxController {
     log("initialized");
   }
   final darkTheme = ThemeData(
-      fontFamily: 'Pathagonia',
+      fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),
       brightness: Brightness.dark,
       scaffoldBackgroundColor: const Color.fromARGB(255, 72, 72, 72),
@@ -38,7 +39,9 @@ class DashboardController extends GetxController {
           )),
       textTheme: const TextTheme(
         bodyText2: TextStyle(
-            fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.white),
+            fontSize: 14.0,
+            fontFamily: Values.fontFamilyName,
+            color: Colors.white),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.black,
@@ -48,10 +51,10 @@ class DashboardController extends GetxController {
           backgroundColor: Colors.black,
           titleTextStyle: TextStyle(
             color: Colors.white,
-            fontFamily: 'Pathagonia',
+            fontFamily: Values.fontFamilyName,
           )));
   final lightTheme = ThemeData(
-    fontFamily: 'Pathagonia',
+    fontFamily: Values.fontFamilyName,
     brightness: Brightness.light,
     unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
     primaryColor: const Color.fromARGB(255, 214, 143, 63),
@@ -73,7 +76,9 @@ class DashboardController extends GetxController {
     ),
     textTheme: const TextTheme(
       bodyText2: TextStyle(
-          fontSize: 14.0, fontFamily: 'Pathagonia', color: Colors.black),
+          fontSize: 14.0,
+          fontFamily: Values.fontFamilyName,
+          color: Colors.black),
     ),
     iconTheme: const IconThemeData(color: Colors.black),
     cardColor: const Color.fromARGB(255, 207, 172, 126),
@@ -81,7 +86,7 @@ class DashboardController extends GetxController {
         backgroundColor: Color.fromARGB(255, 214, 143, 63),
         titleTextStyle: TextStyle(
           color: Colors.black,
-          fontFamily: 'Pathagonia',
+          fontFamily: Values.fontFamilyName,
         )),
   );
 
