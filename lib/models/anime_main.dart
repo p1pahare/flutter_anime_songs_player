@@ -23,12 +23,14 @@ class AnimeMain {
     slug = json['slug'];
     year = json['year'];
     season = json['season'];
-    animethemes = List.from(json['animethemes'])
+    animethemes = List.from(json['animethemes'] ?? [])
         .map((e) => Animethemes.fromJson(e))
         .toList();
-    resources =
-        List.from(json['resources']).map((e) => Resources.fromJson(e)).toList();
-    images = List.from(json['images']).map((e) => Images.fromJson(e)).toList();
+    resources = List.from(json['resources'] ?? [])
+        .map((e) => Resources.fromJson(e))
+        .toList();
+    images =
+        List.from(json['images'] ?? []).map((e) => Images.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {

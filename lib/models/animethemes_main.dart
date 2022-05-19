@@ -152,11 +152,11 @@ class Animethemeentries {
     required this.version,
     required this.videos,
   });
-  late final String version;
+  late final int version;
   late final List<Videos> videos;
 
   Animethemeentries.fromJson(Map<String, dynamic> json) {
-    version = json['version']?.toString() ?? '';
+    version = int.tryParse(json['version']?.toString() ?? '0') ?? 0;
     videos = List.from(json['videos']).map((e) => Videos.fromJson(e)).toList();
   }
 

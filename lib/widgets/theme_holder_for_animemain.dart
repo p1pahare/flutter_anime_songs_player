@@ -58,12 +58,13 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
                         children: List<Widget>.generate(entryList.length,
                             (indexList) {
                       return SongCardForAnimethemes(
+                          animeMain: widget.animeMain,
                           animethemes: entryList[indexList].value,
                           animethemeentries: entryList[indexList].key);
                     }));
                   }),
             ),
-            openedHeight: 450,
-            closedHeight: 150));
+            openedHeight: 460,
+            closedHeight: 140));
   }
 }

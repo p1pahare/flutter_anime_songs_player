@@ -216,4 +216,38 @@ class NetworkCalls {
       }
     }
   }
+
+  Future<ApiResponse> getAnimeFromSlug(String slug) async {
+    try {
+      var request = http.Request(
+          'GET',
+          Uri.parse(
+              'https://staging.animethemes.moe/api/anime/$slug?include=resources'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Anime Data fetched successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
 }
