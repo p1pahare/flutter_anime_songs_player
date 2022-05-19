@@ -1,15 +1,15 @@
 import 'package:anime_themes_player/models/animethemes_main.dart';
 
 class AnimeMain {
-  AnimeMain({
-    required this.name,
-    required this.slug,
-    required this.year,
-    required this.season,
-    required this.animethemes,
-    required this.resources,
-    required this.images,
-  });
+  AnimeMain(
+      {required this.name,
+      required this.slug,
+      required this.year,
+      required this.season,
+      required this.animethemes,
+      required this.resources,
+      required this.images,
+      required this.studios});
   late final String name;
   late final String slug;
   late final int year;
@@ -17,6 +17,7 @@ class AnimeMain {
   late final List<Animethemes> animethemes;
   late final List<Resources> resources;
   late final List<Images> images;
+  late final List<Studios> studios;
 
   AnimeMain.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -28,6 +29,9 @@ class AnimeMain {
         .toList();
     resources = List.from(json['resources'] ?? [])
         .map((e) => Resources.fromJson(e))
+        .toList();
+    studios = List.from(json['studios'] ?? [])
+        .map((e) => Studios.fromJson(e))
         .toList();
     images =
         List.from(json['images'] ?? []).map((e) => Images.fromJson(e)).toList();
@@ -41,7 +45,9 @@ class AnimeMain {
     _data['season'] = season;
     _data['animethemes'] = animethemes.map((e) => e.toJson()).toList();
     _data['resources'] = resources.map((e) => e.toJson()).toList();
+    _data['studios'] = studios.map((e) => e.toJson()).toList();
     _data['images'] = images.map((e) => e.toJson()).toList();
+
     return _data;
   }
 }
@@ -252,6 +258,43 @@ class Images {
     final _data = <String, dynamic>{};
     _data['facet'] = facet;
     _data['link'] = link;
+    return _data;
+  }
+}
+
+class Studios {
+  Studios({
+    required this.id,
+    required this.name,
+    required this.slug,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.deletedAt,
+  });
+  late final int id;
+  late final String name;
+  late final String slug;
+  late final String createdAt;
+  late final String updatedAt;
+  late final String deletedAt;
+
+  Studios.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    slug = json['slug'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at']?.toString() ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['name'] = name;
+    _data['slug'] = slug;
+    _data['created_at'] = createdAt;
+    _data['updated_at'] = updatedAt;
+    _data['deleted_at'] = deletedAt;
     return _data;
   }
 }

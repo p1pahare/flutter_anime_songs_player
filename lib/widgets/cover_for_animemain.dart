@@ -32,29 +32,42 @@ class CoverForAnimeMain extends StatelessWidget {
                   cacheWidth: 160,
                 )),
             Container(
-              width: 0.3333,
+              width: 0.26,
               height: 150,
               margin: const EdgeInsets.only(right: 20),
               color: Colors.brown,
             ),
             Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    animeMain!.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    "${animeMain!.season} ${animeMain!.year}",
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(fontSize: 11),
-                  ),
-                ],
+              child: SizedBox(
+                height: 150,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      animeMain!.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      "${animeMain!.season} ${animeMain!.year}",
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                    Text(
+                      animeMain!.studios.isEmpty
+                          ? ''
+                          : animeMain!.studios.first.name,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    )
+                  ],
+                ),
               ),
             ),
           ])),
