@@ -80,6 +80,11 @@ class _DashboardPageState extends State<DashboardPage> {
               body: getTabFromIndex(c.selectedIndex.value),
               bottomNavigationBar: FancyBottomNavigation(
                   initialSelection: c.selectedIndex.value,
+                  circleColor: Get.theme.primaryColor,
+                  activeIconColor: Get.theme.textTheme.bodyText1!.color,
+                  barBackgroundColor: Theme.of(context)
+                      .bottomNavigationBarTheme
+                      .backgroundColor,
                   tabs: [
                     TabData(
                         iconData: Icons.dashboard_outlined,

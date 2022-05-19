@@ -20,7 +20,8 @@ class SongCardForThemesMalAni extends StatelessWidget {
       child: InkWell(
         onTap: () => log("message"),
         child: Container(
-          decoration: BoxDecoration(border: Border.all()),
+          decoration: BoxDecoration(
+              border: Border.all(color: Get.theme.colorScheme.secondary)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
