@@ -54,7 +54,7 @@ class SearchPage extends GetView<SearchController> {
                           height: 80,
                           child: TextField(
                             controller: _.search,
-                            onSubmitted: (str) {},
+                            onSubmitted: (str) => _.onSearch(),
                             onChanged: (s) {
                               _.update();
                             },
