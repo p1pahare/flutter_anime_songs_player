@@ -38,6 +38,7 @@ class _ThemeHolderForThemesMalaniState
     return Center(
       child: TapToExpand(
           scrollable: true,
+          color: Theme.of(context).cardColor,
           trailing: Container(
             width: 0,
           ),

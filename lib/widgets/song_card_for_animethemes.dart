@@ -18,8 +18,8 @@ class SongCardForAnimethemes extends StatelessWidget {
         onTap: () => log("message"),
         child: Container(
           decoration: BoxDecoration(
-              border:
-                  Border.all(color: Theme.of(context).colorScheme.secondary)),
+              border: Border.all(
+                  color: Theme.of(context).textTheme.bodyText1!.color!)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
