@@ -6,6 +6,7 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -39,6 +40,8 @@ class MyApp extends StatelessWidget {
         title: Values.title,
         debugShowCheckedModeBanner: false,
         home: const SplashPage(),
+        theme: Values.lightTheme,
+        darkTheme: Values.darkTheme,
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case DashboardPage.routeName:

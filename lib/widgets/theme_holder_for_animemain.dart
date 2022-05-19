@@ -37,33 +37,33 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: TapToExpand(
-          scrollable: true,
-          trailing: Container(
-            width: 0,
-          ),
-          scrollPhysics: const NeverScrollableScrollPhysics(),
-          title: CoverForAnimeMain(
-            animeMain: widget.animeMain,
-          ),
-          content: SizedBox(
-            height: 300,
-            child: PageView.builder(
-                itemCount: allVersionThemes.length,
-                itemBuilder: (context, indexPage) {
-                  List<MapEntry<Animethemeentries, Animethemes>> entryList =
-                      allVersionThemes[indexPage].entries.toList();
-                  return Column(
-                      children:
-                          List<Widget>.generate(entryList.length, (indexList) {
-                    return SongCardForAnimethemes(
-                        animethemes: entryList[indexList].value,
-                        animethemeentries: entryList[indexList].key);
-                  }));
-                }),
-          ),
-          openedHeight: 450,
-          closedHeight: 150),
-    );
+        child: TapToExpand(
+            scrollable: true,
+            color: Theme.of(context).cardColor,
+            trailing: Container(
+              width: 0,
+            ),
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            title: CoverForAnimeMain(
+              animeMain: widget.animeMain,
+            ),
+            content: SizedBox(
+              height: 300,
+              child: PageView.builder(
+                  itemCount: allVersionThemes.length,
+                  itemBuilder: (context, indexPage) {
+                    List<MapEntry<Animethemeentries, Animethemes>> entryList =
+                        allVersionThemes[indexPage].entries.toList();
+                    return Column(
+                        children: List<Widget>.generate(entryList.length,
+                            (indexList) {
+                      return SongCardForAnimethemes(
+                          animethemes: entryList[indexList].value,
+                          animethemeentries: entryList[indexList].key);
+                    }));
+                  }),
+            ),
+            openedHeight: 450,
+            closedHeight: 150));
   }
 }
