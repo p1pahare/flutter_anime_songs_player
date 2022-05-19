@@ -1,6 +1,7 @@
 import 'package:anime_themes_player/models/themesmalani.dart';
+import 'package:anime_themes_player/widgets/cover_for_themesmalani.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:tap_to_expand/tap_to_expand.dart';
 
 class ThemeHolderForThemesMalani extends StatelessWidget {
   const ThemeHolderForThemesMalani({Key? key, this.themesMalAni})
@@ -8,66 +9,26 @@ class ThemeHolderForThemesMalani extends StatelessWidget {
   final ThemesMalAni? themesMalAni;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Get.width - 50,
-      child: Card(
-        elevation: 3.5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(7),
-          onTap: () {},
-          child: Row(
-            children: [
-              Container(
-                width: 0.3333,
-                height: 150,
-                margin: const EdgeInsets.only(right: 20),
-                color: Colors.brown,
-              ),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        themesMalAni!.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.fade,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              themesMalAni!.season,
-                              overflow: TextOverflow.fade,
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              themesMalAni!.year.toString(),
-                              overflow: TextOverflow.fade,
-                              style: const TextStyle(fontSize: 11),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.more_vert_outlined))
-            ],
+    return Center(
+      child: TapToExpand(
+          scrollable: true,
+          trailing: Container(
+            width: 0,
           ),
-        ),
-      ),
+          color: Theme.of(context).cardColor,
+          scrollPhysics: const NeverScrollableScrollPhysics(),
+          title: CoverForThemesMalani(
+            themesMalAni: themesMalAni,
+          ),
+          content: ListView.builder(
+              shrinkWrap: true,
+              itemCount: themesMalAni!.themes.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Text(themesMalAni!.themes[index].toJson().toString());
+              }),
+          openedHeight: 400,
+          closedHeight: 100),
     );
   }
 }

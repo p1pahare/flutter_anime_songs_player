@@ -86,7 +86,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : 'https://staging.animethemes.moe/api/search?fields[search]=anime,animethemes,artists,series,studios&include[anime]=animethemes.animethemeentries.videos,animethemes.song,images,resources&include[animetheme]=animethemeentries.videos,anime.images,song.artists&include[artist]=images,songs&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&fields[series]=name,slug&fields[studio]=name,slug&limit=4&q=${percentEncode(title)}'));
 //&filter[has]=song
       http.StreamedResponse response = await request.send();
 
