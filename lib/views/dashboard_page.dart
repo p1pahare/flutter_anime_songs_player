@@ -1,9 +1,6 @@
 import 'dart:developer';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/explore_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/playlist_page.dart';
@@ -112,10 +109,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(DashboardController());
-    Get.put(ExploreController());
-    Get.put(SearchController());
-    Get.put(PlaylistController());
     return GetBuilder<DashboardController>(
         init: DashboardController(),
         initState: (_) {
@@ -170,16 +163,15 @@ class _DashboardPageState extends State<DashboardPage> {
                 body: getTabFromIndex(c.selectedIndex.value),
                 bottomNavigationBar: FancyBottomNavigation(
                     initialSelection: c.selectedIndex.value,
-                    circleColor: Theme.of(context).primaryColor,
+                    circleColor: Get.theme.primaryColor,
                     inactiveIconColor:
-                        Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                        Get.theme.appBarTheme.titleTextStyle?.color ??
                             const Color(0xffffffff),
                     activeIconColor:
-                        Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                        Get.theme.appBarTheme.titleTextStyle?.color ??
                             const Color(0xffffffff),
-                    textColor:
-                        Theme.of(context).appBarTheme.titleTextStyle?.color ??
-                            const Color(0xffffffff),
+                    textColor: Get.theme.appBarTheme.titleTextStyle?.color ??
+                        const Color(0xffffffff),
                     barBackgroundColor: Theme.of(context)
                         .bottomNavigationBarTheme
                         .backgroundColor,
