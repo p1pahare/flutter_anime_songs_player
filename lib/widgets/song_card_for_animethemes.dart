@@ -16,7 +16,8 @@ class SongCardForAnimethemes extends StatelessWidget {
       child: InkWell(
         onTap: () => log("message"),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).bottomAppBarColor)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -31,13 +32,14 @@ class SongCardForAnimethemes extends StatelessWidget {
                         Text(
                           "[${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}] ",
                           style: const TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 12),
+                              fontWeight: FontWeight.w400, fontSize: 15),
                         ),
                         Expanded(
                           child: Text(
                             animethemes!.song.title,
                             overflow: TextOverflow.clip,
-                            style: const TextStyle(fontSize: 12),
+                            maxLines: 1,
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ),
                       ],
@@ -47,7 +49,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                         "${animethemes!.song.artists.map((e) => e.name).toList()}"
                             .replaceAll(RegExp('[^A-Za-z0-9, ]'), ''),
                         textAlign: TextAlign.start,
-                        style: const TextStyle(fontWeight: FontWeight.w400),
+                        style: const TextStyle(fontSize: 12),
                       ),
                   ],
                 ),

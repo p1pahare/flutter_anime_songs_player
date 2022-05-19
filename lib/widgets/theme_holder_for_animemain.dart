@@ -23,7 +23,7 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
       for (Animethemeentries animethemesEntries
           in animethemes.animethemeentries) {
         if (allVersionThemes.isEmpty ||
-            allVersionThemes.last.entries.length >= 3) {
+            allVersionThemes.last.entries.length >= 4) {
           allVersionThemes.add({animethemes: animethemesEntries});
         } else {
           allVersionThemes.last

@@ -47,6 +47,7 @@ class DashboardController extends GetxController {
         backgroundColor: Colors.black,
       ),
       cardColor: const Color.fromARGB(255, 59, 26, 19),
+      bottomAppBarColor: const Color.fromARGB(255, 207, 172, 126),
       appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           titleTextStyle: TextStyle(
@@ -82,6 +83,7 @@ class DashboardController extends GetxController {
     ),
     iconTheme: const IconThemeData(color: Colors.black),
     cardColor: const Color.fromARGB(255, 207, 172, 126),
+    bottomAppBarColor: const Color.fromARGB(255, 59, 26, 19),
     appBarTheme: const AppBarTheme(
         backgroundColor: Color.fromARGB(255, 214, 143, 63),
         titleTextStyle: TextStyle(
