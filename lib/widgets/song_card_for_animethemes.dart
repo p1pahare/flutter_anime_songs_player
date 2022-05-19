@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SongCardForAnimethemes extends StatelessWidget {
   const SongCardForAnimethemes(
@@ -17,7 +18,7 @@ class SongCardForAnimethemes extends StatelessWidget {
         onTap: () => log("message"),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).bottomAppBarColor)),
+              border: Border.all(color: Get.theme.bottomAppBarColor)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(

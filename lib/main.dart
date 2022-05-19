@@ -1,3 +1,7 @@
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/explore_controller.dart';
+import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
@@ -22,6 +26,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(DashboardController());
+    Get.put(ExploreController());
+    Get.put(SearchController());
+    Get.put(PlaylistController());
+    Get.find<DashboardController>().initialize();
     return GestureDetector(
       onTap: () {
         Get.focusScope?.unfocus();

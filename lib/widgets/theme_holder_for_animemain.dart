@@ -3,6 +3,7 @@ import 'package:anime_themes_player/widgets/cover_for_animemain.dart';
 import 'package:anime_themes_player/widgets/song_card_for_animethemes.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 // import 'package:get/get.dart';
 import 'package:tap_to_expand/tap_to_expand.dart';
 
@@ -42,7 +43,7 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
           trailing: Container(
             width: 0,
           ),
-          color: Theme.of(context).cardColor,
+          color: Get.theme.cardColor,
           scrollPhysics: const NeverScrollableScrollPhysics(),
           title: CoverForAnimeMain(
             animeMain: widget.animeMain,

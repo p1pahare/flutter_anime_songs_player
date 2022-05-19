@@ -2,6 +2,7 @@ import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/widgets/cover_for_themesmalani.dart';
 import 'package:anime_themes_player/widgets/song_card_for_themesmalani.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tap_to_expand/tap_to_expand.dart';
 
 class ThemeHolderForThemesMalani extends StatefulWidget {
@@ -41,7 +42,7 @@ class _ThemeHolderForThemesMalaniState
           trailing: Container(
             width: 0,
           ),
-          color: Theme.of(context).cardColor,
+          color: Get.theme.cardColor,
           scrollPhysics: const NeverScrollableScrollPhysics(),
           title: CoverForThemesMalani(
             themesMalAni: widget.themesMalAni,

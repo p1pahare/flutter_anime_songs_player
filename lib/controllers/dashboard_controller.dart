@@ -10,13 +10,14 @@ class DashboardController extends GetxController {
   GetStorage box = GetStorage();
   bool? darkMode;
 
-  DashboardController() {
+  initialize() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
     selectedIndex.value = box.read<int>('selected_index') ?? 0;
     changeDarkMode(darkMode);
     log("initialized");
   }
+
   final darkTheme = ThemeData(
       fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),
