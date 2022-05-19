@@ -16,7 +16,7 @@ class ThemeHolderForAnimeMain extends StatefulWidget {
 }
 
 class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
-  List<Map<Animethemes, Animethemeentries>> allVersionThemes = [];
+  List<Map<Animethemeentries, Animethemes>> allVersionThemes = [];
   @override
   void initState() {
     for (Animethemes animethemes in widget.animeMain!.animethemes) {
@@ -24,10 +24,10 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
           in animethemes.animethemeentries) {
         if (allVersionThemes.isEmpty ||
             allVersionThemes.last.entries.length >= 4) {
-          allVersionThemes.add({animethemes: animethemesEntries});
+          allVersionThemes.add({animethemesEntries: animethemes});
         } else {
           allVersionThemes.last
-              .addEntries([MapEntry(animethemes, animethemesEntries)]);
+              .addEntries([MapEntry(animethemesEntries, animethemes)]);
         }
       }
     }
@@ -52,14 +52,14 @@ class _ThemeHolderForAnimeMainState extends State<ThemeHolderForAnimeMain> {
             child: PageView.builder(
                 itemCount: allVersionThemes.length,
                 itemBuilder: (context, indexPage) {
-                  List<MapEntry<Animethemes, Animethemeentries>> entryList =
+                  List<MapEntry<Animethemeentries, Animethemes>> entryList =
                       allVersionThemes[indexPage].entries.toList();
                   return Column(
                       children:
                           List<Widget>.generate(entryList.length, (indexList) {
                     return SongCardForAnimethemes(
-                        animethemes: entryList[indexList].key,
-                        animethemeentries: entryList[indexList].value);
+                        animethemes: entryList[indexList].value,
+                        animethemeentries: entryList[indexList].key);
                   }));
                 }),
           ),

@@ -15,7 +15,7 @@ class CoverForThemesMalani extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               themesMalAni!.name,
@@ -23,6 +23,7 @@ class CoverForThemesMalani extends StatelessWidget {
               overflow: TextOverflow.fade,
               style: const TextStyle(fontSize: 18),
             ),
+            const SizedBox(height: 8),
             Text(
               "${themesMalAni!.season} ${themesMalAni!.year}",
               overflow: TextOverflow.fade,
