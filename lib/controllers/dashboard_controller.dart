@@ -51,10 +51,10 @@ class DashboardController extends GetxController {
     if (!playerLoaded) {
       underPlayer = AudioPlayer();
     } else {
-      await underPlayer!.stop();
+      await underPlayer?.stop();
 
-      await underPlayer!.seekToNext();
-      await underPlayer!.play();
+      await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
+      await underPlayer?.play();
       return;
     }
 
@@ -68,6 +68,7 @@ class DashboardController extends GetxController {
     update();
     try {
       await underPlayer?.setAudioSource(_playlist);
+      await underPlayer?.play();
     } catch (e, stackTrace) {
       // Catch load errors: 404, invalid url ...
       log("Error loading playlist: $e");
