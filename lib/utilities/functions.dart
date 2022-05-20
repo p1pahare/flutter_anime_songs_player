@@ -36,3 +36,46 @@ showMessage(String message) {
     ),
   ));
 }
+
+Future<int?> showOptions({Map<int, String> options = const {}}) async {
+  return await Get.bottomSheet<int>(
+      Container(
+        color: Colors.black,
+        height: Get.height * 0.6,
+        child: Center(
+          child: ListView.builder(
+            itemCount: options.length + 1,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.all(4),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7)),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(7),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(7),
+                      onTap: () {
+                        Get.back(
+                            result: index == 0
+                                ? null
+                                : options.keys.toList()[index - 1]);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14.0),
+                        child: Text(
+                          index == 0 ? 'Cancel' : options[index - 1] ?? '',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      isScrollControlled: false,
+      isDismissible: false);
+}
