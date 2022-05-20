@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:anime_themes_player/models/animethemes_main.dart';
+import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,8 @@ class PlaylistController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
   RxList<Map<int, String>> playlists = RxList.empty();
   GetStorage box = GetStorage();
+  List<AnimethemesMain> listings = [];
+  RxStatus status = RxStatus.empty();
   final TextEditingController playlistName = TextEditingController();
   initialize() {
     box = GetStorage();
@@ -120,9 +124,9 @@ class PlaylistController extends GetxController {
     int existingId = playlists[playlistIndex]
         .entries
         .toList()
-        .indexWhere((element) => element.value == themeId);
+        .indexWhere((element) => element.value == themeId.padLeft(7));
 
-    if (existingId == -1) {
+    if (existingId != -1) {
       showMessage(
           "This theme already present in the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}'.");
       return;
@@ -144,7 +148,7 @@ class PlaylistController extends GetxController {
         playlists.indexWhere((element) => element[0] == playlistId);
     int emptyIndex = playlists[playlistIndex]
         .entries
-        .firstWhere((element) => element.value == themeId)
+        .firstWhere((element) => element.value == themeId.padLeft(7))
         .key;
     playlists[playlistIndex][emptyIndex] = "0000000";
     playlists.refresh();
@@ -183,5 +187,35 @@ class PlaylistController extends GetxController {
             .map<String>((element) => encodePlayListToString(element))
             .toList());
     update();
+  }
+
+  themesFromThemeId(List<String> themeIds) async {
+    listings.clear();
+
+    status = listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
+    update(["detail"]);
+    int successCount = 4;
+    for (int i = 0; i < themeIds.length; i++) {
+      int currId = int.tryParse(themeIds[i]) ?? 0;
+      if (currId == 0) continue;
+      ApiResponse apiResponse = await networkCalls.loadAnimetheme(currId);
+      if (apiResponse.status) {
+        listings.add(AnimethemesMain.fromJson(apiResponse.data['animetheme']));
+      } else {
+        successCount--;
+      }
+      if (successCount == 0) {
+        status = RxStatus.error(apiResponse.message);
+        update(["detail"]);
+        break;
+      }
+    }
+
+    if (listings.isEmpty) {
+      status = RxStatus.empty();
+    } else {
+      status = RxStatus.success();
+    }
+    update(["detail"]);
   }
 }
