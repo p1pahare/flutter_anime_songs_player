@@ -130,7 +130,7 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
     }
     if (apiResponse.status) {
       if (listings.isEmpty) {
-        change(cats, status: RxStatus.empty());
+        change(listings, status: RxStatus.empty());
       } else {
         change(listings, status: RxStatus.success());
       }
