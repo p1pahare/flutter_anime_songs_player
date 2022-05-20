@@ -250,4 +250,38 @@ class NetworkCalls {
       }
     }
   }
+
+  Future<ApiResponse> searchByAnimeyear(int year) async {
+    try {
+      var request = http.Request(
+          'GET',
+          Uri.parse(
+              'https://staging.animethemes.moe/api/animeyear/$year?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title'));
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String body = await response.stream.bytesToString();
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Anime were retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
 }

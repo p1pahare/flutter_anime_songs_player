@@ -65,7 +65,7 @@ class Animethemes {
   late final int? sequence;
   late final String group;
   late final String slug;
-  late final Song song;
+  late final Song? song;
   late final List<Animethemeentries> animethemeentries;
 
   Animethemes.fromJson(Map<String, dynamic> json) {
@@ -73,7 +73,8 @@ class Animethemes {
     sequence = int.tryParse(json['sequence']?.toString() ?? '0');
     group = json['group']?.toString() ?? '';
     slug = json['slug'];
-    song = Song.fromJson(json['song']);
+    song = json['song'] != null ? Song.fromJson(json['song']) : null;
+
     animethemeentries = List.from(json['animethemeentries'])
         .map((e) => Animethemeentries.fromJson(e))
         .toList();
@@ -85,7 +86,7 @@ class Animethemes {
     _data['sequence'] = sequence;
     _data['group'] = group;
     _data['slug'] = slug;
-    _data['song'] = song.toJson();
+    _data['song'] = song?.toJson();
     _data['animethemeentries'] =
         animethemeentries.map((e) => e.toJson()).toList();
     return _data;

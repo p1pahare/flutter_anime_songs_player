@@ -42,19 +42,21 @@ class SongCardForAnimethemes extends StatelessWidget {
                           style: const TextStyle(
                               fontWeight: FontWeight.w400, fontSize: 15),
                         ),
-                        Expanded(
-                          child: Text(
-                            animethemes!.song.title,
-                            overflow: TextOverflow.clip,
-                            maxLines: 1,
-                            style: const TextStyle(fontSize: 15),
+                        if (animethemes!.song != null)
+                          Expanded(
+                            child: Text(
+                              animethemes!.song!.title,
+                              overflow: TextOverflow.clip,
+                              maxLines: 1,
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           ),
-                        ),
                       ],
                     ),
-                    if (animethemes!.song.artists.isNotEmpty)
+                    if (animethemes!.song != null &&
+                        animethemes!.song!.artists.isNotEmpty)
                       Text(
-                        "${animethemes!.song.artists.map((e) => e.name).toList()}"
+                        "${animethemes!.song!.artists.map((e) => e.name).toList()}"
                             .replaceAll(RegExp('[^A-Za-z0-9, ]'), ''),
                         textAlign: TextAlign.start,
                         style: const TextStyle(fontSize: 12),
@@ -94,7 +96,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                               animethemeentries!.videos.first.link);
                           await Get.find<DashboardController>().init(AudioEntry(
                               album: animeMain!.name,
-                              title: animethemes!.song.title,
+                              title: animethemes!.song?.title ?? '',
                               url: apiResponse.status
                                   ? apiResponse.data
                                   : animethemeentries!.videos.first.link,
