@@ -50,7 +50,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : 'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : 'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 
       http.StreamedResponse response = await request.send();
 
@@ -256,7 +256,7 @@ class NetworkCalls {
       var request = http.Request(
           'GET',
           Uri.parse(
-              'https://staging.animethemes.moe/api/animeyear/$year?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title'));
+              'https://staging.animethemes.moe/api/animeyear/$year?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title'));
 
       http.StreamedResponse response = await request.send();
 

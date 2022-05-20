@@ -105,6 +105,61 @@ class PlaylistController extends GetxController {
     writePlayliststoBox();
   }
 
+  addToPlayList(String playlistId, String themeId) async {
+    if (playlistIsFull(playlistId)) {
+      showMessage(
+          "This Playlist is full, Please add this track to another list");
+      return;
+    }
+    int playlistIndex =
+        playlists.indexWhere((element) => element[0] == playlistId);
+    int emptyIndex = playlists[playlistIndex]
+        .entries
+        .firstWhere((element) => element.value == '0000000')
+        .key;
+    int existingId = playlists[playlistIndex]
+        .entries
+        .toList()
+        .indexWhere((element) => element.value == themeId);
+
+    if (existingId == -1) {
+      showMessage(
+          "This theme already present in the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}'.");
+      return;
+    }
+    playlists[playlistIndex][emptyIndex] = themeId.padLeft(7, '0');
+    playlists.refresh();
+    await writePlayliststoBox();
+    showMessage(
+        "Song added to the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}' Successfully.");
+  }
+
+  deleteFromPlayList(String playlistId, String themeId) async {
+    if (playlistIsFull(playlistId)) {
+      showMessage(
+          "This Playlist is full, Please add this track to another list");
+      return;
+    }
+    int playlistIndex =
+        playlists.indexWhere((element) => element[0] == playlistId);
+    int emptyIndex = playlists[playlistIndex]
+        .entries
+        .firstWhere((element) => element.value == themeId)
+        .key;
+    playlists[playlistIndex][emptyIndex] = "0000000";
+    playlists.refresh();
+    await writePlayliststoBox();
+    showMessage(
+        "Song removed from the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}' Successfully.");
+  }
+
+  bool playlistIsFull(String playlistId) => playlists
+      .where((p0) => p0[0] == playlistId)
+      .first
+      .values
+      .where((element) => element == "0000000")
+      .isEmpty;
+
   deletePlayList(Map<int, String> playList) async {
     bool? delete = await Get.defaultDialog<bool>(
         buttonColor: Get.theme.unselectedWidgetColor,

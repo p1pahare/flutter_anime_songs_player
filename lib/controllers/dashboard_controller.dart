@@ -38,7 +38,8 @@ class DashboardController extends GetxController {
     update();
   }
 
-  Future<void> init(AudioEntry audioEntry) async {
+  Future<void> init(AudioEntry audioEntry,
+      {bool addToQueueOnly = false}) async {
     _playlist.add(AudioSource.uri(
       Uri.parse(audioEntry.url),
       tag: MediaItem(
@@ -53,8 +54,10 @@ class DashboardController extends GetxController {
     } else {
       await underPlayer?.stop();
 
-      await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
-      await underPlayer?.play();
+      if (!addToQueueOnly) {
+        await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
+        await underPlayer?.play();
+      }
       return;
     }
 
@@ -68,7 +71,9 @@ class DashboardController extends GetxController {
     update();
     try {
       await underPlayer?.setAudioSource(_playlist);
-      await underPlayer?.play();
+      if (!addToQueueOnly) {
+        await underPlayer?.play();
+      }
     } catch (e, stackTrace) {
       // Catch load errors: 404, invalid url ...
       log("Error loading playlist: $e");
