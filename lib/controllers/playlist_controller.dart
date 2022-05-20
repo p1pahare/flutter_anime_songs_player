@@ -119,12 +119,14 @@ class PlaylistController extends GetxController {
         playlists.indexWhere((element) => element[0] == playlistId);
     int emptyIndex = playlists[playlistIndex]
         .entries
-        .firstWhere((element) => element.value == '0000000')
+        .firstWhere(
+          (element) => element.value == '0000000',
+        )
         .key;
     int existingId = playlists[playlistIndex]
         .entries
         .toList()
-        .indexWhere((element) => element.value == themeId.padLeft(7));
+        .indexWhere((element) => element.value == themeId.padLeft(7, '0'));
 
     if (existingId != -1) {
       showMessage(
@@ -146,13 +148,27 @@ class PlaylistController extends GetxController {
     }
     int playlistIndex =
         playlists.indexWhere((element) => element[0] == playlistId);
+    if (playlistIndex == -1) {
+      showMessage(
+          "No such playlist found '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}'.");
+      return;
+    }
+    final themeId1 = themeId.padLeft(7, '0');
+    log(playlists[playlistIndex].containsValue(themeId1).toString());
     int emptyIndex = playlists[playlistIndex]
         .entries
-        .firstWhere((element) => element.value == themeId.padLeft(7))
+        .firstWhere((element) => element.value == themeId1,
+            orElse: () => MapEntry(-1, themeId.padLeft(7, '0')))
         .key;
+    if (playlistIndex == -1 || emptyIndex == -1) {
+      showMessage(
+          "No such entry found '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}'.");
+      return;
+    }
     playlists[playlistIndex][emptyIndex] = "0000000";
     playlists.refresh();
     await writePlayliststoBox();
+    update(['detail']);
     showMessage(
         "Song removed from the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}' Successfully.");
   }

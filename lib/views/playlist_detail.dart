@@ -11,7 +11,9 @@ class PlaylistDetail extends StatelessWidget {
   static const routeName = '/PlaylistPage';
   @override
   Widget build(BuildContext context) {
-    Get.find<PlaylistController>().themesFromThemeId(playlist!.values.toList());
+    List<String> playlist1 = playlist!.values.toList().sublist(2);
+    playlist1.removeWhere((element) => element == '0000000');
+    Get.find<PlaylistController>().themesFromThemeId(playlist1);
     return GetBuilder<PlaylistController>(
       id: "detail",
       init: PlaylistController(),
