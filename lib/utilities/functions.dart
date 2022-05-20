@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 String percentEncode(String input) {
   // Do initial percentage encoding of using Uri.encodeComponent()
   input = Uri.encodeComponent(input);
@@ -14,4 +17,22 @@ String percentEncode(String input) {
   input = input.replaceAll(')', '%29');
 
   return input;
+}
+
+final validPlaylist = RegExp(r'^[a-zA-Z0-9 ]+$');
+
+showMessage(String message) {
+  Get.showSnackbar(GetSnackBar(
+    message: message,
+    duration: const Duration(seconds: 4),
+    mainButton: IconButton(
+      icon: const Icon(
+        Icons.cancel_outlined,
+        color: Colors.white,
+      ),
+      onPressed: () {
+        Get.back();
+      },
+    ),
+  ));
 }
