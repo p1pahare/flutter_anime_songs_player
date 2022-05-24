@@ -18,7 +18,7 @@ class AudioEntry {
     album = json['album'];
     title = json['title'];
     url = json['url'];
-    art = json['art'];
+    art = Uri.parse(json['art']);
   }
 
   Map<String, dynamic> toJson() {
@@ -26,7 +26,7 @@ class AudioEntry {
     _data['album'] = album;
     _data['title'] = title;
     _data['url'] = url;
-    _data['art'] = art;
+    _data['art'] = art.toString();
     return _data;
   }
 }

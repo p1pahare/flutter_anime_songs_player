@@ -52,7 +52,7 @@ class DashboardController extends GetxController {
     if (!playerLoaded) {
       underPlayer = AudioPlayer();
     } else {
-      await underPlayer?.stop();
+      // await underPlayer?.stop();
 
       if (!addToQueueOnly) {
         await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);

@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/anime_main.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -79,18 +81,47 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                           style: const TextStyle(fontSize: 11),
                         ),
                       ),
-                      Text(
-                        "${animethemesMain!.song.artists.map((e) => e.name).toList()}"
-                            .replaceAll(RegExp('[^A-Za-z0-9, ]'), ''),
-                        overflow: TextOverflow.fade,
-                        style: const TextStyle(fontSize: 11),
+                      Flexible(
+                        child: Text(
+                          "${animethemesMain!.song.artists.map((e) => e.name).toList()}"
+                              .replaceAll(RegExp('[^A-Za-z0-9, ]'), ''),
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(fontSize: 11),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
               InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    PlaylistController _pc = Get.find<PlaylistController>();
+                    List<Map<int, String>> playlists = _pc.playlists;
+                    int? selectedOption = await showOptions(options: {
+                      0: 'Add to Current Queue',
+                      for (int i = 1; i <= playlists.length; i++)
+                        i: 'Add to ' +
+                            _pc.getReadablePlaylistName(
+                                playlists[i - 1][1] ?? '')
+                    });
+                    log("Selected Option is $selectedOption");
+                    if (selectedOption == null) return;
+                    final Map<String, dynamic>? songmetadata = await _pc
+                        .getMetaDataFromThemeID(animethemesMain!.id.toString());
+                    if (songmetadata == null) {
+                      showMessage("Something went wrong");
+                      return;
+                    }
+
+                    if (selectedOption == 0) {
+                      await Get.find<DashboardController>().init(
+                          AudioEntry.fromJson(songmetadata['audioentry']),
+                          addToQueueOnly: true);
+                    } else {
+                      _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
+                          animethemesMain?.id.toString() ?? '', songmetadata);
+                    }
+                  },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
                     child: Icon(
