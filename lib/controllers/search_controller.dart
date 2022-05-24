@@ -45,11 +45,13 @@ class SearchController extends GetxController {
   SearchController() {
     scroll.addListener(() async {
       if (scroll.position.maxScrollExtent == scroll.position.pixels) {
-        await fetchAnimeLists();
+        if (!status.isLoadingMore) {
+          await fetchAnimeLists();
+        }
       }
     });
   }
-  int currentIndex = 0;
+  int currentIndex = -1;
 
   ScrollController scroll = ScrollController();
 
@@ -77,11 +79,12 @@ class SearchController extends GetxController {
   }
 
   Future fetchAnimeLists() async {
-    for (int i = 0; i < 5; i++) {
+    status = RxStatus.loadingMore();
+    for (int i = 0; i < 10; i++) {
       currentIndex++;
       if (animeList.length > currentIndex) {
         final AnimeMain? animeMain =
-            await titleToMalId(animeList[currentIndex].name);
+            await titleFromMalId(animeList[currentIndex].name);
         if (animeMain != null) {
           listings.add(animeMain);
           listings.refresh();
@@ -89,12 +92,13 @@ class SearchController extends GetxController {
         }
       }
     }
+    status = RxStatus.success();
   }
 
   searchListings() async {
     listings.clear();
     status = RxStatus.loading();
-    currentIndex = 0;
+    currentIndex = -1;
     ApiResponse apiResponse;
     switch (searchByValue) {
       case 0:
@@ -170,11 +174,15 @@ class SearchController extends GetxController {
     return null;
   }
 
-  Future<AnimeMain?> titleToMalId(String title) async {
-    ApiResponse apiResponse = await networkCalls.getAnimeFromTitle(title);
+  Future<AnimeMain?> titleFromMalId(String animeName) async {
+    // need to improve
+    // final String slug = slugify(animeName, delimiter: '_');
 
-    if (apiResponse.status) {
-      return AnimeMain.fromJson(apiResponse.data['anime'][0]);
+    final ApiResponse apiResponse2 =
+        await networkCalls.getAnimeMainFromSlug(animeName);
+
+    if (apiResponse2.status) {
+      return AnimeMain.fromJson(apiResponse2.data['anime'][0]);
     }
     return null;
   }
