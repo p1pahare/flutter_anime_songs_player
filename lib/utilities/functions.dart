@@ -19,7 +19,7 @@ String percentEncode(String input) {
   return input;
 }
 
-final validPlaylist = RegExp(r'^[a-zA-Z0-9 ]+$');
+final validPlaylist = RegExp(r'^[a-zA-Z0-9]+$');
 
 showMessage(String message) {
   Get.showSnackbar(GetSnackBar(
