@@ -1,22 +1,20 @@
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
-import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/theme_holder_for_animemain.dart';
 import 'package:anime_themes_player/widgets/theme_holder_for_animethemesmain.dart';
 import 'package:anime_themes_player/widgets/theme_holder_for_cat.dart';
-import 'package:anime_themes_player/widgets/theme_holder_for_themesmalani.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchPage extends GetView<SearchController> {
+class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    controller.initalizeLoadingStatus();
+    final controller = Get.find<SearchController>();
     return SizedBox(
       height: Get.height,
       child: Center(
@@ -87,42 +85,47 @@ class SearchPage extends GetView<SearchController> {
                   },
                 ),
               ),
-              // if (controller.listings.isNotEmpty)
-              controller.obx(
-                (state) => ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: (state!.length),
-                    itemBuilder: (context, index) {
-                      if (index == state.length) {
-                        return const ProgressIndicatorButton();
-                      }
-                      if (state[0] is AnimethemesMain) {
-                        return ThemeHolderForAnimethemesMain(
-                          animethemesMain: state[index],
-                        );
-                      }
-                      if (state[0] is AnimeMain) {
-                        return ThemeHolderForAnimeMain(
-                          animeMain: state[index],
-                        );
-                      }
-                      if (state[0] is ThemesMalAni) {
-                        return ThemeHolderForThemesMalani(
-                          themesMalAni: state[index],
-                        );
-                      }
-                      return ThemeHolderForCat(cat: state[index]);
-                    }),
+              Obx(() => ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: (controller.listings.isEmpty
+                      ? 0
+                      : controller.listings.length + 1),
+                  itemBuilder: (context, index) {
+                    if (index == controller.listings.length) {
+                      return const ProgressIndicatorButton();
+                    }
+                    if (controller.listings[index] is AnimethemesMain) {
+                      return ThemeHolderForAnimethemesMain(
+                        animethemesMain: controller.listings[index],
+                      );
+                    }
+                    if (controller.listings[index] is AnimeMain) {
+                      return ThemeHolderForAnimeMain(
+                        animeMain: controller.listings[index],
+                      );
+                    }
 
-                // here you can put your custom loading indicator, but
-                // by default would be Center(child:CircularProgressIndicator())
-                onLoading: const Center(child: ProgressIndicatorButton()),
-                onEmpty: const Center(child: Text(Values.noResults)),
-
-                // here also you can set your own error widget, but by
-                // default will be an Center(child:Text(error))
-                onError: (error) => Center(child: Text(error ?? '')),
+                    return ThemeHolderForCat(cat: controller.listings[index]);
+                  })),
+              GetBuilder<SearchController>(
+                init: SearchController(),
+                initState: (_) {},
+                builder: (_) {
+                  return (controller.status.isLoadingMore)
+                      ? const Center(child: Text(''))
+                      : (controller.status.isLoading)
+                          ? const Center(child: ProgressIndicatorButton())
+                          : (controller.status.isEmpty)
+                              ? const Center(child: Text(Values.noResults))
+                              : (controller.status.isError)
+                                  ? Center(
+                                      child: Text(
+                                          controller.status.errorMessage ?? ''))
+                                  : const SizedBox(
+                                      height: 0,
+                                    );
+                },
               ),
             ],
           ),

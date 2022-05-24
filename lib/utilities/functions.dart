@@ -24,7 +24,7 @@ final validPlaylist = RegExp(r'^[a-zA-Z0-9 ]+$');
 showMessage(String message) {
   Get.showSnackbar(GetSnackBar(
     message: message,
-    duration: const Duration(seconds: 4),
+    duration: const Duration(seconds: 2),
     mainButton: IconButton(
       icon: const Icon(
         Icons.cancel_outlined,

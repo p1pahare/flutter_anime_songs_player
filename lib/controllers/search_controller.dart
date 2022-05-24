@@ -9,13 +9,15 @@ import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchController extends GetxController with StateMixin<List<dynamic>> {
+class SearchController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
   bool loadingSong = false;
   List<DemoCat> cats = [];
-  List<dynamic> listings = [];
+  RxList<dynamic> listings = RxList.empty();
+  RxStatus status = RxStatus.loadingMore();
+  List<ThemesMalAni> animeList = [];
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
@@ -41,26 +43,22 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
   }
 
   SearchController() {
-    scroll.addListener(() {
+    scroll.addListener(() async {
       if (scroll.position.maxScrollExtent == scroll.position.pixels) {
-        currentPage++;
-        // searchListings(reload: true);
+        await fetchAnimeLists();
       }
     });
   }
-  int currentPage = 0;
+  int currentIndex = 0;
 
   ScrollController scroll = ScrollController();
 
-  initalizeLoadingStatus() {
-    change(cats, status: RxStatus.empty());
-  }
+  initalizeLoadingStatus() {}
 
   bringCats({bool reload = false}) async {
     if (reload) cats.clear();
-    change(cats,
-        status: cats.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
-    ApiResponse apiResponse = await networkCalls.getCats(page: currentPage);
+    update();
+    ApiResponse apiResponse = await networkCalls.getCats(page: currentIndex);
     if (apiResponse.status) {
       cats = [
         ...cats,
@@ -69,74 +67,84 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
             .toList()
       ];
       if (cats.isEmpty) {
-        change(cats, status: RxStatus.empty());
+        update();
       }
 
-      change(cats, status: RxStatus.success());
+      update();
     } else {
-      change(null, status: RxStatus.error(apiResponse.message));
+      update();
+    }
+  }
+
+  Future fetchAnimeLists() async {
+    for (int i = 0; i < 5; i++) {
+      currentIndex++;
+      if (animeList.length > currentIndex) {
+        final AnimeMain? animeMain =
+            await titleToMalId(animeList[currentIndex].name);
+        if (animeMain != null) {
+          listings.add(animeMain);
+          listings.refresh();
+          update();
+        }
+      }
     }
   }
 
   searchListings() async {
     listings.clear();
-    change(listings,
-        status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
+    status = RxStatus.loading();
+    currentIndex = 0;
     ApiResponse apiResponse;
     switch (searchByValue) {
       case 0:
         apiResponse = await networkCalls.searchAnimeMain(search.text);
         if (apiResponse.status) {
-          listings = [
-            ...listings,
-            ...(apiResponse.data['anime'] as List<dynamic>)
-                .map((e) => AnimeMain.fromJson(e))
-                .toList()
-          ];
+          listings.addAll((apiResponse.data['anime'] as List<dynamic>)
+              .map((e) => AnimeMain.fromJson(e))
+              .toList());
+          listings.refresh();
         }
         break;
       case 1:
         apiResponse = await networkCalls.searchAnimethemesMain(search.text);
         if (apiResponse.status) {
-          listings = [
-            ...listings,
-            ...(apiResponse.data['search']['animethemes'] as List<dynamic>)
-                .map((e) => AnimethemesMain.fromJson(e))
-                .toList()
-          ];
+          listings.addAll(
+              (apiResponse.data['search']['animethemes'] as List<dynamic>)
+                  .map((e) => AnimethemesMain.fromJson(e))
+                  .toList());
+          listings.refresh();
         }
         break;
       case 2:
         apiResponse = await networkCalls.searchMyAnimeListProfile(search.text);
         if (apiResponse.status) {
-          listings = [
-            ...listings,
-            ...(apiResponse.data as List<dynamic>)
-                .map((e) => ThemesMalAni.fromJson(e))
-                .toList()
-          ];
+          animeList = (apiResponse.data as List<dynamic>)
+              .map((e) => ThemesMalAni.fromJson(e))
+              .toList();
+          await fetchAnimeLists();
         }
         break;
       default:
         apiResponse = await networkCalls.searchAnilistProfile(search.text);
         if (apiResponse.status) {
-          listings = [
-            ...listings,
-            ...(apiResponse.data as List<dynamic>)
-                .map((e) => ThemesMalAni.fromJson(e))
-                .toList()
-          ];
+          animeList = (apiResponse.data as List<dynamic>)
+              .map((e) => ThemesMalAni.fromJson(e))
+              .toList();
+
+          await fetchAnimeLists();
         }
     }
     if (apiResponse.status) {
       if (listings.isEmpty) {
-        change(listings, status: RxStatus.empty());
+        status = RxStatus.empty();
       } else {
-        change(listings, status: RxStatus.success());
+        status = RxStatus.success();
       }
     } else {
-      change(null, status: RxStatus.error(apiResponse.message));
+      status = RxStatus.error(apiResponse.message);
     }
+    update();
   }
 
   Future<ApiResponse> webmToMp3(
@@ -158,6 +166,15 @@ class SearchController extends GetxController with StateMixin<List<dynamic>> {
     update();
     if (apiResponse.status) {
       return AnimeMain.fromJson(apiResponse.data['anime']);
+    }
+    return null;
+  }
+
+  Future<AnimeMain?> titleToMalId(String title) async {
+    ApiResponse apiResponse = await networkCalls.getAnimeFromTitle(title);
+
+    if (apiResponse.status) {
+      return AnimeMain.fromJson(apiResponse.data['anime'][0]);
     }
     return null;
   }
