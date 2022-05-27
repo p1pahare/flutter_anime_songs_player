@@ -27,6 +27,12 @@ It is an opensource project I am developing currently Just for fun.
 
 -> Save to Playlist
 
+-> Add To queue
+
+-> Can also in background
+
+-> Tested on Android/iOS/macOS
+
 
 
 ## Planned Features 
