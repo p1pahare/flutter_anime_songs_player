@@ -35,9 +35,9 @@ class PlaylistController extends GetxController {
   Map<int, String> decodePlayListFromString(String encodedPlaylist) {
     Map<int, String> _playlist1 = {
       0: encodedPlaylist.substring(0, 5),
-      1: encodedPlaylist.substring(5, 90),
+      1: encodedPlaylist.substring(5, 89),
       for (int i = 2; i <= 1001; i++)
-        i: encodedPlaylist.substring(90 + ((i - 2) * 7), 90 + ((i - 1) * 7))
+        i: encodedPlaylist.substring(89 + ((i - 2) * 7), 89 + ((i - 1) * 7))
     };
     return _playlist1;
   }
@@ -102,7 +102,8 @@ class PlaylistController extends GetxController {
       }
 
       log(' ASCII value of ${name[i]} is ${name.toUpperCase().codeUnitAt(i)}');
-      playlistName = playlistName + '${name.toUpperCase().codeUnitAt(i)}';
+      playlistName =
+          playlistName + '${name.toUpperCase().codeUnitAt(i)}'.padLeft(2, '0');
     }
     playlists.add({
       0: playlistId,
