@@ -23,12 +23,17 @@ It is an opensource project I am developing currently Just for fun.
 
 -> Search Anilist Profile from Themes.moe
 
-
-## Planned Features
-
 -> Explore Seasons/Years
 
 -> Save to Playlist
+
+
+
+## Planned Features 
+
+(priority wise)
+
+-> playing whole playlist at once
 
 -> Export/Import Playlist backup as QR Code
 
