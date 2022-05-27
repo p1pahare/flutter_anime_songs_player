@@ -20,17 +20,23 @@ class CoverForAnimeMain extends StatelessWidget {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(7)),
                 width: Get.width * 0.32,
-                child: Image.network(
-                  animeMain?.images.first.link ?? Values.errorImage,
-                  height: 150,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProcess) =>
-                      loadingProcess == null
-                          ? child
-                          : const ProgressIndicatorButton(),
-                  cacheHeight: 160,
-                  cacheWidth: 160,
-                )),
+                child: animeMain!.images.isEmpty
+                    ? Image.asset(
+                        'lib/assets/no-image.jpg',
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        animeMain?.images.first.link ?? Values.errorImage,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProcess) =>
+                            loadingProcess == null
+                                ? child
+                                : const ProgressIndicatorButton(),
+                        cacheHeight: 160,
+                        cacheWidth: 160,
+                      )),
             Container(
               width: 0.26,
               height: 150,

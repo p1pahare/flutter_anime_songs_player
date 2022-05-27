@@ -5,12 +5,12 @@ class LinksMain {
     required this.prev,
     required this.next,
   });
-  late final String first;
-  late final String last;
-  late final String prev;
-  late final String next;
-  
-  LinksMain.fromJson(Map<String, dynamic> json){
+  late final String? first;
+  late final String? last;
+  late final String? prev;
+  late final String? next;
+
+  LinksMain.fromJson(Map<String, dynamic> json) {
     first = json['first'];
     last = json['last'];
     prev = json['prev'];
