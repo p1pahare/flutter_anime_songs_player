@@ -4,6 +4,8 @@ import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/democat.dart';
+import 'package:anime_themes_player/models/linksmain.dart';
+import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +17,9 @@ class SearchController extends GetxController {
   int searchByValue = 0;
   bool loadingSong = false;
   List<DemoCat> cats = [];
+  LinksMain? linksMain;
   RxList<dynamic> listings = RxList.empty();
-  RxStatus status = RxStatus.loadingMore();
+  RxStatus status = RxStatus.success();
   List<ThemesMalAni> animeList = [];
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
@@ -46,7 +49,7 @@ class SearchController extends GetxController {
     scroll.addListener(() async {
       if (scroll.position.maxScrollExtent == scroll.position.pixels) {
         if (!status.isLoadingMore) {
-          await fetchAnimeLists();
+          await fetchMoreEntries();
         }
       }
     });
@@ -78,20 +81,62 @@ class SearchController extends GetxController {
     }
   }
 
-  Future fetchAnimeLists() async {
+  Future fetchMoreEntries() async {
+    log(linksMain?.toJson().toString() ?? '');
+    if (linksMain == null || linksMain?.next == null) return;
     status = RxStatus.loadingMore();
-    for (int i = 0; i < 10; i++) {
-      currentIndex++;
-      if (animeList.length > currentIndex) {
-        final AnimeMain? animeMain =
-            await titleFromMalId(animeList[currentIndex].name);
-        if (animeMain != null) {
-          listings.add(animeMain);
-          listings.refresh();
-          update();
+    update();
+    final apiResponse = await networkCalls.loadMore(linksMain?.next);
+    if (apiResponse.status) {
+      linksMain = LinksMain.fromJson(apiResponse.data['links']);
+
+      if (apiResponse.data['anime'] != null) {
+        listings.addAll((apiResponse.data['anime'] as List<dynamic>)
+            .map((e) => AnimeMain.fromJson(e))
+            .toList());
+      }
+      if (apiResponse.data['animethemes'] != null) {
+        listings.addAll((apiResponse.data['animethemes'] as List<dynamic>)
+            .map((e) => AnimethemesMain.fromJson(e))
+            .toList());
+      }
+      if (apiResponse.data['resources'] != null) {
+        final List<ResourcesMain> resorcesMain =
+            (apiResponse.data['resources'] as List<dynamic>)
+                .map<ResourcesMain>((e) => ResourcesMain.fromJson(e))
+                .toList();
+
+        final ApiResponse apiResponse2 =
+            await networkCalls.getAnimesFromAnimeSlugs(resorcesMain
+                .where((element) => element.anime.isNotEmpty)
+                .map<String>((e) => e.anime[0].slug)
+                .toList());
+
+        if (apiResponse2.status) {
+          listings.addAll((apiResponse2.data['anime'] as List<dynamic>)
+              .map<AnimeMain>((e) => AnimeMain.fromJson(e))
+              .toList());
         }
       }
+      listings.refresh();
+
+      update();
     }
+
+    status = RxStatus.success();
+  }
+
+  Future fetchAnimeLists() async {
+    status = RxStatus.loadingMore();
+
+    final List<AnimeMain?> animeMain = await animesFromMalIds(
+        animeList.map<String>((e) => "${e.malID}").toList());
+    if (animeMain.isNotEmpty) {
+      listings.addAll(animeMain);
+      listings.refresh();
+      update();
+    }
+
     status = RxStatus.success();
   }
 
@@ -104,6 +149,7 @@ class SearchController extends GetxController {
       case 0:
         apiResponse = await networkCalls.searchAnimeMain(search.text);
         if (apiResponse.status) {
+          linksMain = LinksMain.fromJson(apiResponse.data['links']);
           listings.addAll((apiResponse.data['anime'] as List<dynamic>)
               .map((e) => AnimeMain.fromJson(e))
               .toList());
@@ -113,10 +159,10 @@ class SearchController extends GetxController {
       case 1:
         apiResponse = await networkCalls.searchAnimethemesMain(search.text);
         if (apiResponse.status) {
-          listings.addAll(
-              (apiResponse.data['search']['animethemes'] as List<dynamic>)
-                  .map((e) => AnimethemesMain.fromJson(e))
-                  .toList());
+          linksMain = LinksMain.fromJson(apiResponse.data['links']);
+          listings.addAll((apiResponse.data['animethemes'] as List<dynamic>)
+              .map((e) => AnimethemesMain.fromJson(e))
+              .toList());
           listings.refresh();
         }
         break;
@@ -174,17 +220,29 @@ class SearchController extends GetxController {
     return null;
   }
 
-  Future<AnimeMain?> titleFromMalId(String animeName) async {
-    // need to improve
-    // final String slug = slugify(animeName, delimiter: '_');
+  Future<List<AnimeMain?>> animesFromMalIds(List<String> malIds) async {
+    final ApiResponse apiResponse1 =
+        await networkCalls.getResourcesFromMalIds(malIds);
+    if (apiResponse1.status) {
+      linksMain = LinksMain.fromJson(apiResponse1.data['links']);
+      final List<ResourcesMain> resorcesMain =
+          (apiResponse1.data['resources'] as List<dynamic>)
+              .map<ResourcesMain>((e) => ResourcesMain.fromJson(e))
+              .toList();
 
-    final ApiResponse apiResponse2 =
-        await networkCalls.getAnimeMainFromSlug(animeName);
+      final ApiResponse apiResponse2 =
+          await networkCalls.getAnimesFromAnimeSlugs(resorcesMain
+              .where((element) => element.anime.isNotEmpty)
+              .map<String>((e) => e.anime[0].slug)
+              .toList());
 
-    if (apiResponse2.status) {
-      return AnimeMain.fromJson(apiResponse2.data['anime'][0]);
+      if (apiResponse2.status) {
+        return (apiResponse2.data['anime'] as List<dynamic>)
+            .map<AnimeMain>((e) => AnimeMain.fromJson(e))
+            .toList();
+      }
     }
-    return null;
+    return [];
   }
 
   @override

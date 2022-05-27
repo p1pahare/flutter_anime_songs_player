@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
@@ -88,13 +90,8 @@ class SearchPage extends StatelessWidget {
               Obx(() => ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: (controller.listings.isEmpty
-                      ? 0
-                      : controller.listings.length + 1),
+                  itemCount: controller.listings.length,
                   itemBuilder: (context, index) {
-                    if (index == controller.listings.length) {
-                      return const ProgressIndicatorButton();
-                    }
                     if (controller.listings[index] is AnimethemesMain) {
                       return ThemeHolderForAnimethemesMain(
                         animethemesMain: controller.listings[index],
@@ -112,21 +109,21 @@ class SearchPage extends StatelessWidget {
                 init: SearchController(),
                 initState: (_) {},
                 builder: (_) {
-                  return (controller.status.isLoadingMore)
-                      ? const Center(child: Text(''))
-                      : (controller.status.isLoading)
-                          ? const Center(child: ProgressIndicatorButton())
-                          : (controller.status.isEmpty)
-                              ? const Center(child: Text(Values.noResults))
-                              : (controller.status.isError)
-                                  ? Center(
-                                      child: Text(
-                                          controller.status.errorMessage ?? ''))
-                                  : const SizedBox(
-                                      height: 0,
-                                    );
+                  log(_.status.isLoadingMore.toString());
+                  return (_.status.isLoadingMore || _.status.isLoading)
+                      ? const Center(
+                          child: ProgressIndicatorButton(
+                          radius: 20,
+                        ))
+                      : (_.status.isEmpty)
+                          ? const Center(child: Text(Values.noResults))
+                          : (_.status.isError)
+                              ? Center(child: Text(_.status.errorMessage ?? ''))
+                              : const SizedBox(
+                                  height: 0,
+                                );
                 },
-              ),
+              )
             ],
           ),
         ),
