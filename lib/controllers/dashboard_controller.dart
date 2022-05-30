@@ -38,18 +38,29 @@ class DashboardController extends GetxController {
     update();
   }
 
-  Future<void> init(AudioEntry audioEntry,
+  Future<void> init(List<AudioEntry> audioEntries,
       {bool addToQueueOnly = false}) async {
     try {
-      await _playlist.add(AudioSource.uri(
-        Uri.parse(audioEntry.url),
-        tag: MediaItem(
-          id: '${_nextMediaId++}',
-          album: audioEntry.album,
-          title: audioEntry.title,
-          artUri: audioEntry.art,
-        ),
-      ));
+      for (final AudioEntry audioEntry in audioEntries) {
+        final int isPresent = _playlist.children.lastIndexWhere((audiosoiurce) {
+          final MediaItem mediaItem =
+              audiosoiurce.sequence.first.tag as MediaItem;
+          return mediaItem.id == audioEntry.id.toString();
+        });
+        log("${_playlist.length} is current playlist length");
+        if (isPresent == -1) {
+          await _playlist.add(AudioSource.uri(
+            Uri.parse(audioEntry.url),
+            tag: MediaItem(
+              id: audioEntry.id,
+              album: audioEntry.album,
+              title: audioEntry.title,
+              artUri: audioEntry.art,
+            ),
+          ));
+        }
+      }
+      log("${_playlist.length} is current playlist length");
       if (!playerLoaded) {
         underPlayer = AudioPlayer();
       } else {
@@ -73,6 +84,7 @@ class DashboardController extends GetxController {
 
       await underPlayer?.setAudioSource(_playlist);
       if (!addToQueueOnly) {
+        log("${_playlist.length} is current playlist length");
         await underPlayer?.play();
       }
     } catch (e, stackTrace) {
@@ -82,7 +94,6 @@ class DashboardController extends GetxController {
     }
   }
 
-  static int _nextMediaId = 0;
   AudioPlayer? underPlayer;
   Future stopPlayer() async {
     await underPlayer!.stop();

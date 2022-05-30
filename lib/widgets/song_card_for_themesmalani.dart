@@ -90,13 +90,16 @@ class SongCardForThemesMalAni extends StatelessWidget {
                             themesMalAni!.malID.toString(),
                             themes!.themeType,
                             themes!.mirror.mirrorURL);
-                        await Get.find<DashboardController>().init(AudioEntry(
-                            album: themesMalAni!.name,
-                            title: themes!.themeName,
-                            url: apiResponse.status
-                                ? apiResponse.data
-                                : themes!.mirror.mirrorURL,
-                            urld: ''));
+                        await Get.find<DashboardController>().init([
+                          AudioEntry(
+                              id: themes!.themeName,
+                              album: themesMalAni!.name,
+                              title: themes!.themeName,
+                              url: apiResponse.status
+                                  ? apiResponse.data
+                                  : themes!.mirror.mirrorURL,
+                              urld: '')
+                        ]);
                       },
                       child: const Padding(
                         padding:

@@ -115,7 +115,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          AudioEntry.fromJson(songmetadata['audioentry']),
+                          [AudioEntry.fromJson(songmetadata['audioentry'])],
                           addToQueueOnly: true);
                     } else {
                       _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
@@ -161,15 +161,18 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                                 status: false,
                                 message: "failed to fetch Anime");
                           }
-                          await Get.find<DashboardController>().init(AudioEntry(
-                              album: animethemesMain!.anime.name,
-                              title: animethemesMain!.song.title,
-                              url: apiResponse.status
-                                  ? apiResponse.data
-                                  : animethemeentries!.videos.first.link,
-                              urld: animethemesMain!.anime.images.isEmpty
-                                  ? ''
-                                  : animethemesMain!.anime.images.first.link));
+                          await Get.find<DashboardController>().init([
+                            AudioEntry(
+                                id: animethemesMain!.id.toString(),
+                                album: animethemesMain!.anime.name,
+                                title: animethemesMain!.song.title,
+                                url: apiResponse.status
+                                    ? apiResponse.data
+                                    : animethemeentries!.videos.first.link,
+                                urld: animethemesMain!.anime.images.isEmpty
+                                    ? ''
+                                    : animethemesMain!.anime.images.first.link)
+                          ]);
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(

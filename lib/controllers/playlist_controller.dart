@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
@@ -264,6 +265,14 @@ class PlaylistController extends GetxController {
     update(["detail"]);
   }
 
+  Future playCurrentListing() async {
+    if (listings.isNotEmpty) {
+      final List<AudioEntry> audios =
+          listings.map((e) => AudioEntry.fromJson(e['audioentry'])).toList();
+      Get.find<DashboardController>().init(audios);
+    }
+  }
+
   Future<Map<String, dynamic>?> getMetaDataFromThemeID(String themeId) async {
     int currId = int.tryParse(themeId) ?? 0;
     if (currId == 0) return null;
@@ -283,6 +292,7 @@ class PlaylistController extends GetxController {
           "${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'}",
           animethemesMain.animethemeentries.first.videos.first.link);
       final AudioEntry _audioEntry = AudioEntry(
+          id: animethemesMain.id.toString(),
           album: animeMain.name,
           title: animethemesMain.song.title,
           url: mp3link.status
