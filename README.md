@@ -33,15 +33,17 @@ It is an opensource project I am developing currently Just for fun.
 
 -> Tested on Android/iOS/macOS
 
+-> seeking the current theme
+
 
 
 ## Planned Features 
 
 (priority wise)
 
--> seeking the current theme
-
 -> playing whole playlist at once
+
+-> Currently Playing Screen
 
 -> Export/Import Playlist backup as QR Code
 

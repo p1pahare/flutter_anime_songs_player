@@ -40,36 +40,37 @@ class DashboardController extends GetxController {
 
   Future<void> init(AudioEntry audioEntry,
       {bool addToQueueOnly = false}) async {
-    _playlist.add(AudioSource.uri(
-      Uri.parse(audioEntry.url),
-      tag: MediaItem(
-        id: '${_nextMediaId++}',
-        album: audioEntry.album,
-        title: audioEntry.title,
-        artUri: audioEntry.art,
-      ),
-    ));
-    if (!playerLoaded) {
-      underPlayer = AudioPlayer();
-    } else {
-      // await underPlayer?.stop();
-
-      if (!addToQueueOnly) {
-        await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
-        await underPlayer?.play();
-      }
-      return;
-    }
-
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
-    // Listen to errors during playback.
-    underPlayer?.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-      log('A stream error occurred: $e');
-    });
-    update();
     try {
+      await _playlist.add(AudioSource.uri(
+        Uri.parse(audioEntry.url),
+        tag: MediaItem(
+          id: '${_nextMediaId++}',
+          album: audioEntry.album,
+          title: audioEntry.title,
+          artUri: audioEntry.art,
+        ),
+      ));
+      if (!playerLoaded) {
+        underPlayer = AudioPlayer();
+      } else {
+        // await underPlayer?.stop();
+
+        if (!addToQueueOnly) {
+          await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
+          await underPlayer?.play();
+        }
+        return;
+      }
+
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
+      // Listen to errors during playback.
+      underPlayer?.playbackEventStream.listen((event) {},
+          onError: (Object e, StackTrace stackTrace) {
+        log('A stream error occurred: $e');
+      });
+      update();
+
       await underPlayer?.setAudioSource(_playlist);
       if (!addToQueueOnly) {
         await underPlayer?.play();
@@ -92,6 +93,13 @@ class DashboardController extends GetxController {
   }
 
   final _playlist = ConcatenatingAudioSource(children: []);
+  AudioSource? currentAudioSource(int index) {
+    if (_playlist.length <= index || index < 0) {
+      return null;
+    } else {
+      return _playlist.children.elementAt(index);
+    }
+  }
 
   bool get playerLoaded => underPlayer != null;
   @override

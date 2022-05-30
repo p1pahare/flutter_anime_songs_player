@@ -258,7 +258,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              'https://staging.animethemes.moe/api/anime/$slug?include=resources'));
+              'https://staging.animethemes.moe/api/anime/$slug?include=resources,images'));
 
       http.StreamedResponse response = await request.send();
 
