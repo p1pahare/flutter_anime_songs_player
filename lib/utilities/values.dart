@@ -1,3 +1,4 @@
+import 'package:anime_themes_player/widgets/round_slider_track_shape.dart';
 import 'package:flutter/material.dart';
 
 class Values {
@@ -16,6 +17,12 @@ class Values {
       fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),
       brightness: Brightness.dark,
+      sliderTheme: SliderThemeData(
+          overlayShape: SliderComponentShape.noOverlay,
+          trackHeight: 6,
+          thumbColor: Colors.white,
+          thumbShape: const SliderThumbShape(),
+          activeTrackColor: Colors.white),
       scaffoldBackgroundColor: const Color.fromARGB(255, 72, 72, 72),
       unselectedWidgetColor: const Color.fromARGB(155, 214, 143, 63),
       primaryColor: const Color.fromARGB(255, 214, 143, 63),
@@ -55,6 +62,13 @@ class Values {
     primaryColor: const Color.fromARGB(255, 214, 143, 63),
     primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
     primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+    sliderTheme: SliderThemeData(
+        trackHeight: 6,
+        thumbShape: const SliderThumbShape(),
+        // trackShape: const RoundSliderTrackShape(radius: 2400),
+        overlayShape: SliderComponentShape.noOverlay,
+        thumbColor: Colors.black,
+        activeTrackColor: Colors.black),
     inputDecorationTheme: const InputDecorationTheme(
         labelStyle: TextStyle(
           color: Color.fromARGB(255, 214, 143, 63),

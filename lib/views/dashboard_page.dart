@@ -3,7 +3,7 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/playlist_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
-import 'package:anime_themes_player/widgets/player_buttons.dart';
+import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,7 +44,8 @@ class _DashboardPageState extends State<DashboardPage> {
             left: false,
             child: Scaffold(
               appBar: PreferredSize(
-                preferredSize: Size.fromHeight(c.playerLoaded ? 85 : 55),
+                preferredSize:
+                    Size.fromHeight(c.underPlayer == null ? 40 : 100),
                 child: AppBar(
                   leading: Container(
                       decoration: BoxDecoration(
@@ -68,13 +69,19 @@ class _DashboardPageState extends State<DashboardPage> {
                         onChanged: c.changeDarkMode)
                   ],
                   bottom: PreferredSize(
-                      child: !c.playerLoaded
-                          ? const SizedBox(height: 0)
-                          : PlayerButtons(
-                              c.underPlayer!,
-                              stopPlayer: c.stopPlayer,
-                            ),
-                      preferredSize: Size.fromHeight(c.playerLoaded ? 50 : 0)),
+                    preferredSize:
+                        Size.fromHeight(c.underPlayer == null ? 0 : 60),
+                    child: c.underPlayer == null
+                        ? const SizedBox(
+                            height: 0,
+                          )
+                        : Container(
+                            height: 70,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            child: PlayerCurrent(c.underPlayer!,
+                                stopPlayer: c.stopPlayer)),
+                  ),
                 ),
               ),
               body: getTabFromIndex(c.selectedIndex.value),

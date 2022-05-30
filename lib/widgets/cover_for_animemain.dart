@@ -34,6 +34,8 @@ class CoverForAnimeMain extends StatelessWidget {
                             loadingProcess == null
                                 ? child
                                 : const ProgressIndicatorButton(),
+                        errorBuilder: (context, url, error) =>
+                            const Icon(Icons.error),
                         cacheHeight: 160,
                         cacheWidth: 160,
                       )),
