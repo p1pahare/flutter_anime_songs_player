@@ -88,7 +88,7 @@ class SongCardForAnimethemes extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          AudioEntry.fromJson(songmetadata['audioentry']),
+                          [AudioEntry.fromJson(songmetadata['audioentry'])],
                           addToQueueOnly: true);
                     } else {
                       _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
@@ -123,15 +123,18 @@ class SongCardForAnimethemes extends StatelessWidget {
                               animeMain!.resources.first.externalId.toString(),
                               "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
                               animethemeentries!.videos.first.link);
-                          await Get.find<DashboardController>().init(AudioEntry(
-                              album: animeMain!.name,
-                              title: animethemes!.song?.title ?? '',
-                              url: apiResponse.status
-                                  ? apiResponse.data
-                                  : animethemeentries!.videos.first.link,
-                              urld: animeMain!.images.isEmpty
-                                  ? ''
-                                  : animeMain!.images.first.link));
+                          await Get.find<DashboardController>().init([
+                            AudioEntry(
+                                id: animethemes!.id.toString(),
+                                album: animeMain!.name,
+                                title: animethemes!.song?.title ?? '',
+                                url: apiResponse.status
+                                    ? apiResponse.data
+                                    : animethemeentries!.videos.first.link,
+                                urld: animeMain!.images.isEmpty
+                                    ? ''
+                                    : animeMain!.images.first.link)
+                          ]);
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(

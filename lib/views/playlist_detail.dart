@@ -26,9 +26,10 @@ class PlaylistDetail extends StatelessWidget {
       builder: (_) {
         return Scaffold(
           appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(45),
+              preferredSize: const Size.fromHeight(40),
               child: AppBar(
                 centerTitle: true,
+                elevation: 0,
                 title: Text(
                   _.getReadablePlaylistName(playlist?[1] ?? ''),
                 ),
@@ -55,8 +56,18 @@ class PlaylistDetail extends StatelessWidget {
                   child: _.listings.length != playlist1.length
                       ? Text(
                           "Downloading Metadata ${_.listings.length} of ${playlist1.length}")
-                      : const SizedBox(
-                          height: 0,
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("${_.listings.length} Themes"),
+                              ElevatedButton.icon(
+                                  onPressed: () => _.playCurrentListing(),
+                                  icon: const Icon(Icons.play_circle),
+                                  label: const Text(Values.playAll))
+                            ],
+                          ),
                         ))),
               Expanded(
                 child: (_.status.isLoading || _.status.isLoadingMore)
@@ -72,6 +83,7 @@ class PlaylistDetail extends StatelessWidget {
                                     alignment: Alignment.center,
                                     children: [
                                       ThemeHolderForAnimethemesMain(
+                                        showOnlyOne: true,
                                         animethemesMain:
                                             AnimethemesMain.fromJson(_
                                                 .listings[index]['animetheme']),

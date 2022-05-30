@@ -9,6 +9,7 @@ class Values {
   static const search = 'Search';
   static const playlist = 'Playlist';
   static const searchBy = 'Search By';
+  static const playAll = 'Play All';
   static const noResults = 'No resulting data found';
   static const fontFamilyName = 'ptsans';
   static const errorImage =
@@ -17,6 +18,11 @@ class Values {
       fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),
       brightness: Brightness.dark,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+              backgroundColor: MaterialStateProperty.all(
+                  const Color.fromARGB(255, 214, 143, 63)))),
       sliderTheme: SliderThemeData(
           overlayShape: SliderComponentShape.noOverlay,
           trackHeight: 6,
@@ -62,6 +68,11 @@ class Values {
     primaryColor: const Color.fromARGB(255, 214, 143, 63),
     primaryColorLight: const Color.fromARGB(255, 214, 143, 63),
     primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.black),
+            backgroundColor: MaterialStateProperty.all(
+                const Color.fromARGB(255, 214, 143, 63)))),
     sliderTheme: SliderThemeData(
         trackHeight: 6,
         thumbShape: const SliderThumbShape(),

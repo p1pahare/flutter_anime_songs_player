@@ -35,18 +35,15 @@ It is an opensource project I am developing currently Just for fun.
 
 -> seeking the current theme
 
+-> playing whole playlist at once
 
 
 ## Planned Features 
 
 (priority wise)
 
--> playing whole playlist at once
-
 -> Currently Playing Screen
 
 -> Export/Import Playlist backup as QR Code
 
 -> Play Video
-
-

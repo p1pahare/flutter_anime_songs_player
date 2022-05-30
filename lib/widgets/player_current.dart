@@ -33,42 +33,49 @@ class PlayerCurrent extends StatelessWidget {
             ],
           ),
         ),
-        StreamBuilder<Duration?>(
-          stream: _audioPlayer.durationStream,
-          builder: (_, fullDurationSnap) {
-            final fullDuration = fullDurationSnap.data;
+        Container(
+          height: 0.3,
+          color: Get.theme.appBarTheme.backgroundColor,
+        ),
+        Container(
+          color: Get.theme.appBarTheme.backgroundColor,
+          child: StreamBuilder<Duration?>(
+            stream: _audioPlayer.durationStream,
+            builder: (_, fullDurationSnap) {
+              final fullDuration = fullDurationSnap.data;
 
-            if (fullDuration == null) {
-              return const SizedBox(
-                height: 0,
-                width: 0,
-              );
-            } else {
-              return StreamBuilder<Duration>(
-                  stream: _audioPlayer.positionStream,
-                  builder: (context, currentDurationSnap) {
-                    final currentDuration = currentDurationSnap.data;
-                    log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
+              if (fullDuration == null) {
+                return const SizedBox(
+                  height: 0,
+                  width: 0,
+                );
+              } else {
+                return StreamBuilder<Duration>(
+                    stream: _audioPlayer.positionStream,
+                    builder: (context, currentDurationSnap) {
+                      final currentDuration = currentDurationSnap.data;
+                      // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
 
-                    if (currentDuration == null) {
-                      return const SizedBox(
-                        height: 0,
-                        width: 0,
-                      );
-                    } else {
-                      return Slider(
-                          value:
-                              currentDuration.inSeconds > fullDuration.inSeconds
-                                  ? fullDuration.inSeconds.toDouble()
-                                  : currentDuration.inSeconds.toDouble(),
-                          max: fullDuration.inSeconds.toDouble(),
-                          onChanged: (val) {
-                            _audioPlayer.seek(Duration(seconds: val.toInt()));
-                          });
-                    }
-                  });
-            }
-          },
+                      if (currentDuration == null) {
+                        return const SizedBox(
+                          height: 0,
+                          width: 0,
+                        );
+                      } else {
+                        return Slider(
+                            value: currentDuration.inSeconds >
+                                    fullDuration.inSeconds
+                                ? fullDuration.inSeconds.toDouble()
+                                : currentDuration.inSeconds.toDouble(),
+                            max: fullDuration.inSeconds.toDouble(),
+                            onChanged: (val) {
+                              _audioPlayer.seek(Duration(seconds: val.toInt()));
+                            });
+                      }
+                    });
+              }
+            },
+          ),
         ),
       ],
     );
@@ -122,22 +129,25 @@ class PlayerCurrent extends StatelessWidget {
               );
             }
             final mediaItem = _currentSource.sequence.first.tag as MediaItem;
-            return ListTile(
-              onTap: () {
-                log("message on song tap");
-              },
-              leading: SizedBox(
-                width: 60,
-                child: Image.network(
-                  mediaItem.artUri.toString(),
-                  fit: BoxFit.fill,
+            return Material(
+              type: MaterialType.transparency,
+              child: ListTile(
+                onTap: () {
+                  log("message on song tap");
+                },
+                leading: Container(
                   width: 60,
-                  errorBuilder: (context, url, error) =>
-                      const Icon(Icons.error),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: NetworkImage(
+                      mediaItem.artUri.toString(),
+                    ),
+                    fit: BoxFit.cover,
+                  )),
                 ),
+                title: Text(mediaItem.title),
+                subtitle: Text(mediaItem.album.toString()),
               ),
-              title: Text(mediaItem.title),
-              subtitle: Text(mediaItem.album.toString()),
             );
           }
         });
