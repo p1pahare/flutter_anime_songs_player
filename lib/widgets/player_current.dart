@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +132,7 @@ class PlayerCurrent extends StatelessWidget {
               type: MaterialType.transparency,
               child: ListTile(
                 onTap: () {
-                  log("message on song tap");
+                  Get.toNamed(CurrentPlaying.routeName);
                 },
                 leading: Container(
                   width: 60,

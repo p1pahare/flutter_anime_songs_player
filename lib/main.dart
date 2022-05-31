@@ -3,6 +3,7 @@ import 'package:anime_themes_player/controllers/explore_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/playlist_detail.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
@@ -47,6 +48,10 @@ class MyApp extends StatelessWidget {
             case DashboardPage.routeName:
               return CupertinoPageRoute(builder: (context) {
                 return const DashboardPage();
+              });
+            case CurrentPlaying.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                return const CurrentPlaying();
               });
             case PlaylistDetail.routeName:
               Map<int, String>? playlist =
