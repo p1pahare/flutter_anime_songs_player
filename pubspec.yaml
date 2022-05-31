@@ -1,7 +1,7 @@
 name: anime_themes_player
 description: A Music Player App which specifically plays Anime Themes
 publish_to: 'none' 
-version: 0.4.02+1
+version: 0.5.00+1
 environment:
   sdk: ">=2.16.2 <3.0.0"
 dependencies:
@@ -17,6 +17,9 @@ dependencies:
   audio_session: ^0.1.6+1
   http: ^0.13.4
   tap_to_expand: ^0.0.1
+  qr_code_vision: ^0.1.0
+  qr_flutter: ^4.0.0
+  file_picker: ^4.6.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -26,6 +26,8 @@
 		<true/>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+<string>To import playlist from Image File you need to allow permissions to Photos</string>
 		<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
