@@ -39,12 +39,11 @@ It is an opensource project I am developing currently Just for fun.
 
 -> Currently Playing Screen
 
+-> Export/Import Playlist backup as QR Code
 
 ## Planned Features 
 
 (priority wise)
-
--> Export/Import Playlist backup as QR Code
 
 -> Play Video
 
