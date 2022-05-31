@@ -13,6 +13,9 @@ class DashboardController extends GetxController {
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
+  List<MediaItem> get mediaItems => _playlist.children
+      .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
+      .toList();
   initialize() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
@@ -109,6 +112,25 @@ class DashboardController extends GetxController {
       return null;
     } else {
       return _playlist.children.elementAt(index);
+    }
+  }
+
+  Future removeThemeFromPlayer(int index) async {
+    if (playerLoaded) {
+      await _playlist.removeAt(index);
+      update();
+    }
+  }
+
+  void playFromPlayer(int index) {
+    if (playerLoaded) {
+      underPlayer?.seek(Duration.zero, index: index);
+    }
+  }
+
+  void moveThemeInPlayer(int oldIndex, int newIndex) {
+    if (playerLoaded) {
+      _playlist.move(oldIndex, newIndex);
     }
   }
 

@@ -47,3 +47,5 @@ It is an opensource project I am developing currently Just for fun.
 -> Export/Import Playlist backup as QR Code
 
 -> Play Video
+
+-> Allowing versions of themes to be added queue and playlists

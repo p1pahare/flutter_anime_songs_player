@@ -1,5 +1,6 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,7 @@ class CurrentPlaying extends StatelessWidget {
         init: DashboardController(),
         initState: (_) {},
         builder: (_) {
-          if (_.underPlayer == null) {
+          if (!_.playerLoaded) {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(18.0),
@@ -47,10 +48,66 @@ class CurrentPlaying extends StatelessWidget {
               _seekBar(_.underPlayer!),
               PlayerButtons(
                 _.underPlayer!,
+              ),
+              Expanded(
+                child: ReorderableListView.builder(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) =>
+                        _mediaInfoFromMediaItem(_.mediaItems[index], index, _),
+                    itemCount: _.mediaItems.length,
+                    onReorder: (indexA, indexB) {
+                      _.moveThemeInPlayer(indexA, indexB);
+                    }),
               )
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _mediaInfoFromMediaItem(
+      MediaItem mediaItem, int index, DashboardController _controller) {
+    return Material(
+      key: ValueKey(mediaItem.id),
+      type: MaterialType.transparency,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ListTile(
+              onTap: () {},
+              leading: Container(
+                width: 60,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: NetworkImage(
+                    mediaItem.artUri.toString(),
+                  ),
+                  fit: BoxFit.cover,
+                )),
+              ),
+              title: Text(mediaItem.title),
+              subtitle: Text(mediaItem.album.toString()),
+              trailing: BetterButton(
+                icon: Icons.play_circle_rounded,
+                onPressed: () {
+                  _controller.playFromPlayer(index);
+                },
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: BetterButton(
+              icon: Icons.cancel_rounded,
+              onPressed: () {
+                _controller.removeThemeFromPlayer(index);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -68,7 +125,7 @@ class CurrentPlaying extends StatelessWidget {
 
   Widget _seekBar(AudioPlayer _audioPlayer) {
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
       child: StreamBuilder<Duration?>(
         stream: _audioPlayer.durationStream,
         builder: (_, fullDurationSnap) {
@@ -129,14 +186,14 @@ class CurrentPlaying extends StatelessWidget {
             return Column(
               children: [
                 Container(
-                  width: Get.width * 0.6,
-                  height: Get.width * 0.8,
+                  width: Get.width * 0.85,
+                  height: Get.width * 0.65,
                   decoration: BoxDecoration(
                       image: DecorationImage(
                     image: NetworkImage(
                       mediaItem.artUri.toString(),
                     ),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   )),
                 ),
                 Text(
