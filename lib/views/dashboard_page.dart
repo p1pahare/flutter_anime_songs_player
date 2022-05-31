@@ -44,8 +44,7 @@ class _DashboardPageState extends State<DashboardPage> {
             left: false,
             child: Scaffold(
               appBar: PreferredSize(
-                preferredSize:
-                    Size.fromHeight(c.underPlayer == null ? 40 : 100),
+                preferredSize: Size.fromHeight(!c.playerLoaded ? 40 : 100),
                 child: AppBar(
                   leading: Container(
                       decoration: BoxDecoration(
@@ -69,9 +68,8 @@ class _DashboardPageState extends State<DashboardPage> {
                         onChanged: c.changeDarkMode)
                   ],
                   bottom: PreferredSize(
-                    preferredSize:
-                        Size.fromHeight(c.underPlayer == null ? 0 : 60),
-                    child: c.underPlayer == null
+                    preferredSize: Size.fromHeight(!c.playerLoaded ? 0 : 60),
+                    child: !c.playerLoaded
                         ? const SizedBox(
                             height: 0,
                           )
