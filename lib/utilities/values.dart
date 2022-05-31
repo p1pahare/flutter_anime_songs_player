@@ -1,4 +1,5 @@
 import 'package:anime_themes_player/widgets/round_slider_track_shape.dart';
+
 import 'package:flutter/material.dart';
 
 class Values {
@@ -7,11 +8,15 @@ class Values {
   static const dayModeAsset = 'lib/assets/sunny-day.png';
   static const explore = 'Explore';
   static const search = 'Search';
+  static const closePlayer = 'Close Player';
   static const playlist = 'Playlist';
   static const searchBy = 'Search By';
   static const playAll = 'Play All';
   static const noResults = 'No resulting data found';
+  static const currentlyPlaying = 'Currently Playing';
   static const fontFamilyName = 'ptsans';
+  static const noThemesBeingPlayed =
+      'Currently Playing nothing. Please Play from Playlists or add themes to Queue';
   static const errorImage =
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcNsW42LouEo4S1FC103szBVQyAuRYoZwsgg&usqp=CAU';
   static final darkTheme = ThemeData(

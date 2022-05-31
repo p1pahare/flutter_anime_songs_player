@@ -30,6 +30,13 @@ class PlaylistDetail extends StatelessWidget {
               child: AppBar(
                 centerTitle: true,
                 elevation: 0,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 title: Text(
                   _.getReadablePlaylistName(playlist?[1] ?? ''),
                 ),

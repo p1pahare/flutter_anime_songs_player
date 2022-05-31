@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class PlayerButtons extends StatelessWidget {
-  const PlayerButtons(this._audioPlayer, {Key? key, @required this.stopPlayer})
-      : super(key: key);
-  final VoidCallback? stopPlayer;
+  const PlayerButtons(this._audioPlayer, {Key? key}) : super(key: key);
   final AudioPlayer _audioPlayer;
 
   @override
@@ -58,7 +56,6 @@ class PlayerButtons extends StatelessWidget {
             ],
           ),
         ),
-        _closeButton()
       ],
     );
   }
@@ -101,9 +98,9 @@ class PlayerButtons extends StatelessWidget {
     return IconButton(
       icon: isEnabled
           ? const Icon(
-              Icons.shuffle,
+              Icons.shuffle_on_rounded,
             )
-          : const Icon(Icons.shuffle),
+          : const Icon(Icons.shuffle_rounded),
       onPressed: () async {
         final enable = !isEnabled;
         if (enable) {
@@ -128,20 +125,15 @@ class PlayerButtons extends StatelessWidget {
     );
   }
 
-  Widget _closeButton() {
-    return IconButton(
-        icon: const Icon(Icons.cancel_sharp), onPressed: stopPlayer);
-  }
-
   Widget _repeatButton(BuildContext context, LoopMode loopMode) {
     final icons = [
-      const Icon(Icons.repeat),
       const Icon(
-        Icons.repeat,
+        Icons.repeat_rounded,
       ),
       const Icon(
-        Icons.repeat_one,
+        Icons.repeat_on_rounded,
       ),
+      const Icon(Icons.repeat_one_on_rounded),
     ];
     const cycleModes = [
       LoopMode.off,

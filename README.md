@@ -37,12 +37,12 @@ It is an opensource project I am developing currently Just for fun.
 
 -> playing whole playlist at once
 
+-> Currently Playing Screen
+
 
 ## Planned Features 
 
 (priority wise)
-
--> Currently Playing Screen
 
 -> Export/Import Playlist backup as QR Code
 
