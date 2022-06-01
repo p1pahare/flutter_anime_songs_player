@@ -73,7 +73,7 @@ class PlaylistDetail extends StatelessWidget {
                   height: 50,
                   child: _.listings.length != playlist1.length
                       ? Text(
-                          "Downloading Metadata ${_.listings.length} of ${playlist1.length}")
+                          "Downloading Metadata ${_.listings.length + 1} of ${playlist1.length}")
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 18.0),
                           child: Row(
