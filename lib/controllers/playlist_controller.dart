@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' as math;
-
+import 'dart:ui' as ui;
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
@@ -8,10 +10,12 @@ import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_themes_player/models/anime_main.dart' as animemain;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:qr_code_vision/qr_code_vision.dart';
 
 class PlaylistController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
@@ -59,6 +63,14 @@ class PlaylistController extends GetxController {
   String songCount(Map<int, String> playlist) =>
       "${(playlist.values.where((element) => element != "0000000").length - 2)} Songs";
 
+  bool containsPlaylistId(String playlistId) {
+    bool exists = false;
+    for (final element in playlists) {
+      if (element[0] == playlistId) exists = true;
+    }
+    return exists;
+  }
+
   String encodePlayListToString(Map<int, String> encodedPlaylist) {
     String ecodedString = '';
     for (String part in encodedPlaylist.values) {
@@ -83,11 +95,69 @@ class PlaylistController extends GetxController {
     update();
   }
 
-  void createPlayList(String name) {
-    String playlistId = (10000 + playlists.length + 1).toString();
-    log('${math.Random().nextInt(79999) + 20000}');
-    String playlistName = '';
+  importFromFile() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.image);
 
+    if (result != null) {
+      File imageFile = File(result.files.single.path!);
+      ui.Image image = await getImage(imageFile);
+      final byteData =
+          (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!
+              .buffer
+              .asUint8List();
+
+      final qrCode = QrCode();
+      qrCode.scanRgbaBytes(byteData, image.width, image.height);
+
+      if (qrCode.location == null) {
+        showMessage('No QR code found');
+      } else {
+        log('QR code here: ${qrCode.location}');
+
+        if (qrCode.content == null ||
+            (qrCode.content?.text.length ?? 0) < 7089) {
+          showMessage('The content of the QR code could not be decoded');
+        } else {
+          log('This is the content: ${qrCode.content?.text}');
+          await importPlaylist(qrCode.content?.text);
+        }
+      }
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future<ui.Image> getImage(File imageFile) async {
+    var completer = Completer<ImageInfo>();
+    var img = FileImage(imageFile);
+    img
+        .resolve(const ImageConfiguration())
+        .addListener(ImageStreamListener((info, _) {
+      completer.complete(info);
+    }));
+    ImageInfo imageInfo = await completer.future;
+    return imageInfo.image;
+  }
+
+  Future importPlaylist(String? encodedPlaylist) async {
+    final Map<int, String> playlist =
+        decodePlayListFromString(encodedPlaylist!);
+    while (containsPlaylistId(playlist[0] ?? '')) {
+      log('${math.Random().nextInt(79999) + 10000}');
+      playlist[0] = '${math.Random().nextInt(89999) + 10000}';
+    }
+    playlists.add(playlist);
+    await writePlayliststoBox();
+  }
+
+  void createPlayList(String name) {
+    String playlistId = '${math.Random().nextInt(89999) + 10000}';
+    while (containsPlaylistId(playlistId)) {
+      log('${math.Random().nextInt(79999) + 10000}');
+      playlistId = '${math.Random().nextInt(89999) + 10000}';
+    }
+    String playlistName = '';
     if (!validPlaylist.hasMatch(name)) {
       showMessage("Playlist name can only be alphanumeric");
       return;
@@ -230,6 +300,7 @@ class PlaylistController extends GetxController {
   Future<void> writeSongMetaDataToBox(
       String themeId, Map<String, dynamic> songmetadata) async {
     await box.write('theme_$themeId', songmetadata);
+    update(['detail']);
   }
 
   metadataFromThemeId(List<String> themeIds) async {
@@ -247,6 +318,7 @@ class PlaylistController extends GetxController {
       final Map<String, dynamic>? songmetadata =
           await getMetaDataFromThemeID(themeIds[i]);
       if (songmetadata != null) {
+        listings.add(songmetadata);
         await writeSongMetaDataToBox(themeIds[i], songmetadata);
       } else {
         successCount--;

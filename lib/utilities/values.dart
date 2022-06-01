@@ -17,6 +17,8 @@ class Values {
   static const fontFamilyName = 'ptsans';
   static const noThemesBeingPlayed =
       'Currently Playing nothing. Please Play from Playlists or add themes to Queue';
+  static const takeAScreenShot =
+      "Please take a screenshot of this QR Code. You can Save or Share this Playlist and import it anytime on any device.";
   static const errorImage =
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcNsW42LouEo4S1FC103szBVQyAuRYoZwsgg&usqp=CAU';
   static final darkTheme = ThemeData(
