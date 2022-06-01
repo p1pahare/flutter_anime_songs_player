@@ -12,6 +12,17 @@ Who has been maintaining Anime themes Database for a while now
 
 It is an opensource project I am developing currently Just for fun.
 
+![Alt text](screenshots/File_00001.jpg?raw=true "Screenshot 1")
+![Alt text](screenshots/File_00002.jpg?raw=true "Screenshot 2")
+![Alt text](screenshots/File_00003.jpg?raw=true "Screenshot 3")
+![Alt text](screenshots/File_00004.jpg?raw=true "Screenshot 4")
+![Alt text](screenshots/File_00005.jpg?raw=true "Screenshot 5")
+![Alt text](screenshots/File_00006.jpg?raw=true "Screenshot 6")
+![Alt text](screenshots/File_00007.jpg?raw=true "Screenshot 7")
+![Alt text](screenshots/File_00008.jpg?raw=true "Screenshot 8")
+![Alt text](screenshots/File_00009.jpg?raw=true "Screenshot 9")
+![Alt text](screenshots/File_00010.jpg?raw=true "Screenshot 10")
+![Alt text](screenshots/File_00011.jpg?raw=true "Screenshot 11")
 
 ## Features
 
