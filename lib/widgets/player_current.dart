@@ -21,14 +21,11 @@ class PlayerCurrent extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(
-                width: 5,
+                width: 4,
               ),
               _closeButton(),
               Expanded(child: _mediaInfo()),
               _playButton(),
-              const SizedBox(
-                width: 5,
-              ),
             ],
           ),
         ),
@@ -49,29 +46,33 @@ class PlayerCurrent extends StatelessWidget {
                   width: 0,
                 );
               } else {
-                return StreamBuilder<Duration>(
-                    stream: _audioPlayer.positionStream,
-                    builder: (context, currentDurationSnap) {
-                      final currentDuration = currentDurationSnap.data;
-                      // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: StreamBuilder<Duration>(
+                      stream: _audioPlayer.positionStream,
+                      builder: (context, currentDurationSnap) {
+                        final currentDuration = currentDurationSnap.data;
+                        // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
 
-                      if (currentDuration == null) {
-                        return const SizedBox(
-                          height: 0,
-                          width: 0,
-                        );
-                      } else {
-                        return Slider(
-                            value: currentDuration.inSeconds >
-                                    fullDuration.inSeconds
-                                ? fullDuration.inSeconds.toDouble()
-                                : currentDuration.inSeconds.toDouble(),
-                            max: fullDuration.inSeconds.toDouble(),
-                            onChanged: (val) {
-                              _audioPlayer.seek(Duration(seconds: val.toInt()));
-                            });
-                      }
-                    });
+                        if (currentDuration == null) {
+                          return const SizedBox(
+                            height: 0,
+                            width: 0,
+                          );
+                        } else {
+                          return Slider(
+                              value: currentDuration.inSeconds >
+                                      fullDuration.inSeconds
+                                  ? fullDuration.inSeconds.toDouble()
+                                  : currentDuration.inSeconds.toDouble(),
+                              max: fullDuration.inSeconds.toDouble(),
+                              onChanged: (val) {
+                                _audioPlayer
+                                    .seek(Duration(seconds: val.toInt()));
+                              });
+                        }
+                      }),
+                );
               }
             },
           ),
