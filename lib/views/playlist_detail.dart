@@ -43,7 +43,10 @@ class PlaylistDetail extends StatelessWidget {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.share_rounded),
+                    icon: Icon(
+                      Icons.share_rounded,
+                      color: Get.theme.iconTheme.color,
+                    ),
                     onPressed: () => Get.toNamed(SharePlaylist.routeName,
                         arguments: playlist),
                   )
@@ -66,7 +69,7 @@ class PlaylistDetail extends StatelessWidget {
                               stopPlayer: c.stopPlayer,
                             ));
                   }),
-              Obx(() => SizedBox(
+              SizedBox(
                   height: 50,
                   child: _.listings.length != playlist1.length
                       ? Text(
@@ -79,11 +82,14 @@ class PlaylistDetail extends StatelessWidget {
                               Text("${_.listings.length} Themes"),
                               ElevatedButton.icon(
                                   onPressed: () => _.playCurrentListing(),
-                                  icon: const Icon(Icons.play_circle),
+                                  icon: Icon(
+                                    Icons.play_circle,
+                                    color: Get.theme.textTheme.bodyText1?.color,
+                                  ),
                                   label: const Text(Values.playAll))
                             ],
                           ),
-                        ))),
+                        )),
               Expanded(
                 child: (_.status.isLoading || _.status.isLoadingMore)
                     ? const Center(child: ProgressIndicatorButton())

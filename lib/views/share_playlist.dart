@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class SharePlaylist extends StatelessWidget {
@@ -42,8 +44,22 @@ class SharePlaylist extends StatelessWidget {
                 qr: qrCode,
                 version: QrVersions.max,
                 errorCorrectionLevel: QrErrorCorrectLevel.L,
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                size: Get.width,
+              ),
+              Text(DateFormat('h:m a , d MMM y').format(DateTime.now())),
+              Text("${_.listings.length} Themes",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w300)),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  Values.takeAScreenShot,
+                  style: TextStyle(fontSize: 13),
+                  textAlign: TextAlign.center,
+                ),
               )
-              //  QrCode.fromData(data: data, errorCorrectLevel: errorCorrectLevel)
             ],
           ),
         );
