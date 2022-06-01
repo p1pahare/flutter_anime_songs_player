@@ -1,16 +1,16 @@
 # anime_themes_player
 
-A new Flutter project.
+A mobile application to play explore , search , manage and play anime theme songs. 
 
-## Getting Started
+## Thanks to the community
 
-Credits to Animethemes.moe and AnimeThemes Subreddit community
+Credits to Animethemes.moe and AnimeThemes Subreddit community, Who has been maintaining Anime themes Database for a while now.
 
-Who has been maintaining Anime themes Database for a while now
+Many thanks also goes to Themes.moe who have provided mp3 mirrors of songs.
 
 ## Open Source Project
 
-It is an opensource project I am developing currently Just for fun.
+It is an opensource project I have developed Just for fun.
 
 <p align="center">
   <img src="screenshots/File_00001.png" width="256" height="455">
