@@ -41,25 +41,26 @@ class CurrentPlaying extends StatelessWidget {
               ),
             );
           }
-          return Column(
-            children: [
-              _closeButton(_.stopPlayer),
-              _mediaInfo(_.underPlayer!),
-              _seekBar(_.underPlayer!),
-              PlayerButtons(
-                _.underPlayer!,
-              ),
-              Expanded(
-                child: ReorderableListView.builder(
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _closeButton(_.stopPlayer),
+                _mediaInfo(_.underPlayer!),
+                _seekBar(_.underPlayer!),
+                PlayerButtons(
+                  _.underPlayer!,
+                ),
+                ReorderableListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) =>
                         _mediaInfoFromMediaItem(_.mediaItems[index], index, _),
                     itemCount: _.mediaItems.length,
                     onReorder: (indexA, indexB) {
                       _.moveThemeInPlayer(indexA, indexB);
                     }),
-              )
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -125,7 +126,7 @@ class CurrentPlaying extends StatelessWidget {
 
   Widget _seekBar(AudioPlayer _audioPlayer) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18),
       child: StreamBuilder<Duration?>(
         stream: _audioPlayer.durationStream,
         builder: (_, fullDurationSnap) {
