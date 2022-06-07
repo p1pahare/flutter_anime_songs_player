@@ -126,7 +126,7 @@ class CurrentPlaying extends StatelessWidget {
 
   Widget _seekBar(AudioPlayer _audioPlayer) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
       child: StreamBuilder<Duration?>(
         stream: _audioPlayer.durationStream,
         builder: (_, fullDurationSnap) {

@@ -6,7 +6,7 @@ class SliderThumbShape extends SliderComponentShape {
   /// Create a slider thumb that draws a circle.
 
   const SliderThumbShape({
-    this.enabledThumbRadius = 4.0,
+    this.enabledThumbRadius = 8.0,
     this.disabledThumbRadius,
     this.elevation = 1.0,
     this.pressedElevation = 12.0,
