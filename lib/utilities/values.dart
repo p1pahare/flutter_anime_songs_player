@@ -32,7 +32,7 @@ class Values {
                   const Color.fromARGB(255, 214, 143, 63)))),
       sliderTheme: SliderThemeData(
           overlayShape: SliderComponentShape.noOverlay,
-          trackHeight: 6,
+          trackHeight: 10,
           thumbColor: Colors.white,
           thumbShape: const SliderThumbShape(),
           activeTrackColor: Colors.white),
@@ -81,7 +81,7 @@ class Values {
             backgroundColor: MaterialStateProperty.all(
                 const Color.fromARGB(255, 214, 143, 63)))),
     sliderTheme: SliderThemeData(
-        trackHeight: 6,
+        trackHeight: 10,
         thumbShape: const SliderThumbShape(),
         // trackShape: const RoundSliderTrackShape(radius: 2400),
         overlayShape: SliderComponentShape.noOverlay,
