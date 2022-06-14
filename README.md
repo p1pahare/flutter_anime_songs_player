@@ -4,7 +4,7 @@ A mobile application to play explore , search , manage and play anime theme song
 
 ## Thanks to the community
 
-Credits to Animethemes.moe and AnimeThemes Subreddit community, Who has been maintaining Anime themes Database for a while now.
+Credits to Animethemes.moe and AnimeThemes community, Who has been maintaining Anime themes Database for a while now.
 
 Many thanks also goes to Themes.moe who have provided mp3 mirrors of songs.
 
