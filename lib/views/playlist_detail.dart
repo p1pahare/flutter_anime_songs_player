@@ -84,7 +84,8 @@ class PlaylistDetail extends StatelessWidget {
                                   onPressed: () => _.playCurrentListing(),
                                   icon: Icon(
                                     Icons.play_circle,
-                                    color: Get.theme.textTheme.bodyText1?.color,
+                                    color:
+                                        Get.theme.textTheme.bodyMedium?.color,
                                   ),
                                   label: const Text(Values.playAll))
                             ],

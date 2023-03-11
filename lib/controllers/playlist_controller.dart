@@ -274,7 +274,7 @@ class PlaylistController extends GetxController {
     bool? delete = await Get.defaultDialog<bool>(
         buttonColor: Get.theme.unselectedWidgetColor,
         cancelTextColor: Get.theme.primaryColor,
-        confirmTextColor: Get.theme.textTheme.bodyText2!.color,
+        confirmTextColor: Get.theme.textTheme.bodySmall!.color,
         content: Text(
             "Do you really want to delete playlist '${getReadablePlaylistName(playList[1] ?? '')}' with ${songCount(playList)} ?"),
         onConfirm: () => Get.back(result: true),
@@ -359,17 +359,13 @@ class PlaylistController extends GetxController {
       log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
       log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
-      ApiResponse mp3link = await Get.find<SearchController>().webmToMp3(
-          animeMain.resources.first.externalId.toString(),
-          "${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'}",
-          animethemesMain.animethemeentries.first.videos.first.link);
+
       final AudioEntry _audioEntry = AudioEntry(
           id: animethemesMain.id.toString(),
           album: animeMain.name,
           title: animethemesMain.song.title,
-          url: mp3link.status
-              ? mp3link.data
-              : animethemesMain.animethemeentries.first.videos.first.link,
+          url: Get.find<SearchController>().webmToOgg(
+              animethemesMain.animethemeentries.first.videos.first.link),
           urld: animeMain.images.isEmpty ? '' : animeMain.images.first.link);
       final Map<String, dynamic> songmetadata = {
         'id': themeId,

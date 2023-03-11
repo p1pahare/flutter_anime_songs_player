@@ -197,6 +197,12 @@ class SearchController extends GetxController {
     update();
   }
 
+/* Usage
+           ApiResponse apiResponse = await _.webmToMp3(
+                              animeMain!.resources.first.externalId.toString(),
+                              "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
+                              animethemeentries!.videos.first.link);
+*/
   Future<ApiResponse> webmToMp3(
       String malId, String themeId, String videoUrl) async {
     loadingSong = true;
@@ -206,6 +212,15 @@ class SearchController extends GetxController {
     loadingSong = false;
     update();
     return apiResponse;
+  }
+
+  String webmToOgg(String videoUrl) {
+    final RegExp regex = RegExp(r'\/([^\/]+)$');
+    final Match? match = regex.firstMatch(videoUrl);
+    String fileName = match?.group(1) ?? "";
+    fileName = fileName.replaceFirst(".webm", ".ogg");
+    log(fileName);
+    return "https://a.animethemes.moe/$fileName";
   }
 
   Future<AnimeMain?> slugToMalId(String slug) async {

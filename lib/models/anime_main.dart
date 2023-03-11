@@ -107,8 +107,9 @@ class Song {
 
   Song.fromJson(Map<String, dynamic> json) {
     title = json['title'];
-    artists =
-        List.from(json['artists']).map((e) => Artists.fromJson(e)).toList();
+    artists = List.from(json['artists'] ?? [])
+        .map((e) => Artists.fromJson(e))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -138,7 +139,8 @@ class Animethemeentries {
     episodes = json['episodes']?.toString() ?? '';
     nsfw = json['nsfw'] ?? false;
     spoiler = json['spoiler'] ?? false;
-    videos = List.from(json['videos']).map((e) => Videos.fromJson(e)).toList();
+    videos =
+        List.from(json['videos'] ?? []).map((e) => Videos.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -224,11 +226,11 @@ class Resources {
   Resources.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     link = json['link'];
-    externalId = json['external_id'];
+    externalId = json['external_id'] ?? 0;
     site = json['site'];
     as = json['as']?.toString() ?? '';
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
     deletedAt = json['deleted_at']?.toString() ?? '';
   }
 
@@ -287,8 +289,8 @@ class Studios {
     id = json['id'];
     name = json['name'];
     slug = json['slug'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
     deletedAt = json['deleted_at']?.toString() ?? '';
   }
 

@@ -369,12 +369,12 @@ class NetworkCalls {
     }
   }
 
-  Future<ApiResponse> searchByAnimeyear(int year) async {
+  Future<ApiResponse> searchByAnimeYearSeason(int year, String season) async {
     try {
       final request = http.Request(
           'GET',
           Uri.parse(
-              'https://staging.animethemes.moe/api/animeyear/$year?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title'));
+              'https://api.animethemes.moe/anime?page[size]=15&page[number]=1&filter[season]=$season&filter[year]=$year&sort=name&include=resources,animethemes.animethemeentries.videos,animethemes.song,images'));
 
       http.StreamedResponse response = await request.send();
 

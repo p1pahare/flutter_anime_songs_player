@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
-import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -22,7 +21,7 @@ class SongCardForThemesMalAni extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               border: Border.all(
-                  color: Theme.of(context).textTheme.bodyText1!.color!)),
+                  color: Theme.of(context).textTheme.bodyMedium!.color!)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -86,18 +85,12 @@ class SongCardForThemesMalAni extends StatelessWidget {
                   }
                   return InkWell(
                       onTap: () async {
-                        ApiResponse apiResponse = await _.webmToMp3(
-                            themesMalAni!.malID.toString(),
-                            themes!.themeType,
-                            themes!.mirror.mirrorURL);
                         await Get.find<DashboardController>().init([
                           AudioEntry(
                               id: themes!.themeName,
                               album: themesMalAni!.name,
                               title: themes!.themeName,
-                              url: apiResponse.status
-                                  ? apiResponse.data
-                                  : themes!.mirror.mirrorURL,
+                              url: _.webmToOgg(themes!.mirror.mirrorURL),
                               urld: '')
                         ]);
                       },

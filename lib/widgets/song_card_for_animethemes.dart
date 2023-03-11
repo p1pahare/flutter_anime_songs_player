@@ -4,7 +4,6 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/models/anime_main.dart';
-import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -27,7 +26,7 @@ class SongCardForAnimethemes extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               border: Border.all(
-                  color: Theme.of(context).textTheme.bodyText1!.color!)),
+                  color: Theme.of(context).textTheme.bodyMedium!.color!)),
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -118,19 +117,14 @@ class SongCardForAnimethemes extends StatelessWidget {
                     }
                     return InkWell(
                         onTap: () async {
-                          log("malId ${animeMain!.resources.first.externalId} themeId ${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.first.link}");
-                          ApiResponse apiResponse = await _.webmToMp3(
-                              animeMain!.resources.first.externalId.toString(),
-                              "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
-                              animethemeentries!.videos.first.link);
+                          log("malId ${animeMain!.resources.length} themeId ${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.length}");
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),
                                 album: animeMain!.name,
                                 title: animethemes!.song?.title ?? '',
-                                url: apiResponse.status
-                                    ? apiResponse.data
-                                    : animethemeentries!.videos.first.link,
+                                url: _.webmToOgg(
+                                    animethemeentries!.videos.first.link),
                                 urld: animeMain!.images.isEmpty
                                     ? ''
                                     : animeMain!.images.first.link)

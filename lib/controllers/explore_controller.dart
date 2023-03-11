@@ -52,12 +52,13 @@ class ExploreController extends GetxController
     change(listings,
         status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
     ApiResponse apiResponse;
-    apiResponse = await networkCalls
-        .searchByAnimeyear(yearValuesMap[yearValue] ?? DateTime.now().year);
+    apiResponse = await networkCalls.searchByAnimeYearSeason(
+        yearValuesMap[yearValue] ?? DateTime.now().year,
+        seasonValuesMap[seasonValue]!.toLowerCase());
     if (apiResponse.status) {
       listings = [
         ...listings,
-        ...(apiResponse.data[seasonValuesMap[seasonValue]!.toLowerCase()] ?? [])
+        ...(apiResponse.data["anime"] ?? [])
             .map((e) => AnimeMain.fromJson(e))
             .toList()
       ];
