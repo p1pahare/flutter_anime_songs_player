@@ -70,8 +70,8 @@ class Anime {
     year = json['year'];
     season = json['season'];
     synopsis = json['synopsis'] ?? '';
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
