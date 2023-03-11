@@ -20,11 +20,11 @@ class ResourcesMain {
 
   ResourcesMain.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    link = json['link'];
-    externalId = json['external_id'];
-    site = json['site'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    link = json['link'] ?? '';
+    externalId = json['external_id'] ?? '';
+    site = json['site'] ?? '';
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
     deletedAt = json['deleted_at']?.toString() ?? '';
     anime = List.from(json['anime']).map((e) => Anime.fromJson(e)).toList();
   }

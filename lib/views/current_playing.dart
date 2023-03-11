@@ -2,6 +2,7 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_buttons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -83,7 +84,7 @@ class CurrentPlaying extends StatelessWidget {
                 width: 60,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: NetworkImage(
+                  image: CachedNetworkImageProvider(
                     mediaItem.artUri.toString(),
                   ),
                   fit: BoxFit.cover,
@@ -115,11 +116,11 @@ class CurrentPlaying extends StatelessWidget {
 
   Widget _closeButton(VoidCallback onClose) {
     return TextButton.icon(
-      icon: Icon(Icons.cancel_sharp, color: Get.textTheme.bodyText1!.color),
+      icon: Icon(Icons.cancel_sharp, color: Get.textTheme.bodyMedium!.color),
       onPressed: onClose,
       label: Text(
         Values.closePlayer,
-        style: TextStyle(color: Get.textTheme.bodyText1!.color),
+        style: TextStyle(color: Get.textTheme.bodyMedium!.color),
       ),
     );
   }
@@ -191,7 +192,7 @@ class CurrentPlaying extends StatelessWidget {
                   height: Get.width * 0.65,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       mediaItem.artUri.toString(),
                     ),
                     fit: BoxFit.fill,

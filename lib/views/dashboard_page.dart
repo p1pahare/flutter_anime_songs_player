@@ -4,7 +4,7 @@ import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/playlist_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
+import 'package:fancy_bottom_navigation_2/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -86,7 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
               bottomNavigationBar: FancyBottomNavigation(
                   initialSelection: c.selectedIndex.value,
                   circleColor: Get.theme.primaryColor,
-                  activeIconColor: Get.theme.textTheme.bodyText1!.color,
+                  activeIconColor: Get.theme.textTheme.bodyMedium!.color,
                   barBackgroundColor: Theme.of(context)
                       .bottomNavigationBarTheme
                       .backgroundColor,

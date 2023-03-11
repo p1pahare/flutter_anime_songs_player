@@ -3,17 +3,18 @@ description: A Music Player App which specifically plays Anime Themes
 publish_to: 'none' 
 version: 0.5.20+1
 environment:
-  sdk: ">=2.16.2 <3.0.0"
+  sdk: ">=2.18.6 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
   get: ^4.6.1
   get_storage: ^2.0.3
-  fancy_bottom_navigation: ^0.3.3
+  fancy_bottom_navigation_2: ^0.3.5
   flutter_native_splash: ^2.1.6
   just_audio: ^0.9.21
   just_audio_libwinmedia: ^0.0.4
   just_audio_background: ^0.0.1-beta.5
+  cached_network_image: ^3.2.3
   audio_session: ^0.1.6+1
   http: ^0.13.4
   tap_to_expand: ^0.0.1

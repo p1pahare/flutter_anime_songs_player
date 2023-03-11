@@ -53,7 +53,7 @@ class Values {
             ),
           )),
       textTheme: const TextTheme(
-        bodyText2: TextStyle(
+        bodySmall: TextStyle(
             fontSize: 14.0,
             fontFamily: Values.fontFamilyName,
             color: Colors.white),
@@ -102,7 +102,7 @@ class Values {
       backgroundColor: Colors.white,
     ),
     textTheme: const TextTheme(
-      bodyText2: TextStyle(
+      bodySmall: TextStyle(
           fontSize: 14.0,
           fontFamily: Values.fontFamilyName,
           color: Colors.black),

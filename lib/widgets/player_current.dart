@@ -2,6 +2,7 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -135,7 +136,7 @@ class PlayerCurrent extends StatelessWidget {
                   width: 60,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: NetworkImage(
+                    image: CachedNetworkImageProvider(
                       mediaItem.artUri.toString(),
                     ),
                     fit: BoxFit.cover,
