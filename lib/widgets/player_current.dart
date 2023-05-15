@@ -27,6 +27,9 @@ class PlayerCurrent extends StatelessWidget {
               _closeButton(),
               Expanded(child: _mediaInfo()),
               _playButton(),
+              const SizedBox(
+                width: 4,
+              ),
             ],
           ),
         ),

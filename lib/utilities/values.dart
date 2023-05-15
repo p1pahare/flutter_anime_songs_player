@@ -9,12 +9,16 @@ class Values {
   static const explore = 'Explore';
   static const search = 'Search';
   static const closePlayer = 'Close Player';
+  static const hidePlayer = 'Hide Player';
+  static const showPlayer = 'Show Player';
+  static const playVideo = 'Play Video';
   static const playlist = 'Playlist';
   static const searchBy = 'Search By';
   static const playAll = 'Play All';
   static const noResults = 'No resulting data found';
   static const currentlyPlaying = 'Currently Playing';
   static const fontFamilyName = 'ptsans';
+  static const featureNotAddedYet = 'Feature not Added Yet';
   static const noThemesBeingPlayed =
       'Currently Playing nothing. Please Play from Playlists or add themes to Queue';
   static const takeAScreenShot =

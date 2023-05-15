@@ -85,12 +85,18 @@ class SongCardForThemesMalAni extends StatelessWidget {
                   }
                   return InkWell(
                       onTap: () async {
+                        final songUrl = (await _.webmToMp3(
+                                "${themesMalAni?.malID}",
+                                "${themes?.themeType}",
+                                themes!.mirror.mirrorURL))
+                            .data as String;
+                        log(songUrl);
                         await Get.find<DashboardController>().init([
                           AudioEntry(
                               id: themes!.themeName,
                               album: themesMalAni!.name,
                               title: themes!.themeName,
-                              url: _.webmToOgg(themes!.mirror.mirrorURL),
+                              url: songUrl,
                               urld: '')
                         ]);
                       },

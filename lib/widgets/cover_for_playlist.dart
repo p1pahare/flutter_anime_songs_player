@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import '../controllers/playlist_controller.dart';
 
 class CoverForPlaylist extends StatelessWidget {
-  const CoverForPlaylist({Key? key, this.playlist}) : super(key: key);
+  const CoverForPlaylist({Key? key, this.playlist, required this.playlistIndex})
+      : super(key: key);
   final Map<int, String>? playlist;
+  final int playlistIndex;
   @override
   Widget build(BuildContext context) {
     PlaylistController _pc = Get.find();
@@ -17,7 +19,8 @@ class CoverForPlaylist extends StatelessWidget {
         child: ListTile(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           onTap: () {
-            Get.toNamed(PlaylistDetail.routeName, arguments: playlist);
+            Get.toNamed(PlaylistDetail.routeName,
+                arguments: [playlistIndex, playlist]);
           },
           title: Text(_pc.getReadablePlaylistName(playlist?[1] ?? '')),
           subtitle: Text(_pc.songCount(playlist!)),

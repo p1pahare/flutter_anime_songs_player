@@ -7,7 +7,6 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/theme_holder_for_animemain.dart';
 import 'package:anime_themes_player/widgets/theme_holder_for_animethemesmain.dart';
-import 'package:anime_themes_player/widgets/theme_holder_for_cat.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -103,7 +102,7 @@ class SearchPage extends StatelessWidget {
                       );
                     }
 
-                    return ThemeHolderForCat(cat: controller.listings[index]);
+                    return const SizedBox.shrink();
                   })),
               GetBuilder<SearchController>(
                 init: SearchController(),

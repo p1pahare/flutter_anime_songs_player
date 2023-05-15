@@ -173,10 +173,10 @@ packages:
     dependency: transitive
     description:
       name: ffi
-      sha256: "13a6ccf6a459a125b3fcdb6ec73bd5ff90822e071207c663bfd1f70062d51d18"
+      sha256: ed5337a5660c506388a9f012be0288fb38b49020ce2b45fe1f8b8323fe429f99
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "2.0.2"
   file:
     dependency: transitive
     description:
@@ -189,10 +189,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "704259669b5e9cb24e15c11cfcf02caf5f20d30901b3916d60b6d1c2d647035f"
+      sha256: c24465c112b1a31a37ac450afc2e1f927b7c11599beab93233d7ffb449373fe3
       url: "https://pub.dev"
     source: hosted
-    version: "4.6.1"
+    version: "5.2.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -304,6 +304,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
+  implicitly_animated_reorderable_list_2:
+    dependency: "direct main"
+    description:
+      name: implicitly_animated_reorderable_list_2
+      sha256: bcdf9bfbf78a61f7c4c7a6b53a9e570bf5096592b94e9ad07cbf78b877cd91aa
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   intl:
     dependency: "direct main"
     description:
@@ -336,14 +344,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.1-beta.9"
-  just_audio_libwinmedia:
-    dependency: "direct main"
-    description:
-      name: just_audio_libwinmedia
-      sha256: "66587bbc7a2c46fc7ad5625c97e7f7282bdb3e1daeba1be759fb464cabbf9dc3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4+1"
   just_audio_platform_interface:
     dependency: transitive
     description:
@@ -360,14 +360,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.7"
-  libwinmedia:
-    dependency: transitive
-    description:
-      name: libwinmedia
-      sha256: c9223d9213f99bf498a516079e274eca4982024d46df633ef20a9d8006b5d826
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.7"
   lints:
     dependency: transitive
     description:
@@ -460,10 +452,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_windows
-      sha256: a34ecd7fb548f8e57321fd8e50d865d266941b54e6c3b7758cf8f37c24116905
+      sha256: d3f80b32e83ec208ac95253e0cd4d298e104fbc63cb29c5c69edaed43b0c69d6
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.7"
+    version: "2.1.6"
   pedantic:
     dependency: transitive
     description:
@@ -665,10 +657,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: c0e3a4f7be7dae51d8f152230b86627e3397c1ba8c3fa58e63d44a9f3edc9cef
+      sha256: a6f0236dbda0f63aa9a25ad1ff9a9d8a4eaaa5012da0dc59d21afdb1dc361ca4
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.1"
+    version: "3.1.4"
   xdg_directories:
     dependency: transitive
     description:

@@ -21,7 +21,7 @@ class PlaylistController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
   RxList<Map<int, String>> playlists = RxList.empty();
   GetStorage box = GetStorage();
-  RxList<Map<String, dynamic>> listings = RxList.empty();
+  RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
   final TextEditingController playlistName = TextEditingController();
   initialize() {
@@ -221,6 +221,20 @@ class PlaylistController extends GetxController {
         "Song added to the playlist '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}' Successfully.");
   }
 
+  Future editPlaylistsAndSave(
+      int playlistIndex, String playListId, String playlistName) async {
+    List<String> stringList =
+        listings.map((e) => e.id.padLeft(7, '0')).toList();
+    stringList.insert(0, playListId);
+    stringList.insert(1, playlistName);
+    stringList.insertAll(stringList.length,
+        List.generate(1002 - stringList.length, (index) => '0000000'));
+    playlists[playlistIndex].clear();
+    playlists[playlistIndex].addAll(Map.fromIterables(
+        List.generate(stringList.length, (index) => index), stringList));
+    await writePlayliststoBox();
+  }
+
   Future deleteFromPlayList(String playlistId, String themeId) async {
     if (playlistIsFull(playlistId)) {
       showMessage(
@@ -250,7 +264,7 @@ class PlaylistController extends GetxController {
     }
     playlists[playlistIndex][emptyIndex] = "0000000";
     listings.removeWhere(
-        (element) => element['id'] == int.tryParse(themeId).toString());
+        (element) => element.id == int.tryParse(themeId).toString());
     playlists.refresh();
     await writePlayliststoBox();
     if (listings.isEmpty) {
@@ -311,14 +325,14 @@ class PlaylistController extends GetxController {
     int successCount = 4;
     for (int i = 0; i < themeIds.length; i++) {
       if (box.hasData('theme_${themeIds[i]}')) {
-        listings.add(box.read('theme_${themeIds[i]}'));
+        listings.add(AudioEntry.fromJson(box.read('theme_${themeIds[i]}')));
         continue;
       }
 
       final Map<String, dynamic>? songmetadata =
           await getMetaDataFromThemeID(themeIds[i]);
       if (songmetadata != null) {
-        listings.add(songmetadata);
+        listings.add(AudioEntry.fromJson(songmetadata));
         await writeSongMetaDataToBox(themeIds[i], songmetadata);
       } else {
         successCount--;
@@ -339,9 +353,7 @@ class PlaylistController extends GetxController {
 
   Future playCurrentListing() async {
     if (listings.isNotEmpty) {
-      final List<AudioEntry> audios =
-          listings.map((e) => AudioEntry.fromJson(e['audioentry'])).toList();
-      Get.find<DashboardController>().init(audios);
+      Get.find<DashboardController>().init(listings);
     }
   }
 
@@ -353,28 +365,38 @@ class PlaylistController extends GetxController {
     if (apiResponse.status) {
       final AnimethemesMain animethemesMain =
           AnimethemesMain.fromJson(apiResponse.data['animetheme']);
-      animemain.AnimeMain? animeMain = await Get.find<SearchController>()
-          .slugToMalId(animethemesMain.anime.slug);
-      if (animeMain == null) return null;
-      log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
-      log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
+      if (Platform.isIOS || Platform.isMacOS) {
+        animemain.AnimeMain? animeMain = await Get.find<SearchController>()
+            .slugToMalId(animethemesMain.anime.slug);
+        if (animeMain == null) return null;
+        log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
+        log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
+        final songUrl = (await Get.find<SearchController>().webmToMp3(
+                animeMain.resources.first.externalId.toString(),
+                animethemesMain.slug,
+                animethemesMain.animethemeentries.first.videos.first.link))
+            .data as String;
+        final AudioEntry _audioEntry = AudioEntry(
+            id: animethemesMain.id.toString(),
+            album: animeMain.name,
+            title: animethemesMain.song.title,
+            url: songUrl,
+            urld: animeMain.images.isEmpty ? '' : animeMain.images.first.link);
+
+        return _audioEntry.toJson();
+      }
+      final String songUrl =
+          animethemesMain.animethemeentries.first.videos.first.audio.link;
       final AudioEntry _audioEntry = AudioEntry(
           id: animethemesMain.id.toString(),
-          album: animeMain.name,
+          album: animethemesMain.anime.name,
           title: animethemesMain.song.title,
-          url: Get.find<SearchController>().webmToOgg(
-              animethemesMain.animethemeentries.first.videos.first.link),
-          urld: animeMain.images.isEmpty ? '' : animeMain.images.first.link);
-      final Map<String, dynamic> songmetadata = {
-        'id': themeId,
-        'anime': animeMain.toJson(),
-        'animetheme': animethemesMain.toJson(),
-        'animethemeentry': animethemesMain.animethemeentries.first.toJson(),
-        'audioentry': _audioEntry.toJson()
-      };
-      return songmetadata;
+          url: songUrl,
+          urld: animethemesMain.anime.images.first.link);
+
+      return _audioEntry.toJson();
     } else {
       return null;
     }

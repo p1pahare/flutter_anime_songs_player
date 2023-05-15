@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
@@ -87,7 +88,7 @@ class SongCardForAnimethemes extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          [AudioEntry.fromJson(songmetadata['audioentry'])],
+                          [AudioEntry.fromJson(songmetadata)],
                           addToQueueOnly: true);
                     } else {
                       _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
@@ -118,13 +119,22 @@ class SongCardForAnimethemes extends StatelessWidget {
                     return InkWell(
                         onTap: () async {
                           log("malId ${animeMain!.resources.length} themeId ${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.length}");
+
+                          final songUrl = Platform.isIOS || Platform.isMacOS
+                              ? (await _.webmToMp3(
+                                      animeMain!.resources.first.externalId
+                                          .toString(),
+                                      "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
+                                      animethemeentries!.videos.first.link))
+                                  .data as String
+                              : animethemeentries!.videos.first.audio.link;
+                          log(songUrl);
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),
                                 album: animeMain!.name,
                                 title: animethemes!.song?.title ?? '',
-                                url: _.webmToOgg(
-                                    animethemeentries!.videos.first.link),
+                                url: songUrl,
                                 urld: animeMain!.images.isEmpty
                                     ? ''
                                     : animeMain!.images.first.link)

@@ -175,6 +175,7 @@ class Videos {
   late final String overlap;
   late final String tags;
   late final String link;
+  late final Audio audio;
 
   Videos.fromJson(Map<String, dynamic> json) {
     resolution = json['resolution'] ?? 0;
@@ -186,6 +187,7 @@ class Videos {
     overlap = json['overlap'] ?? '';
     tags = json['tags'];
     link = json['link'];
+    audio = Audio.fromJson(json['audio']);
   }
 
   Map<String, dynamic> toJson() {
@@ -198,6 +200,44 @@ class Videos {
     _data['source'] = source;
     _data['overlap'] = overlap;
     _data['tags'] = tags;
+    _data['link'] = link;
+    _data['audio'] = audio.toJson();
+    return _data;
+  }
+}
+
+class Audio {
+  Audio({
+    required this.id,
+    required this.basename,
+    required this.filename,
+    required this.path,
+    required this.size,
+    required this.link,
+  });
+  late final int id;
+  late final String basename;
+  late final String filename;
+  late final String path;
+  late final int size;
+  late final String link;
+
+  Audio.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    basename = json['basename'];
+    filename = json['filename'];
+    path = json['path'];
+    size = json['size'];
+    link = json['link'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['basename'] = basename;
+    _data['filename'] = filename;
+    _data['path'] = path;
+    _data['size'] = size;
     _data['link'] = link;
     return _data;
   }

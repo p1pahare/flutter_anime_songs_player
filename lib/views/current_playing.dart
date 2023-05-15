@@ -1,16 +1,35 @@
+import 'dart:ui';
+
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_buttons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
+
 import 'package:get/get.dart';
+import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
+import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
-class CurrentPlaying extends StatelessWidget {
+class CurrentPlaying extends StatefulWidget {
   const CurrentPlaying({Key? key}) : super(key: key);
   static const routeName = '/CurrentlyPlaying';
+
+  @override
+  State<CurrentPlaying> createState() => _CurrentPlayingState();
+}
+
+class _CurrentPlayingState extends State<CurrentPlaying> {
+  double minimizeHeight = 0;
+  @override
+  void didChangeDependencies() {
+    minimizeHeight = Get.height * 0.5;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,26 +61,71 @@ class CurrentPlaying extends StatelessWidget {
               ),
             );
           }
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _closeButton(_.stopPlayer),
-                _mediaInfo(_.underPlayer!),
-                _seekBar(_.underPlayer!),
-                PlayerButtons(
-                  _.underPlayer!,
+
+          return Column(
+            children: [
+              _optionButtons(_),
+              AnimatedContainer(
+                  height: minimizeHeight,
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.fastOutSlowIn,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _mediaInfo(_.underPlayer!),
+                        _seekBar(_.underPlayer!),
+                        PlayerButtons(
+                          _.underPlayer!,
+                        ),
+                      ],
+                    ),
+                  )),
+              Expanded(
+                child: ImplicitlyAnimatedReorderableList<MediaItem>(
+                  items: _.mediaItems,
+                  areItemsTheSame: (oldItem, newItem) =>
+                      oldItem.id == newItem.id,
+                  onReorderFinished: (item, from, to, newItems) {
+                    // Remember to update the underlying data when the list has been
+                    // reordered.
+                    _.mediaItems.removeAt(from);
+                    _.mediaItems.insert(to, item);
+                  },
+                  itemBuilder: (context, itemAnimation, item, index) {
+                    // Each item must be wrapped in a Reorderable widget.
+                    return Reorderable(
+                      // Each item must have an unique key.
+                      key: ValueKey(item),
+                      // The animation of the Reorderable builder can be used to
+                      // change to appearance of the item between dragged and normal
+                      // state. For example to add elevation when the item is being dragged.
+                      // This is not to be confused with the animation of the itemBuilder.
+                      // Implicit animations (like AnimatedContainer) are sadly not yet supported.
+                      builder: (context, dragAnimation, inDrag) {
+                        final t = dragAnimation.value;
+                        final elevation = lerpDouble(0, 8, t);
+                        final color = Color.lerp(
+                            Colors.white, Colors.white.withOpacity(0.8), t);
+
+                        return SizeFadeTransition(
+                          sizeFraction: 0.7,
+                          curve: Curves.easeInOut,
+                          animation: itemAnimation,
+                          child: Material(
+                            key: Key(item.id),
+                            color: color,
+                            elevation: elevation ?? 1.0,
+                            type: MaterialType.transparency,
+                            child: _mediaInfoFromMediaItem(item, index, _),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  shrinkWrap: true,
                 ),
-                ReorderableListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) =>
-                        _mediaInfoFromMediaItem(_.mediaItems[index], index, _),
-                    itemCount: _.mediaItems.length,
-                    onReorder: (indexA, indexB) {
-                      _.moveThemeInPlayer(indexA, indexB);
-                    }),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
@@ -80,15 +144,17 @@ class CurrentPlaying extends StatelessWidget {
             padding: const EdgeInsets.only(left: 8.0),
             child: ListTile(
               onTap: () {},
-              leading: Container(
-                width: 60,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                    mediaItem.artUri.toString(),
-                  ),
-                  fit: BoxFit.cover,
-                )),
+              leading: Handle(
+                child: Container(
+                  width: 60,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      mediaItem.artUri.toString(),
+                    ),
+                    fit: BoxFit.cover,
+                  )),
+                ),
               ),
               title: Text(mediaItem.title),
               subtitle: Text(mediaItem.album.toString()),
@@ -114,14 +180,63 @@ class CurrentPlaying extends StatelessWidget {
     );
   }
 
-  Widget _closeButton(VoidCallback onClose) {
-    return TextButton.icon(
-      icon: Icon(Icons.cancel_sharp, color: Get.textTheme.bodyMedium!.color),
-      onPressed: onClose,
-      label: Text(
-        Values.closePlayer,
-        style: TextStyle(color: Get.textTheme.bodyMedium!.color),
-      ),
+  Widget _optionButtons(DashboardController dashboardController) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TextButton.icon(
+          icon: Icon(
+            Icons.cancel_sharp,
+            color: Get.textTheme.bodyMedium!.color,
+            size: 20,
+          ),
+          onPressed: dashboardController.stopPlayer,
+          label: Text(
+            Values.closePlayer,
+            style:
+                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+          ),
+        ),
+        TextButton.icon(
+          icon: Icon(
+            Icons.video_file_sharp,
+            color: Get.textTheme.bodyMedium!.color,
+            size: 20,
+          ),
+          onPressed: () {
+            showMessage(Values.featureNotAddedYet);
+          },
+          label: Text(
+            Values.playVideo,
+            style:
+                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+          ),
+        ),
+        TextButton.icon(
+          icon: Icon(
+            minimizeHeight == 0
+                ? Icons.circle_outlined
+                : Icons.hide_source_sharp,
+            color: Get.textTheme.bodyMedium!.color,
+            size: 20,
+          ),
+          onPressed: () {
+            setState(() {
+              if (minimizeHeight == 0) {
+                minimizeHeight = Get.height * 0.5;
+              } else {
+                minimizeHeight = 0;
+              }
+            });
+          },
+          label: Text(
+            minimizeHeight == 0 ? Values.showPlayer : Values.hidePlayer,
+            style:
+                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+          ),
+        ),
+      ],
     );
   }
 
