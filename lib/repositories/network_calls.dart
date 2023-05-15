@@ -7,42 +7,6 @@ import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkCalls {
-  Future<ApiResponse> getCats({int page = 1}) async {
-    try {
-      var headers = {
-        'x-api-key': 'ef272bbf-4024-4e2b-903e-c617ec7fb8ca',
-      };
-
-      var params = {
-        'size': 'mid',
-        'page': page,
-        'limit': '7',
-      };
-      var query = params.entries.map((p) => '${p.key}=${p.value}').join('&');
-
-      var url = Uri.parse('https://api.thecatapi.com/v1/images/search?$query');
-      var res = await http.get(url, headers: headers);
-      if (res.statusCode != 200) {
-        return ApiResponse(status: false, message: 'Failed to Load Cats');
-      }
-      log(res.body);
-      return ApiResponse.fromJson({
-        "status": true,
-        "message": "Cats were called successfully",
-        "data": jsonDecode(res.body)
-      });
-    } catch (e) {
-      if (e is SocketException) {
-        return ApiResponse(
-            status: false,
-            message:
-                "Network Problem Occurred. Kindly check your internet connection.");
-      } else {
-        return ApiResponse(status: false, message: e.toString());
-      }
-    }
-  }
-
   Future<ApiResponse> searchAnimeMain(String title,
       {bool isUrl = false}) async {
     try {
@@ -50,7 +14,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : 'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : 'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 
       http.StreamedResponse response = await request.send();
 
@@ -86,7 +50,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : 'https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 //&filter[has]=song
       http.StreamedResponse response = await request.send();
 
@@ -340,7 +304,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1'));
+              'https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1'));
 
       http.StreamedResponse response = await request.send();
 
@@ -374,7 +338,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              'https://api.animethemes.moe/anime?page[size]=15&page[number]=1&filter[season]=$season&filter[year]=$year&sort=name&include=resources,animethemes.animethemeentries.videos,animethemes.song,images'));
+              'https://api.animethemes.moe/anime?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images'));
 
       http.StreamedResponse response = await request.send();
 
@@ -408,7 +372,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              'https://staging.animethemes.moe/api/animetheme/$themeId?include=animethemeentries.videos,anime.images,song.artists'));
+              'https://staging.animethemes.moe/api/animetheme/$themeId?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists'));
 
       http.StreamedResponse response = await request.send();
 

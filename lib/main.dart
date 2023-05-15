@@ -63,11 +63,15 @@ class MyApp extends StatelessWidget {
                 );
               });
             case PlaylistDetail.routeName:
-              Map<int, String>? playlist =
-                  settings.arguments as Map<int, String>;
+              int playlistIndex =
+                  ((settings.arguments as List<dynamic>?)?[0] ?? 0);
+              Map<int, String> playlist =
+                  ((settings.arguments as List<dynamic>?)?[1] ?? {});
+
               return CupertinoPageRoute(builder: (context) {
                 return PlaylistDetail(
                   playlist: playlist,
+                  playlistIndex: playlistIndex,
                 );
               });
             case '/':

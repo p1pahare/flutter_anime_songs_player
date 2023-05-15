@@ -71,6 +71,7 @@ class PlaylistPage extends StatelessWidget {
                         itemCount: _pc.playlists.length,
                         itemBuilder: ((context, index) => CoverForPlaylist(
                               playlist: _pc.playlists[index],
+                              playlistIndex: index,
                             ))),
                   )
               ],

@@ -1,19 +1,24 @@
+import 'dart:ui';
+
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
-import 'package:anime_themes_player/models/animethemes_main.dart';
+import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/share_playlist.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
-import 'package:anime_themes_player/widgets/theme_holder_for_animethemesmain.dart';
-// import 'package:anime_themes_player/widgets/theme_holder_for_animethemesmain.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reorderable_list_2.dart';
+import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 
 class PlaylistDetail extends StatelessWidget {
-  const PlaylistDetail({Key? key, this.playlist}) : super(key: key);
+  const PlaylistDetail({Key? key, this.playlist, required this.playlistIndex})
+      : super(key: key);
   final Map<int, String>? playlist;
+  final int playlistIndex;
   static const routeName = '/PlaylistPage';
   @override
   Widget build(BuildContext context) {
@@ -97,38 +102,85 @@ class PlaylistDetail extends StatelessWidget {
                     : (_.status.isError)
                         ? Center(child: Text(_.status.errorMessage ?? ''))
                         : (_.status.isSuccess)
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: (_.listings.length),
-                                itemBuilder: (context, index) {
-                                  return Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      ThemeHolderForAnimethemesMain(
-                                        showOnlyOne: true,
-                                        animethemesMain:
-                                            AnimethemesMain.fromJson(_
-                                                .listings[index]['animetheme']),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: BetterButton(
-                                          onPressed: () {
-                                            playlist1.remove(_.listings[index]
-                                                    ['id']
-                                                .toString()
-                                                .padLeft(7, '0'));
-                                            _.deleteFromPlayList(
-                                                playlist![0].toString(),
-                                                _.listings[index]['id']
-                                                    .toString());
-                                          },
-                                          icon: Icons.cancel_rounded,
+                            ? ImplicitlyAnimatedReorderableList<AudioEntry>(
+                                items: _.listings,
+                                areItemsTheSame: (oldItem, newItem) =>
+                                    oldItem.id == newItem.id,
+                                onReorderFinished: (item, from, to, newItems) {
+                                  // Remember to update the underlying data when the list has been
+                                  // reordered.
+                                  _.listings.removeAt(from);
+                                  _.listings.insert(to, item);
+                                  _.editPlaylistsAndSave(
+                                      0,
+                                      playlist?.values.first ?? '',
+                                      playlist?.values.toList()[1] ?? '');
+                                },
+                                itemBuilder:
+                                    (context, itemAnimation, item, index) {
+                                  // Each item must be wrapped in a Reorderable widget.
+                                  return Reorderable(
+                                    // Each item must have an unique key.
+                                    key: ValueKey(item),
+                                    // The animation of the Reorderable builder can be used to
+                                    // change to appearance of the item between dragged and normal
+                                    // state. For example to add elevation when the item is being dragged.
+                                    // This is not to be confused with the animation of the itemBuilder.
+                                    // Implicit animations (like AnimatedContainer) are sadly not yet supported.
+                                    builder: (context, dragAnimation, inDrag) {
+                                      final t = dragAnimation.value;
+                                      final elevation = lerpDouble(0, 8, t);
+                                      final color = Color.lerp(Colors.white,
+                                          Colors.white.withOpacity(0.8), t);
+
+                                      return SizeFadeTransition(
+                                        sizeFraction: 0.7,
+                                        curve: Curves.easeInOut,
+                                        animation: itemAnimation,
+                                        child: Material(
+                                          key: Key(item.id),
+                                          color: color,
+                                          elevation: elevation ?? 1.0,
+                                          type: MaterialType.transparency,
+                                          child: _mediaInfoFromAudioEntry(
+                                            item,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   );
-                                })
+                                },
+                                shrinkWrap: true,
+                              )
+                            // ListView.builder(
+                            //     shrinkWrap: true,
+                            //     itemCount: (_.listings.length),
+                            //     itemBuilder: (context, index) {
+                            //       return Stack(
+                            //         alignment: Alignment.center,
+                            //         children: [
+                            //           _mediaInfoFromAudioEntry(
+                            //               AudioEntry.fromJson(
+                            //                   _.listings[index])),
+                            //           Align(
+                            //             alignment: Alignment.centerLeft,
+                            //             child: BetterButton(
+                            //               onPressed: () {
+                            //                 playlist1.remove(_.listings[index]
+                            //                         ['id']
+                            //                     .toString()
+                            //                     .padLeft(7, '0'));
+                            //                 _.deleteFromPlayList(
+                            //                     playlist![0].toString(),
+                            //                     _.listings[index]['id']
+                            //                         .toString());
+                            //               },
+                            //               icon: Icons.cancel_rounded,
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       );
+                            //     })
                             : (_.status.isEmpty)
                                 ? const Center(child: Text(Values.noResults))
                                 : const SizedBox(height: 0),
@@ -139,4 +191,42 @@ class PlaylistDetail extends StatelessWidget {
       },
     );
   }
+}
+
+Widget _mediaInfoFromAudioEntry(AudioEntry audioEntry) {
+  return Material(
+    key: ValueKey(audioEntry.id),
+    type: MaterialType.transparency,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: ListTile(
+            onTap: () {},
+            leading: Handle(
+              child: Container(
+                width: 60,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: CachedNetworkImageProvider(
+                    audioEntry.urld.toString(),
+                  ),
+                  fit: BoxFit.cover,
+                )),
+              ),
+            ),
+            title: Text(audioEntry.title),
+            subtitle: Text(audioEntry.album.toString()),
+            trailing: BetterButton(
+              icon: Icons.play_circle_rounded,
+              onPressed: () async {
+                await Get.find<DashboardController>().init([audioEntry]);
+              },
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

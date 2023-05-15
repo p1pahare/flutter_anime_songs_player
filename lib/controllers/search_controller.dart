@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
-import 'package:anime_themes_player/models/democat.dart';
 import 'package:anime_themes_player/models/linksmain.dart';
 import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
@@ -16,7 +15,6 @@ class SearchController extends GetxController {
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
   bool loadingSong = false;
-  List<DemoCat> cats = [];
   LinksMain? linksMain;
   RxList<dynamic> listings = RxList.empty();
   RxStatus status = RxStatus.success();
@@ -24,8 +22,8 @@ class SearchController extends GetxController {
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
-    2: 'MyAnimeList Profile',
-    3: 'Anilist Profile'
+    // 2: 'MyAnimeList Profile',
+    // 3: 'Anilist Profile'
   };
   void changesearchByValue(int? newValue) {
     searchByValue = newValue ?? 0;
@@ -59,27 +57,6 @@ class SearchController extends GetxController {
   ScrollController scroll = ScrollController();
 
   initalizeLoadingStatus() {}
-
-  bringCats({bool reload = false}) async {
-    if (reload) cats.clear();
-    update();
-    ApiResponse apiResponse = await networkCalls.getCats(page: currentIndex);
-    if (apiResponse.status) {
-      cats = [
-        ...cats,
-        ...(apiResponse.data as List<dynamic>)
-            .map((e) => DemoCat.fromJson(e))
-            .toList()
-      ];
-      if (cats.isEmpty) {
-        update();
-      }
-
-      update();
-    } else {
-      update();
-    }
-  }
 
   Future fetchMoreEntries() async {
     log(linksMain?.toJson().toString() ?? '');
@@ -122,7 +99,6 @@ class SearchController extends GetxController {
 
       update();
     }
-
     status = RxStatus.success();
   }
 
@@ -214,14 +190,13 @@ class SearchController extends GetxController {
     return apiResponse;
   }
 
-  String webmToOgg(String videoUrl) {
-    final RegExp regex = RegExp(r'\/([^\/]+)$');
-    final Match? match = regex.firstMatch(videoUrl);
-    String fileName = match?.group(1) ?? "";
-    fileName = fileName.replaceFirst(".webm", ".ogg");
-    log(fileName);
-    return "https://a.animethemes.moe/$fileName";
-  }
+  // String webmToOgg(Videos videoUrl) {
+  //   final RegExp regex = RegExp(r'\/([^\/]+)$');
+  //   final Match? match = regex.firstMatch(videoUrl);
+  //   String fileName = match?.group(1) ?? "";
+  //   fileName = fileName.replaceFirst(".webm", ".ogg");
+  //   return "https://a.animethemes.moe/$fileName";
+  // }
 
   Future<AnimeMain?> slugToMalId(String slug) async {
     loadingSong = true;
@@ -264,7 +239,6 @@ class SearchController extends GetxController {
   void dispose() {
     log("dispose");
     scroll.dispose();
-    cats.clear();
     listings.clear();
     super.dispose();
   }

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
-import 'package:anime_themes_player/models/democat.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -12,7 +11,6 @@ class ExploreController extends GetxController
   NetworkCalls networkCalls = NetworkCalls();
   int currentPage = 0;
   ScrollController scroll = ScrollController();
-  List<DemoCat> cats = [];
   bool loadingSong = false;
   List<AnimeMain> listings = [];
   int seasonValue = (DateTime.now().month - 1) ~/ 3;
@@ -79,7 +77,6 @@ class ExploreController extends GetxController
   void dispose() {
     log("dispose");
     scroll.dispose();
-    cats.clear();
     super.dispose();
   }
 }

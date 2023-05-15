@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
@@ -114,7 +115,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          [AudioEntry.fromJson(songmetadata['audioentry'])],
+                          [AudioEntry.fromJson(songmetadata)],
                           addToQueueOnly: true);
                     } else {
                       _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
@@ -144,21 +145,41 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                     }
                     return InkWell(
                         onTap: () async {
-                          animemain.AnimeMain? animeMain =
-                              await _.slugToMalId(animethemesMain!.anime.slug);
+                          if (Platform.isIOS || Platform.isMacOS) {
+                            animemain.AnimeMain? animeMain = await _
+                                .slugToMalId(animethemesMain!.anime.slug);
+                            log("${animethemesMain?.anime.slug} malId ${animeMain?.resources.first.externalId} themeId ${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.first.link}");
 
-                          log("${animethemesMain?.anime.slug} malId ${animeMain?.resources.first.externalId} themeId ${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.first.link}");
+                            if (animeMain != null) {
+                              final songUrl = (await _.webmToMp3(
+                                      animeMain.resources.first.externalId
+                                          .toString(),
+                                      "${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
+                                      animethemeentries!.videos.first.link))
+                                  .data as String;
 
-                          if (animeMain != null) {
-                            final str = _.webmToOgg(
-                                animethemeentries!.videos.first.link);
-                            log(str);
+                              await Get.find<DashboardController>().init([
+                                AudioEntry(
+                                    id: animethemesMain!.id.toString(),
+                                    album: animethemesMain!.anime.name,
+                                    title: animethemesMain!.song.title,
+                                    url: songUrl,
+                                    urld: animethemesMain!.anime.images.isEmpty
+                                        ? ''
+                                        : animethemesMain!
+                                            .anime.images.first.link)
+                              ]);
+                            }
+                          } else {
+                            final songUrl =
+                                animethemeentries!.videos.first.audio.link;
+                            log(songUrl);
                             await Get.find<DashboardController>().init([
                               AudioEntry(
                                   id: animethemesMain!.id.toString(),
                                   album: animethemesMain!.anime.name,
                                   title: animethemesMain!.song.title,
-                                  url: str,
+                                  url: songUrl,
                                   urld: animethemesMain!.anime.images.isEmpty
                                       ? ''
                                       : animethemesMain!
