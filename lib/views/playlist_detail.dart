@@ -143,8 +143,7 @@ class PlaylistDetail extends StatelessWidget {
                                           elevation: elevation ?? 1.0,
                                           type: MaterialType.transparency,
                                           child: _mediaInfoFromAudioEntry(
-                                            item,
-                                          ),
+                                              context, item),
                                         ),
                                       );
                                     },
@@ -152,35 +151,6 @@ class PlaylistDetail extends StatelessWidget {
                                 },
                                 shrinkWrap: true,
                               )
-                            // ListView.builder(
-                            //     shrinkWrap: true,
-                            //     itemCount: (_.listings.length),
-                            //     itemBuilder: (context, index) {
-                            //       return Stack(
-                            //         alignment: Alignment.center,
-                            //         children: [
-                            //           _mediaInfoFromAudioEntry(
-                            //               AudioEntry.fromJson(
-                            //                   _.listings[index])),
-                            //           Align(
-                            //             alignment: Alignment.centerLeft,
-                            //             child: BetterButton(
-                            //               onPressed: () {
-                            //                 playlist1.remove(_.listings[index]
-                            //                         ['id']
-                            //                     .toString()
-                            //                     .padLeft(7, '0'));
-                            //                 _.deleteFromPlayList(
-                            //                     playlist![0].toString(),
-                            //                     _.listings[index]['id']
-                            //                         .toString());
-                            //               },
-                            //               icon: Icons.cancel_rounded,
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       );
-                            //     })
                             : (_.status.isEmpty)
                                 ? const Center(child: Text(Values.noResults))
                                 : const SizedBox(height: 0),
@@ -191,42 +161,52 @@ class PlaylistDetail extends StatelessWidget {
       },
     );
   }
-}
 
-Widget _mediaInfoFromAudioEntry(AudioEntry audioEntry) {
-  return Material(
-    key: ValueKey(audioEntry.id),
-    type: MaterialType.transparency,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: ListTile(
-            onTap: () {},
-            leading: Handle(
-              child: Container(
-                width: 60,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                    audioEntry.urld.toString(),
-                  ),
-                  fit: BoxFit.cover,
-                )),
+  Widget _mediaInfoFromAudioEntry(BuildContext context, AudioEntry audioEntry) {
+    return Material(
+      key: ValueKey(audioEntry.id),
+      type: MaterialType.transparency,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ListTile(
+              onTap: () {},
+              leading: Handle(
+                child: Container(
+                  width: 60,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      audioEntry.art.toString(),
+                    ),
+                    fit: BoxFit.cover,
+                  )),
+                ),
+              ),
+              title: Text(audioEntry.title),
+              subtitle: Text(audioEntry.album.toString()),
+              trailing: BetterButton(
+                icon: Icons.play_circle_rounded,
+                onPressed: () async {
+                  await Get.find<DashboardController>().init([audioEntry]);
+                },
               ),
             ),
-            title: Text(audioEntry.title),
-            subtitle: Text(audioEntry.album.toString()),
-            trailing: BetterButton(
-              icon: Icons.play_circle_rounded,
-              onPressed: () async {
-                await Get.find<DashboardController>().init([audioEntry]);
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: BetterButton(
+              onPressed: () {
+                Get.find<PlaylistController>().deleteFromPlayList(
+                    playlist?.values.first ?? "", audioEntry.id, context);
               },
+              icon: Icons.cancel_rounded,
             ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

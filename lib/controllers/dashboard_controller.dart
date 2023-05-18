@@ -53,7 +53,7 @@ class DashboardController extends GetxController {
         log("${_playlist.length} is current playlist length");
         if (isPresent == -1) {
           await _playlist.add(AudioSource.uri(
-            Uri.parse(audioEntry.url),
+            Uri.parse(audioEntry.audioUrl),
             tag: MediaItem(
               id: audioEntry.id,
               album: audioEntry.album,

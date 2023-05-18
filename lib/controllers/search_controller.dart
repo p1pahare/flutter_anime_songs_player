@@ -7,8 +7,11 @@ import 'package:anime_themes_player/models/linksmain.dart';
 import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+enum MediaType { audio, video }
 
 class SearchController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
@@ -190,13 +193,10 @@ class SearchController extends GetxController {
     return apiResponse;
   }
 
-  // String webmToOgg(Videos videoUrl) {
-  //   final RegExp regex = RegExp(r'\/([^\/]+)$');
-  //   final Match? match = regex.firstMatch(videoUrl);
-  //   String fileName = match?.group(1) ?? "";
-  //   fileName = fileName.replaceFirst(".webm", ".ogg");
-  //   return "https://a.animethemes.moe/$fileName";
-  // }
+  String fileNameToUrl(String fileName,
+      {MediaType mediaType = MediaType.audio}) {
+    return "${mediaType == MediaType.audio ? Values.audioUrl : Values.videoUrl}/$fileName.${mediaType == MediaType.audio ? "ogg" : "webm"}";
+  }
 
   Future<AnimeMain?> slugToMalId(String slug) async {
     loadingSong = true;

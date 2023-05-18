@@ -96,8 +96,9 @@ class SongCardForThemesMalAni extends StatelessWidget {
                               id: themes!.themeName,
                               album: themesMalAni!.name,
                               title: themes!.themeName,
-                              url: songUrl,
-                              urld: '')
+                              audioUrl: songUrl,
+                              videoUrl: themes!.mirror.mirrorURL,
+                              urlCover: '')
                         ]);
                       },
                       child: const Padding(

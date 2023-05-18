@@ -11,7 +11,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://staging.animethemes.moe/api/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&filter[has]=song&page[size]=15&page[number]=1&q=bakemonogatari",
+					"raw": "${Values.baseUrl}/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug,as&filter[has]=song&page[size]=15&page[number]=1&q=bakemonogatari",
 					"protocol": "https",
 					"host": [
 						"staging",
@@ -87,7 +87,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://staging.animethemes.moe/api/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=bakemonogatari\n",
+					"raw": "${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.song,images,resources&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=bakemonogatari\n",
 					"protocol": "https",
 					"host": [
 						"staging",
@@ -150,7 +150,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://staging.animethemes.moe/api/search?q=Shingeki&fields[search]=animethemes&include[animetheme]=animethemeentries.videos,anime.images,song.artists&include[anime]=resources",
+					"raw": "${Values.baseUrl}/search?q=Shingeki&fields[search]=animethemes&include[animetheme]=animethemeentries.videos,anime.images,song.artists&include[anime]=resources",
 					"protocol": "https",
 					"host": [
 						"staging",
@@ -189,7 +189,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://staging.animethemes.moe/api/anime/shingeki_kyojin_chuugakkou?include=resources",
+					"raw": "${Values.baseUrl}/anime/shingeki_kyojin_chuugakkou?include=resources",
 					"protocol": "https",
 					"host": [
 						"staging",

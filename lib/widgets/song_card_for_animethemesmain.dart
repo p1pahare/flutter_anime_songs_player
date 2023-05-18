@@ -151,39 +151,53 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                             log("${animethemesMain?.anime.slug} malId ${animeMain?.resources.first.externalId} themeId ${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.first.link}");
 
                             if (animeMain != null) {
-                              final songUrl = (await _.webmToMp3(
+                              final audioUrl = (await _.webmToMp3(
                                       animeMain.resources.first.externalId
                                           .toString(),
                                       "${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
                                       animethemeentries!.videos.first.link))
                                   .data as String;
-
+                              String videoUrl = '';
+                              if (animethemeentries != null) {
+                                videoUrl = Get.find<SearchController>()
+                                    .fileNameToUrl(
+                                        animethemeentries!
+                                            .videos.first.audio.filename,
+                                        mediaType: MediaType.video);
+                              }
                               await Get.find<DashboardController>().init([
                                 AudioEntry(
                                     id: animethemesMain!.id.toString(),
                                     album: animethemesMain!.anime.name,
                                     title: animethemesMain!.song.title,
-                                    url: songUrl,
-                                    urld: animethemesMain!.anime.images.isEmpty
-                                        ? ''
-                                        : animethemesMain!
-                                            .anime.images.first.link)
+                                    audioUrl: audioUrl,
+                                    videoUrl: videoUrl,
+                                    urlCover:
+                                        animethemesMain!.anime.images.isEmpty
+                                            ? ''
+                                            : animethemesMain!
+                                                .anime.images.first.link)
                               ]);
                             }
                           } else {
-                            final songUrl =
-                                animethemeentries!.videos.first.audio.link;
-                            log(songUrl);
+                            final audioUrl = _.fileNameToUrl(
+                                animethemeentries!.videos.first.audio.filename);
+                            final videoUrl = _.fileNameToUrl(
+                                animethemeentries!.videos.first.audio.filename,
+                                mediaType: MediaType.video);
+                            log(audioUrl);
                             await Get.find<DashboardController>().init([
                               AudioEntry(
                                   id: animethemesMain!.id.toString(),
                                   album: animethemesMain!.anime.name,
                                   title: animethemesMain!.song.title,
-                                  url: songUrl,
-                                  urld: animethemesMain!.anime.images.isEmpty
-                                      ? ''
-                                      : animethemesMain!
-                                          .anime.images.first.link)
+                                  audioUrl: audioUrl,
+                                  videoUrl: videoUrl,
+                                  urlCover:
+                                      animethemesMain!.anime.images.isEmpty
+                                          ? ''
+                                          : animethemesMain!
+                                              .anime.images.first.link)
                             ]);
                           }
                         },
