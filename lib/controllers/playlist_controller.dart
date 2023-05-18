@@ -235,7 +235,8 @@ class PlaylistController extends GetxController {
     await writePlayliststoBox();
   }
 
-  Future deleteFromPlayList(String playlistId, String themeId) async {
+  Future deleteFromPlayList(
+      String playlistId, String themeId, BuildContext context) async {
     if (playlistIsFull(playlistId)) {
       showMessage(
           "This Playlist is full, Please add this track to another list");
@@ -260,6 +261,21 @@ class PlaylistController extends GetxController {
     if (playlistIndex == -1 || emptyIndex == -1) {
       showMessage(
           "No such entry found '${getReadablePlaylistName(playlists[playlistIndex][1] ?? '')}'.");
+      return;
+    }
+    bool deleteSong = (await Get.defaultDialog<bool>(
+            buttonColor: Get.theme.unselectedWidgetColor,
+            cancelTextColor: Get.theme.primaryColor,
+            confirmTextColor: Get.theme.textTheme.bodySmall!.color,
+            content: const Text(
+                "Do you really want to delete this theme playlist ?"),
+            onConfirm: () => Get.back(result: true, canPop: false),
+            textConfirm: 'Confirm',
+            onCancel: () {})) ??
+        false;
+    if (!deleteSong) {
+      status = RxStatus.success();
+      update(['detail']);
       return;
     }
     playlists[playlistIndex][emptyIndex] = "0000000";
@@ -373,28 +389,39 @@ class PlaylistController extends GetxController {
         log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
         log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
-        final songUrl = (await Get.find<SearchController>().webmToMp3(
+        final audioUrl = (await Get.find<SearchController>().webmToMp3(
                 animeMain.resources.first.externalId.toString(),
                 animethemesMain.slug,
                 animethemesMain.animethemeentries.first.videos.first.link))
             .data as String;
+        final videoUrl = Get.find<SearchController>().fileNameToUrl(
+            animethemesMain.animethemeentries.first.videos.first.audio.filename,
+            mediaType: MediaType.video);
+
         final AudioEntry _audioEntry = AudioEntry(
             id: animethemesMain.id.toString(),
             album: animeMain.name,
             title: animethemesMain.song.title,
-            url: songUrl,
-            urld: animeMain.images.isEmpty ? '' : animeMain.images.first.link);
+            audioUrl: audioUrl,
+            videoUrl: videoUrl,
+            urlCover:
+                animeMain.images.isEmpty ? '' : animeMain.images.first.link);
 
         return _audioEntry.toJson();
       }
-      final String songUrl =
-          animethemesMain.animethemeentries.first.videos.first.audio.link;
+      final String audioUrl = Get.find<SearchController>().fileNameToUrl(
+          animethemesMain.animethemeentries.first.videos.first.audio.filename,
+          mediaType: MediaType.audio);
+      final String videoUrl = Get.find<SearchController>().fileNameToUrl(
+          animethemesMain.animethemeentries.first.videos.first.audio.filename,
+          mediaType: MediaType.video);
       final AudioEntry _audioEntry = AudioEntry(
           id: animethemesMain.id.toString(),
           album: animethemesMain.anime.name,
           title: animethemesMain.song.title,
-          url: songUrl,
-          urld: animethemesMain.anime.images.first.link);
+          audioUrl: audioUrl,
+          videoUrl: videoUrl,
+          urlCover: animethemesMain.anime.images.first.link);
 
       return _audioEntry.toJson();
     } else {

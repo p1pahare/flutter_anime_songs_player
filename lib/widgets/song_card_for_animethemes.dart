@@ -120,22 +120,27 @@ class SongCardForAnimethemes extends StatelessWidget {
                         onTap: () async {
                           log("malId ${animeMain!.resources.length} themeId ${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.length}");
 
-                          final songUrl = Platform.isIOS || Platform.isMacOS
+                          final audioUrl = Platform.isIOS || Platform.isMacOS
                               ? (await _.webmToMp3(
                                       animeMain!.resources.first.externalId
                                           .toString(),
                                       "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
                                       animethemeentries!.videos.first.link))
                                   .data as String
-                              : animethemeentries!.videos.first.audio.link;
-                          log(songUrl);
+                              : _.fileNameToUrl(animethemeentries!
+                                  .videos.first.audio.filename);
+                          log(audioUrl);
+                          final videoUrl = _.fileNameToUrl(
+                              animethemeentries!.videos.first.audio.filename,
+                              mediaType: MediaType.video);
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),
                                 album: animeMain!.name,
                                 title: animethemes!.song?.title ?? '',
-                                url: songUrl,
-                                urld: animeMain!.images.isEmpty
+                                audioUrl: audioUrl,
+                                videoUrl: videoUrl,
+                                urlCover: animeMain!.images.isEmpty
                                     ? ''
                                     : animeMain!.images.first.link)
                           ]);

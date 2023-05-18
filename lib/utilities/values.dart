@@ -3,6 +3,10 @@ import 'package:anime_themes_player/widgets/round_slider_track_shape.dart';
 import 'package:flutter/material.dart';
 
 class Values {
+  static const baseUrl = "https://beta.animethemes.moe/api";
+  static const apiUrl = "https://api.animethemes.moe/anime";
+  static const videoUrl = "https://v.animethemes.moe";
+  static const audioUrl = "https://a.animethemes.moe";
   static const title = "Anime Themes";
   static const nightModeAsset = 'lib/assets/night-mode.png';
   static const dayModeAsset = 'lib/assets/sunny-day.png';
