@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,11 +56,14 @@ class DashboardController extends GetxController {
           await _playlist.add(AudioSource.uri(
             Uri.parse(audioEntry.audioUrl),
             tag: MediaItem(
-              id: audioEntry.id,
-              album: audioEntry.album,
-              title: audioEntry.title,
-              artUri: audioEntry.art,
-            ),
+                id: audioEntry.id,
+                album: audioEntry.album,
+                title: audioEntry.title,
+                artUri: audioEntry.art,
+                extras: {
+                  Values.audio: audioEntry.audioUrl,
+                  Values.video: audioEntry.videoUrl,
+                }),
           ));
         }
       }
@@ -122,9 +126,9 @@ class DashboardController extends GetxController {
     }
   }
 
-  void playFromPlayer(int index) {
+  Future playFromPlayer(int index) async {
     if (playerLoaded) {
-      underPlayer?.seek(Duration.zero, index: index);
+      await underPlayer?.seek(Duration.zero, index: index);
     }
   }
 

@@ -56,10 +56,10 @@ It is an opensource project I have developed Just for fun.
 
 -> Export/Import Playlist backup as QR Code
 
+-> Play Video (Can switch between Audio only and video)
+
 ## Planned Features 
 
-(priority wise)
+~~-> Allowing versions of themes to be added queue and playlists~~
 
--> Play Video
-
--> Allowing versions of themes to be added queue and playlists
+-> maintenance

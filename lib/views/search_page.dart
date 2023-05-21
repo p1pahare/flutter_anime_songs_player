@@ -117,7 +117,11 @@ class SearchPage extends StatelessWidget {
                       : (_.status.isEmpty)
                           ? const Center(child: Text(Values.noResults))
                           : (_.status.isError)
-                              ? Center(child: Text(_.status.errorMessage ?? ''))
+                              ? Center(
+                                  child: Text(
+                                  _.status.errorMessage ?? '',
+                                  textAlign: TextAlign.center,
+                                ))
                               : const SizedBox(
                                   height: 0,
                                 );

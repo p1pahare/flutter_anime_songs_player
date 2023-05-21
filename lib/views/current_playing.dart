@@ -1,8 +1,7 @@
 import 'dart:ui';
-
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/video_payer.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_buttons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -23,10 +22,12 @@ class CurrentPlaying extends StatefulWidget {
 }
 
 class _CurrentPlayingState extends State<CurrentPlaying> {
-  double minimizeHeight = 0;
+  double audioHeight = 0;
+  bool showVideo = false;
+  final GlobalKey<OnlineVideoPlayerState> videoPlayerKey = GlobalKey();
   @override
   void didChangeDependencies() {
-    minimizeHeight = Get.height * 0.5;
+    audioHeight = Get.height * 0.5;
     super.didChangeDependencies();
   }
 
@@ -62,26 +63,48 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             );
           }
 
-          return Column(
-            children: [
-              _optionButtons(_),
-              AnimatedContainer(
-                  height: minimizeHeight,
-                  duration: const Duration(seconds: 2),
-                  curve: Curves.fastOutSlowIn,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _mediaInfo(_.underPlayer!),
-                        _seekBar(_.underPlayer!),
-                        PlayerButtons(
-                          _.underPlayer!,
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _optionButtons(_),
+                if (!showVideo)
+                  AnimatedContainer(
+                      height: audioHeight,
+                      duration: const Duration(seconds: 2),
+                      curve: Curves.fastOutSlowIn,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _mediaInfo(_.underPlayer!),
+                            _seekBar(_.underPlayer!),
+                            PlayerButtons(
+                              _.underPlayer!,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )),
-              Expanded(
-                child: ImplicitlyAnimatedReorderableList<MediaItem>(
+                      )),
+                if (showVideo)
+                  AnimatedContainer(
+                      height: audioHeight,
+                      duration: const Duration(seconds: 2),
+                      curve: Curves.fastOutSlowIn,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            SizedBox(
+                              height: Get.height * 0.01,
+                            ),
+                            OnlineVideoPlayer(
+                              key: videoPlayerKey,
+                            ),
+                            _mediaInfo(_.underPlayer!, withoutImage: true),
+                          ],
+                        ),
+                      )),
+                ImplicitlyAnimatedReorderableList<MediaItem>(
                   items: _.mediaItems,
                   areItemsTheSame: (oldItem, newItem) =>
                       oldItem.id == newItem.id,
@@ -124,8 +147,8 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                   },
                   shrinkWrap: true,
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -160,8 +183,11 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
               subtitle: Text(mediaItem.album.toString()),
               trailing: BetterButton(
                 icon: Icons.play_circle_rounded,
-                onPressed: () {
-                  _controller.playFromPlayer(index);
+                onPressed: () async {
+                  await _controller.playFromPlayer(index);
+                  if (showVideo) {
+                    videoPlayerKey.currentState?.setDataSource(index: index);
+                  }
                 },
               ),
             ),
@@ -181,62 +207,74 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
   }
 
   Widget _optionButtons(DashboardController dashboardController) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        TextButton.icon(
-          icon: Icon(
-            Icons.cancel_sharp,
-            color: Get.textTheme.bodyMedium!.color,
-            size: 20,
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextButton.icon(
+            icon: Icon(
+              Icons.cancel_sharp,
+              color: Get.textTheme.bodyMedium!.color,
+              size: 20,
+            ),
+            onPressed: dashboardController.stopPlayer,
+            label: Text(
+              Values.closePlayer,
+              style: TextStyle(
+                  color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            ),
           ),
-          onPressed: dashboardController.stopPlayer,
-          label: Text(
-            Values.closePlayer,
-            style:
-                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
-          ),
-        ),
-        TextButton.icon(
-          icon: Icon(
-            Icons.video_file_sharp,
-            color: Get.textTheme.bodyMedium!.color,
-            size: 20,
-          ),
-          onPressed: () {
-            showMessage(Values.featureNotAddedYet);
-          },
-          label: Text(
-            Values.playVideo,
-            style:
-                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
-          ),
-        ),
-        TextButton.icon(
-          icon: Icon(
-            minimizeHeight == 0
-                ? Icons.circle_outlined
-                : Icons.hide_source_sharp,
-            color: Get.textTheme.bodyMedium!.color,
-            size: 20,
-          ),
-          onPressed: () {
-            setState(() {
-              if (minimizeHeight == 0) {
-                minimizeHeight = Get.height * 0.5;
+          TextButton.icon(
+            icon: Icon(
+              !showVideo ? Icons.video_file_sharp : Icons.audio_file_sharp,
+              color: Get.textTheme.bodyMedium!.color,
+              size: 20,
+            ),
+            onPressed: () async {
+              setState(() {
+                showVideo = !showVideo;
+              });
+              if (showVideo) {
+                await dashboardController.underPlayer?.pause();
               } else {
-                minimizeHeight = 0;
+                await dashboardController.underPlayer
+                    ?.seek(videoPlayerKey.currentState?.currentPosition);
+                await dashboardController.underPlayer?.play();
               }
-            });
-          },
-          label: Text(
-            minimizeHeight == 0 ? Values.showPlayer : Values.hidePlayer,
-            style:
-                TextStyle(color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            },
+            label: Text(
+              !showVideo ? Values.switchToVideo : Values.switchToAudio,
+              style: TextStyle(
+                  color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            ),
           ),
-        ),
-      ],
+          TextButton.icon(
+            icon: Icon(
+              audioHeight == 0
+                  ? Icons.circle_outlined
+                  : Icons.hide_source_sharp,
+              color: Get.textTheme.bodyMedium!.color,
+              size: 20,
+            ),
+            onPressed: () {
+              setState(() {
+                if (audioHeight == 0) {
+                  audioHeight = Get.height * 0.5;
+                } else {
+                  audioHeight = 0;
+                }
+              });
+            },
+            label: Text(
+              audioHeight == 0 ? Values.showPlayer : Values.hidePlayer,
+              style: TextStyle(
+                  color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -283,7 +321,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
     );
   }
 
-  Widget _mediaInfo(AudioPlayer _audioPlayer) {
+  Widget _mediaInfo(AudioPlayer _audioPlayer, {bool withoutImage = false}) {
     return StreamBuilder<int?>(
         stream: _audioPlayer.currentIndexStream,
         builder: (context, indexShot) {
@@ -300,29 +338,34 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
               );
             }
             final mediaItem = _currentSource.sequence.first.tag as MediaItem;
-            return Column(
-              children: [
-                Container(
-                  width: Get.width * 0.85,
-                  height: Get.width * 0.65,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      mediaItem.artUri.toString(),
+            return Padding(
+              padding:
+                  withoutImage ? const EdgeInsets.all(16.0) : EdgeInsets.zero,
+              child: Column(
+                children: [
+                  if (!withoutImage)
+                    Container(
+                      width: Get.width * 0.85,
+                      height: Get.width * 0.65,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        image: CachedNetworkImageProvider(
+                          mediaItem.artUri.toString(),
+                        ),
+                        fit: BoxFit.fill,
+                      )),
                     ),
-                    fit: BoxFit.fill,
-                  )),
-                ),
-                Text(
-                  mediaItem.title,
-                  style: const TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  mediaItem.album.toString(),
-                  maxLines: 2,
-                ),
-              ],
+                  Text(
+                    mediaItem.title,
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.w700),
+                  ),
+                  Text(
+                    mediaItem.album.toString(),
+                    maxLines: 2,
+                  ),
+                ],
+              ),
             );
           }
         });
