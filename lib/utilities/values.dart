@@ -15,10 +15,13 @@ class Values {
   static const closePlayer = 'Close Player';
   static const hidePlayer = 'Hide Player';
   static const showPlayer = 'Show Player';
-  static const playVideo = 'Play Video';
+  static const switchToVideo = 'Switch to Video';
+  static const switchToAudio = 'Switch to Audio';
   static const playlist = 'Playlist';
   static const searchBy = 'Search By';
   static const playAll = 'Play All';
+  static const audio = 'audio';
+  static const video = 'video';
   static const noResults = 'No resulting data found';
   static const currentlyPlaying = 'Currently Playing';
   static const fontFamilyName = 'ptsans';

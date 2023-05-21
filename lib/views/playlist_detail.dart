@@ -100,7 +100,11 @@ class PlaylistDetail extends StatelessWidget {
                 child: (_.status.isLoading || _.status.isLoadingMore)
                     ? const Center(child: ProgressIndicatorButton())
                     : (_.status.isError)
-                        ? Center(child: Text(_.status.errorMessage ?? ''))
+                        ? Center(
+                            child: Text(
+                            _.status.errorMessage ?? '',
+                            textAlign: TextAlign.center,
+                          ))
                         : (_.status.isSuccess)
                             ? ImplicitlyAnimatedReorderableList<AudioEntry>(
                                 items: _.listings,

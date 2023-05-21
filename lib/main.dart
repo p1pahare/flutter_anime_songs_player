@@ -9,6 +9,7 @@ import 'package:anime_themes_player/views/playlist_detail.dart';
 import 'package:anime_themes_player/views/share_playlist.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_meedu_videoplayer/meedu_player.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -21,6 +22,7 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
+  initMeeduPlayer(iosUseMediaKit: true, androidUseMediaKit: true);
   runApp(const MyApp());
 }
 
