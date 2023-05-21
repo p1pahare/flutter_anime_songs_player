@@ -58,7 +58,7 @@ It is an opensource project I have developed Just for fun.
 
 -> Play Video (Can switch between Audio only and video)
 
--> Android Apk can be downloaded from releases Folder
+-> Android Apk can be downloaded from [Here](https://app.box.com/s/6bu50l7xsp0go9u3rxjeruic2974qwuw)
 
 ## Planned Features 
 
