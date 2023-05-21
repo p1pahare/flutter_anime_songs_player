@@ -58,6 +58,8 @@ It is an opensource project I have developed Just for fun.
 
 -> Play Video (Can switch between Audio only and video)
 
+-> Android Apk can be downloaded from releases Folder
+
 ## Planned Features 
 
 ~~-> Allowing versions of themes to be added queue and playlists~~
