@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/views/video_payer.dart';
+import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_buttons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,6 +28,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
   @override
   void didChangeDependencies() {
     audioHeight = Get.height * 0.5;
+    Get.put<GlobalKey<OnlineVideoPlayerState>>(videoPlayerKey);
     super.didChangeDependencies();
   }
 
@@ -94,13 +95,14 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            SizedBox(
-                              height: Get.height * 0.01,
-                            ),
                             OnlineVideoPlayer(
                               key: videoPlayerKey,
                             ),
                             _mediaInfo(_.underPlayer!, withoutImage: true),
+                            PlayerButtons(
+                              _.underPlayer!,
+                              videoMode: true,
+                            ),
                           ],
                         ),
                       )),
