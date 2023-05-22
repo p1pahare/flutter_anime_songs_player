@@ -32,6 +32,7 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
     _currentPositionSubs = _controller.onPositionChanged.listen(
       (Duration position) {
         currentPosition = position;
+        nextTrack(auto: true);
       },
     );
 
@@ -39,6 +40,27 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setDataSource();
     });
+  }
+
+  Future nextTrack({bool auto = false}) async {
+    final Duration fullLength = _controller.duration.value;
+    if (!auto || (fullLength == currentPosition && fullLength.inSeconds != 0)) {
+      if (Get.find<DashboardController>().underPlayer?.hasNext ?? false) {
+        await Get.find<DashboardController>().underPlayer?.seekToNext();
+        await Future.delayed(const Duration(seconds: 1));
+        await setDataSource(
+            index: Get.find<DashboardController>().underPlayer?.currentIndex);
+      }
+    }
+  }
+
+  Future previousTrack() async {
+    if (Get.find<DashboardController>().underPlayer?.hasPrevious ?? false) {
+      await Get.find<DashboardController>().underPlayer?.seekToPrevious();
+      await Future.delayed(const Duration(seconds: 1));
+      await setDataSource(
+          index: Get.find<DashboardController>().underPlayer?.currentIndex);
+    }
   }
 
   @override
@@ -72,7 +94,7 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Get.height * 0.36,
+      height: Get.height * 0.32,
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: MeeduVideoPlayer(

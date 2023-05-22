@@ -1,11 +1,14 @@
+import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
 class PlayerButtons extends StatelessWidget {
-  const PlayerButtons(this._audioPlayer, {Key? key}) : super(key: key);
+  const PlayerButtons(this._audioPlayer, {Key? key, this.videoMode = false})
+      : super(key: key);
   final AudioPlayer _audioPlayer;
-
+  final bool videoMode;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -27,20 +30,21 @@ class PlayerButtons extends StatelessWidget {
                   return _previousButton();
                 },
               ),
-              StreamBuilder<PlayerState>(
-                stream: _audioPlayer.playerStateStream,
-                builder: (_, snapshot) {
-                  final playerState = snapshot.data;
-                  if (playerState == null) {
-                    return const SizedBox(
-                      height: 0,
-                      width: 0,
-                    );
-                  } else {
-                    return _playPauseButton(playerState);
-                  }
-                },
-              ),
+              if (!videoMode)
+                StreamBuilder<PlayerState>(
+                  stream: _audioPlayer.playerStateStream,
+                  builder: (_, snapshot) {
+                    final playerState = snapshot.data;
+                    if (playerState == null) {
+                      return const SizedBox(
+                        height: 0,
+                        width: 0,
+                      );
+                    } else {
+                      return _playPauseButton(playerState);
+                    }
+                  },
+                ),
               StreamBuilder<SequenceState?>(
                 stream: _audioPlayer.sequenceStateStream,
                 builder: (_, __) {
@@ -114,14 +118,30 @@ class PlayerButtons extends StatelessWidget {
   Widget _previousButton() {
     return IconButton(
       icon: const Icon(Icons.skip_previous),
-      onPressed: _audioPlayer.hasPrevious ? _audioPlayer.seekToPrevious : null,
+      onPressed: () {
+        if (videoMode) {
+          Get.find<GlobalKey<OnlineVideoPlayerState>>()
+              .currentState
+              ?.previousTrack();
+        } else {
+          if (_audioPlayer.hasPrevious) _audioPlayer.seekToPrevious();
+        }
+      },
     );
   }
 
   Widget _nextButton() {
     return IconButton(
       icon: const Icon(Icons.skip_next),
-      onPressed: _audioPlayer.hasNext ? _audioPlayer.seekToNext : null,
+      onPressed: () {
+        if (videoMode) {
+          Get.find<GlobalKey<OnlineVideoPlayerState>>()
+              .currentState
+              ?.nextTrack();
+        } else {
+          if (_audioPlayer.hasNext) _audioPlayer.seekToNext();
+        }
+      },
     );
   }
 
