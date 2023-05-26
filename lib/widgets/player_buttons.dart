@@ -1,3 +1,4 @@
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class PlayerButtons extends StatelessWidget {
       : super(key: key);
   final AudioPlayer _audioPlayer;
   final bool videoMode;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -118,13 +120,18 @@ class PlayerButtons extends StatelessWidget {
   Widget _previousButton() {
     return IconButton(
       icon: const Icon(Icons.skip_previous),
-      onPressed: () {
-        if (videoMode) {
-          Get.find<GlobalKey<OnlineVideoPlayerState>>()
-              .currentState
-              ?.previousTrack();
-        } else {
-          if (_audioPlayer.hasPrevious) _audioPlayer.seekToPrevious();
+      onPressed: () async {
+        if (_audioPlayer.hasPrevious) {
+          if (videoMode) {
+            Get.find<DashboardController>().setVideoLoadingStatus(true);
+          }
+          await _audioPlayer.seekToPrevious();
+          if (videoMode) {
+            await Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.setDataSource(index: _audioPlayer.currentIndex);
+            Get.find<DashboardController>().setVideoLoadingStatus(false);
+          }
         }
       },
     );
@@ -133,13 +140,18 @@ class PlayerButtons extends StatelessWidget {
   Widget _nextButton() {
     return IconButton(
       icon: const Icon(Icons.skip_next),
-      onPressed: () {
-        if (videoMode) {
-          Get.find<GlobalKey<OnlineVideoPlayerState>>()
-              .currentState
-              ?.nextTrack();
-        } else {
-          if (_audioPlayer.hasNext) _audioPlayer.seekToNext();
+      onPressed: () async {
+        if (_audioPlayer.hasNext) {
+          if (videoMode) {
+            Get.find<DashboardController>().setVideoLoadingStatus(true);
+          }
+          await _audioPlayer.seekToNext();
+          if (videoMode) {
+            await Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.setDataSource(index: _audioPlayer.currentIndex);
+            Get.find<DashboardController>().setVideoLoadingStatus(false);
+          }
         }
       },
     );

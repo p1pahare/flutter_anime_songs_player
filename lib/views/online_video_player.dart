@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
 import 'package:get/get.dart';
@@ -27,12 +28,12 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
   @override
   void initState() {
     super.initState();
-
+    Get.find<DashboardController>().setVideoLoadingStatus(false);
     // Listen to the video position changes and save the current position.
     _currentPositionSubs = _controller.onPositionChanged.listen(
       (Duration position) {
         currentPosition = position;
-        nextTrack(auto: true);
+        autoNextTrack();
       },
     );
 
@@ -42,24 +43,14 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
     });
   }
 
-  Future nextTrack({bool auto = false}) async {
+  Future autoNextTrack() async {
     final Duration fullLength = _controller.duration.value;
-    if (!auto || (fullLength == currentPosition && fullLength.inSeconds != 0)) {
+    if (fullLength == currentPosition && fullLength.inSeconds != 0) {
       if (Get.find<DashboardController>().underPlayer?.hasNext ?? false) {
         await Get.find<DashboardController>().underPlayer?.seekToNext();
-        await Future.delayed(const Duration(seconds: 1));
         await setDataSource(
             index: Get.find<DashboardController>().underPlayer?.currentIndex);
       }
-    }
-  }
-
-  Future previousTrack() async {
-    if (Get.find<DashboardController>().underPlayer?.hasPrevious ?? false) {
-      await Get.find<DashboardController>().underPlayer?.seekToPrevious();
-      await Future.delayed(const Duration(seconds: 1));
-      await setDataSource(
-          index: Get.find<DashboardController>().underPlayer?.currentIndex);
     }
   }
 
@@ -93,14 +84,20 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    DashboardController dashboardController = Get.find();
     return SizedBox(
-      height: Get.height * 0.32,
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: MeeduVideoPlayer(
-          controller: _controller,
-        ),
-      ),
-    );
+        height: Get.height * 0.32,
+        child: GetBuilder<DashboardController>(
+          id: "video",
+          init: dashboardController,
+          builder: (controller) => dashboardController.isVideoLoading.isTrue
+              ? const Center(child: ProgressIndicatorButton())
+              : AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: MeeduVideoPlayer(
+                    controller: _controller,
+                  ),
+                ),
+        ));
   }
 }
