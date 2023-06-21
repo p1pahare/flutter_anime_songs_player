@@ -123,6 +123,7 @@ class PlayerButtons extends StatelessWidget {
       onPressed: () async {
         if (_audioPlayer.hasPrevious) {
           if (videoMode) {
+            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.pause();
             Get.find<DashboardController>().setVideoLoadingStatus(true);
           }
           await _audioPlayer.seekToPrevious();
@@ -130,6 +131,7 @@ class PlayerButtons extends StatelessWidget {
             await Get.find<GlobalKey<OnlineVideoPlayerState>>()
                 .currentState
                 ?.setDataSource(index: _audioPlayer.currentIndex);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.play();
             Get.find<DashboardController>().setVideoLoadingStatus(false);
           }
         }
@@ -143,6 +145,7 @@ class PlayerButtons extends StatelessWidget {
       onPressed: () async {
         if (_audioPlayer.hasNext) {
           if (videoMode) {
+            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.pause();
             Get.find<DashboardController>().setVideoLoadingStatus(true);
           }
           await _audioPlayer.seekToNext();
@@ -150,6 +153,7 @@ class PlayerButtons extends StatelessWidget {
             await Get.find<GlobalKey<OnlineVideoPlayerState>>()
                 .currentState
                 ?.setDataSource(index: _audioPlayer.currentIndex);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.play();
             Get.find<DashboardController>().setVideoLoadingStatus(false);
           }
         }

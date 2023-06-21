@@ -24,12 +24,16 @@ class CurrentPlaying extends StatefulWidget {
 class _CurrentPlayingState extends State<CurrentPlaying> {
   double audioHeight = 0;
   bool showVideo = false;
-  final GlobalKey<OnlineVideoPlayerState> videoPlayerKey = GlobalKey();
+
   @override
   void didChangeDependencies() {
     audioHeight = Get.height * 0.5;
-    Get.put<GlobalKey<OnlineVideoPlayerState>>(videoPlayerKey);
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -96,7 +100,8 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             OnlineVideoPlayer(
-                              key: videoPlayerKey,
+                              key:
+                                  Get.find<GlobalKey<OnlineVideoPlayerState>>(),
                             ),
                             _mediaInfo(_.underPlayer!, withoutImage: true),
                             PlayerButtons(
@@ -188,7 +193,9 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                 onPressed: () async {
                   await _controller.playFromPlayer(index);
                   if (showVideo) {
-                    videoPlayerKey.currentState?.setDataSource(index: index);
+                    Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                        .currentState
+                        ?.setDataSource(index: index);
                   }
                 },
               ),
@@ -241,8 +248,10 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
               if (showVideo) {
                 await dashboardController.underPlayer?.pause();
               } else {
-                await dashboardController.underPlayer
-                    ?.seek(videoPlayerKey.currentState?.currentPosition);
+                await dashboardController.underPlayer?.seek(
+                    Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                        .currentState
+                        ?.currentPosition);
                 await dashboardController.underPlayer?.play();
               }
             },

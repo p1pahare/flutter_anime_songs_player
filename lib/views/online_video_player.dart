@@ -54,6 +54,10 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
     }
   }
 
+  void pause() => _controller.pause();
+
+  void play() => _controller.play();
+
   @override
   void dispose() {
     _currentPositionSubs?.cancel(); // cancel the subscription
