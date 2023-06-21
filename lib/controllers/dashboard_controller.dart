@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,13 +19,14 @@ class DashboardController extends GetxController {
   List<MediaItem> get mediaItems => _playlist.children
       .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
       .toList();
+  final GlobalKey<OnlineVideoPlayerState> videoPlayerKey = GlobalKey();
   initialize() {
     box = GetStorage();
     darkMode = box.read<bool>('dark_mode') ?? false;
     selectedIndex.value = box.read<int>('selected_index') ?? 0;
     changeDarkMode(darkMode);
     initializedWidgets = true;
-
+    Get.put<GlobalKey<OnlineVideoPlayerState>>(videoPlayerKey);
     log("initialized");
   }
 
@@ -45,6 +47,7 @@ class DashboardController extends GetxController {
 
   setVideoLoadingStatus(bool loading) {
     isVideoLoading = loading.obs;
+
     update(["video"]);
   }
 
