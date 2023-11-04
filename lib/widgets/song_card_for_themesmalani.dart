@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -68,8 +68,8 @@ class SongCardForThemesMalAni extends StatelessWidget {
                       Icons.playlist_add,
                     ),
                   )),
-              GetBuilder<SearchController>(
-                init: SearchController(),
+              GetBuilder<sc.SearchController>(
+                init: sc.SearchController(),
                 initState: (_) {},
                 builder: (_) {
                   if (_.loadingSong) {

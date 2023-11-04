@@ -170,25 +170,91 @@ class Animethemeentries {
 
 class Videos {
   Videos({
+    required this.id,
+    required this.basename,
+    required this.filename,
+    required this.path,
+    required this.size,
+    required this.mimetype,
+    required this.resolution,
+    required this.nc,
+    required this.subbed,
+    required this.lyrics,
+    required this.uncen,
+    required this.source,
+    required this.overlap,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.deletedAt,
     required this.tags,
     required this.link,
     required this.audio,
   });
-  late final String tags;
+  late final int? id;
+  late final String? basename;
+  late final String filename;
+  late final String? path;
+  late final int? size;
+  late final String? mimetype;
+  late final int? resolution;
+  late final bool? nc;
+  late final bool? subbed;
+  late final bool? lyrics;
+  late final bool? uncen;
+  late final String? source;
+  late final String? overlap;
+  late final String? createdAt;
+  late final String? updatedAt;
+  late final String? deletedAt;
+  late final String? tags;
   late final String link;
-  late final Audio audio;
+  late final Audio? audio;
 
   Videos.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    basename = json['basename'];
+    filename = json['filename'];
+    path = json['path'];
+    size = json['size'];
+    mimetype = json['mimetype'];
+    resolution = json['resolution'];
+    nc = json['nc'];
+    subbed = json['subbed'];
+    lyrics = json['lyrics'];
+    uncen = json['uncen'];
+    source = json['source'];
+    overlap = json['overlap'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    deletedAt = json['deleted_at'];
     tags = json['tags'];
     link = json['link'];
-    audio = Audio.fromJson(json['audio']);
+    if (json['audio'] != null) {
+      audio = Audio.fromJson(json['audio']);
+    }
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['basename'] = basename;
+    _data['filename'] = filename;
+    _data['path'] = path;
+    _data['size'] = size;
+    _data['mimetype'] = mimetype;
+    _data['resolution'] = resolution;
+    _data['nc'] = nc;
+    _data['subbed'] = subbed;
+    _data['lyrics'] = lyrics;
+    _data['uncen'] = uncen;
+    _data['source'] = source;
+    _data['overlap'] = overlap;
+    _data['created_at'] = createdAt;
+    _data['updated_at'] = updatedAt;
+    _data['deleted_at'] = deletedAt;
     _data['tags'] = tags;
     _data['link'] = link;
-    _data['audio'] = audio.toJson();
+    _data['audio'] = audio?.toJson();
     return _data;
   }
 }
