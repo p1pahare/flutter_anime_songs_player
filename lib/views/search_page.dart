@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/utilities/values.dart';
@@ -15,7 +15,7 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<SearchController>();
+    final controller = Get.find<sc.SearchController>();
     return SizedBox(
       height: Get.height,
       child: Center(
@@ -27,8 +27,8 @@ class SearchPage extends StatelessWidget {
               Container(
                 height: 130,
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: GetBuilder<SearchController>(
-                  init: SearchController(),
+                child: GetBuilder<sc.SearchController>(
+                  init: sc.SearchController(),
                   initState: (_) {},
                   builder: (_) {
                     return Column(
@@ -104,8 +104,8 @@ class SearchPage extends StatelessWidget {
 
                     return const SizedBox.shrink();
                   })),
-              GetBuilder<SearchController>(
-                init: SearchController(),
+              GetBuilder<sc.SearchController>(
+                init: sc.SearchController(),
                 initState: (_) {},
                 builder: (_) {
                   log(_.status.isLoadingMore.toString());

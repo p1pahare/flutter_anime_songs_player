@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime_main.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
@@ -128,8 +128,8 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                       Icons.playlist_add,
                     ),
                   )),
-              GetBuilder<SearchController>(
-                  init: SearchController(),
+              GetBuilder<sc.SearchController>(
+                  init: sc.SearchController(),
                   initState: (_) {},
                   builder: (_) {
                     if (_.loadingSong) {
@@ -159,11 +159,11 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                                   .data as String;
                               String videoUrl = '';
                               if (animethemeentries != null) {
-                                videoUrl = Get.find<SearchController>()
+                                videoUrl = Get.find<sc.SearchController>()
                                     .fileNameToUrl(
                                         animethemeentries!
-                                            .videos.first.audio.filename,
-                                        mediaType: MediaType.video);
+                                            .videos.first.filename,
+                                        mediaType: sc.MediaType.video);
                               }
                               await Get.find<DashboardController>().init([
                                 AudioEntry(
@@ -181,10 +181,10 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                             }
                           } else {
                             final audioUrl = _.fileNameToUrl(
-                                animethemeentries!.videos.first.audio.filename);
+                                animethemeentries!.videos.first.filename);
                             final videoUrl = _.fileNameToUrl(
-                                animethemeentries!.videos.first.audio.filename,
-                                mediaType: MediaType.video);
+                                animethemeentries!.videos.first.filename,
+                                mediaType: sc.MediaType.video);
                             log(audioUrl);
                             await Get.find<DashboardController>().init([
                               AudioEntry(

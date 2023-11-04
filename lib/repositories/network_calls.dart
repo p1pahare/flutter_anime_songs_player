@@ -51,7 +51,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link,filename&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 //&filter[has]=song
       http.StreamedResponse response = await request.send();
 
@@ -337,7 +337,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              '${Values.apiUrl}?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images'));
+              '${Values.baseUrl}/anime?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images'));
 
       http.StreamedResponse response = await request.send();
 
@@ -371,8 +371,8 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              '${Values.baseUrl}/animetheme/$themeId?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists'));
-
+              '${Values.baseUrl}/animetheme/$themeId?include=animethemeentries.videos,anime.images,song.artists'));
+      //,animethemeentries.videos.audio
       http.StreamedResponse response = await request.send();
 
       if (response.statusCode == 200) {

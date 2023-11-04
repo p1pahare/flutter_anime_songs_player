@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
@@ -101,8 +101,8 @@ class SongCardForAnimethemes extends StatelessWidget {
                       Icons.playlist_add,
                     ),
                   )),
-              GetBuilder<SearchController>(
-                  init: SearchController(),
+              GetBuilder<sc.SearchController>(
+                  init: sc.SearchController(),
                   initState: (_) {},
                   builder: (_) {
                     if (_.loadingSong) {
@@ -132,7 +132,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                           log(audioUrl);
                           final videoUrl = _.fileNameToUrl(
                               animethemeentries!.videos.first.audio.filename,
-                              mediaType: MediaType.video);
+                              mediaType: sc.MediaType.video);
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
@@ -383,20 +383,20 @@ class PlaylistController extends GetxController {
           AnimethemesMain.fromJson(apiResponse.data['animetheme']);
 
       if (Platform.isIOS || Platform.isMacOS) {
-        animemain.AnimeMain? animeMain = await Get.find<SearchController>()
+        animemain.AnimeMain? animeMain = await Get.find<sc.SearchController>()
             .slugToMalId(animethemesMain.anime.slug);
         if (animeMain == null) return null;
         log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
         log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
-        final audioUrl = (await Get.find<SearchController>().webmToMp3(
+        final audioUrl = (await Get.find<sc.SearchController>().webmToMp3(
                 animeMain.resources.first.externalId.toString(),
                 animethemesMain.slug,
                 animethemesMain.animethemeentries.first.videos.first.link))
             .data as String;
-        final videoUrl = Get.find<SearchController>().fileNameToUrl(
-            animethemesMain.animethemeentries.first.videos.first.audio.filename,
-            mediaType: MediaType.video);
+        final videoUrl = Get.find<sc.SearchController>().fileNameToUrl(
+            animethemesMain.animethemeentries.first.videos.first.filename,
+            mediaType: sc.MediaType.video);
 
         final AudioEntry _audioEntry = AudioEntry(
             id: animethemesMain.id.toString(),
@@ -409,12 +409,12 @@ class PlaylistController extends GetxController {
 
         return _audioEntry.toJson();
       }
-      final String audioUrl = Get.find<SearchController>().fileNameToUrl(
-          animethemesMain.animethemeentries.first.videos.first.audio.filename,
-          mediaType: MediaType.audio);
-      final String videoUrl = Get.find<SearchController>().fileNameToUrl(
-          animethemesMain.animethemeentries.first.videos.first.audio.filename,
-          mediaType: MediaType.video);
+      final String audioUrl = Get.find<sc.SearchController>().fileNameToUrl(
+          animethemesMain.animethemeentries.first.videos.first.filename,
+          mediaType: sc.MediaType.audio);
+      final String videoUrl = Get.find<sc.SearchController>().fileNameToUrl(
+          animethemesMain.animethemeentries.first.videos.first.filename,
+          mediaType: sc.MediaType.video);
       final AudioEntry _audioEntry = AudioEntry(
           id: animethemesMain.id.toString(),
           album: animethemesMain.anime.name,
