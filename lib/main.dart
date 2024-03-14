@@ -22,7 +22,7 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  initMeeduPlayer(iosUseMediaKit: false, androidUseMediaKit: false);
+  initMeeduPlayer(iosUseFVP: false, androidUseFVP: false);
   runApp(const MyApp());
 }
 
