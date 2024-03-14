@@ -1,7 +1,7 @@
 name: anime_themes_player
 description: A Music Player App which specifically plays Anime Themes
 publish_to: 'none' 
-version: 0.7.25+4
+version: 0.7.28+5
 environment:
   sdk: ">=2.18.6 <3.0.0"
 dependencies:
@@ -13,7 +13,7 @@ dependencies:
   flutter_native_splash: ^2.1.6
   just_audio: ^0.9.33
   just_audio_background: ^0.0.1-beta.5
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.0
   audio_session: ^0.1.6+1
   http: ^0.13.4
   tap_to_expand: ^0.0.1
@@ -21,7 +21,7 @@ dependencies:
   qr_flutter: ^4.0.0
   intl: ^0.17.0
   implicitly_animated_reorderable_list_2: ^0.5.1
-  flutter_meedu_videoplayer: ^4.2.10
+  flutter_meedu_videoplayer: ^4.3.1
  # media_kit_libs_android_video: ^1.0.3           # Android package for video native libraries.
  # media_kit_libs_ios_video: ^1.0.4         # iOS package for video (& audio) native libraries.
   video_player_web_hls: ^1.0.0+3
