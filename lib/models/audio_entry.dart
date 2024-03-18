@@ -6,16 +6,16 @@ class AudioEntry {
       required this.audioUrl,
       required this.videoUrl,
       required this.urlCover}) {
-    if (urlCover.isNotEmpty) {
-      art = Uri.parse(urlCover);
+    if (urlCover?.isNotEmpty ?? false) {
+      art = Uri.parse(urlCover!);
     }
   }
   late final String id;
   late final String album;
   late final String title;
-  late final String audioUrl;
-  late final String videoUrl;
-  late final String urlCover;
+  late final String? audioUrl;
+  late final String? videoUrl;
+  late final String? urlCover;
   Uri art = Uri.parse(
       'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj5REg76Q_U_rt-GxBXbi3C-76wOIKdcuGwl1PMOBoMkpdNva48wiHny2t2tCH2lFeh4GNCNrLlcXrx3mHH_V0vSwSPN9zG2iyUmmvuZbgbtjLsZ1FO6mOhmfuqUD54Uti8ieIXdTPi3ZbZDJzJxrv70pRah8g_rzLlb49JSWuUGfB2I7DdCTgiCdh9_A/s320/cover.jpg');
 
