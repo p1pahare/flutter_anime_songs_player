@@ -208,7 +208,7 @@ class Videos {
   late final String? deletedAt;
   late final String? tags;
   late final String link;
-  late final Audio? audio;
+  late final Audio audio;
 
   Videos.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -254,7 +254,7 @@ class Videos {
     _data['deleted_at'] = deletedAt;
     _data['tags'] = tags;
     _data['link'] = link;
-    _data['audio'] = audio?.toJson();
+    _data['audio'] = audio.toJson();
     return _data;
   }
 }

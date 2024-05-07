@@ -371,7 +371,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              '${Values.baseUrl}/animetheme/$themeId?include=animethemeentries.videos,anime.images,song.artists'));
+              '${Values.baseUrl}/animetheme/$themeId?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists'));
       //,animethemeentries.videos.audio
       http.StreamedResponse response = await request.send();
 

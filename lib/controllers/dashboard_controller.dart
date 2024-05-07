@@ -119,7 +119,9 @@ class DashboardController extends GetxController {
     update();
   }
 
-  final _playlist = ConcatenatingAudioSource(children: []);
+  final _playlist = ConcatenatingAudioSource(
+    children: [],
+  );
   AudioSource? currentAudioSource(int index) {
     if (_playlist.length <= index || index < 0) {
       return null;
@@ -137,6 +139,9 @@ class DashboardController extends GetxController {
 
   Future playFromPlayer(int index) async {
     if (playerLoaded) {
+      log((_playlist.children.elementAt(index) as ProgressiveAudioSource)
+          .uri
+          .toString());
       await underPlayer?.seek(Duration.zero, index: index);
     }
   }

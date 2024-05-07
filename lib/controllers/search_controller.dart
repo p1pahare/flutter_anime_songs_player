@@ -7,7 +7,6 @@ import 'package:anime_themes_player/models/linksmain.dart';
 import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
-import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -191,11 +190,6 @@ class SearchController extends GetxController {
     loadingSong = false;
     update();
     return apiResponse;
-  }
-
-  String fileNameToUrl(String fileName,
-      {MediaType mediaType = MediaType.audio}) {
-    return "${mediaType == MediaType.audio ? Values.audioUrl : Values.videoUrl}/$fileName.${mediaType == MediaType.audio ? "ogg" : "webm"}";
   }
 
   Future<AnimeMain?> slugToMalId(String slug) async {

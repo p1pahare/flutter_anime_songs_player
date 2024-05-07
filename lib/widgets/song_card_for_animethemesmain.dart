@@ -145,61 +145,33 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                     }
                     return InkWell(
                         onTap: () async {
+                          String audioUrl =
+                              animethemeentries!.videos.first.link;
+                          final videoUrl = animethemeentries!.videos.first.link;
+                          log(audioUrl);
                           if (Platform.isIOS || Platform.isMacOS) {
                             animemain.AnimeMain? animeMain = await _
                                 .slugToMalId(animethemesMain!.anime.slug);
-                            log("${animethemesMain?.anime.slug} malId ${animeMain?.resources.first.externalId} themeId ${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.first.link}");
-
                             if (animeMain != null) {
-                              final audioUrl = (await _.webmToMp3(
+                              audioUrl = (await _.webmToMp3(
                                       animeMain.resources.first.externalId
                                           .toString(),
                                       "${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
                                       animethemeentries!.videos.first.link))
                                   .data as String;
-                              String videoUrl = '';
-                              if (animethemeentries != null) {
-                                videoUrl = Get.find<sc.SearchController>()
-                                    .fileNameToUrl(
-                                        animethemeentries!
-                                            .videos.first.filename,
-                                        mediaType: sc.MediaType.video);
-                              }
-                              await Get.find<DashboardController>().init([
-                                AudioEntry(
-                                    id: animethemesMain!.id.toString(),
-                                    album: animethemesMain!.anime.name,
-                                    title: animethemesMain!.song.title,
-                                    audioUrl: audioUrl,
-                                    videoUrl: videoUrl,
-                                    urlCover:
-                                        animethemesMain!.anime.images.isEmpty
-                                            ? ''
-                                            : animethemesMain!
-                                                .anime.images.first.link)
-                              ]);
                             }
-                          } else {
-                            final audioUrl = _.fileNameToUrl(
-                                animethemeentries!.videos.first.filename);
-                            final videoUrl = _.fileNameToUrl(
-                                animethemeentries!.videos.first.filename,
-                                mediaType: sc.MediaType.video);
-                            log(audioUrl);
-                            await Get.find<DashboardController>().init([
-                              AudioEntry(
-                                  id: animethemesMain!.id.toString(),
-                                  album: animethemesMain!.anime.name,
-                                  title: animethemesMain!.song.title,
-                                  audioUrl: audioUrl,
-                                  videoUrl: videoUrl,
-                                  urlCover:
-                                      animethemesMain!.anime.images.isEmpty
-                                          ? ''
-                                          : animethemesMain!
-                                              .anime.images.first.link)
-                            ]);
                           }
+                          await Get.find<DashboardController>().init([
+                            AudioEntry(
+                                id: animethemesMain!.id.toString(),
+                                album: animethemesMain!.anime.name,
+                                title: animethemesMain!.song.title,
+                                audioUrl: audioUrl,
+                                videoUrl: videoUrl,
+                                urlCover: animethemesMain!.anime.images.isEmpty
+                                    ? ''
+                                    : animethemesMain!.anime.images.first.link)
+                          ]);
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
