@@ -11,8 +11,8 @@ dependencies:
   get_storage: ^2.0.3
   fancy_bottom_navigation_2: ^0.3.5
   flutter_native_splash: ^2.1.6
-  just_audio: ^0.9.33
-  just_audio_background: ^0.0.1-beta.5
+  just_audio: ^0.9.37
+  just_audio_background: ^0.0.1-beta.11
   cached_network_image: ^3.3.0
   audio_session: ^0.1.6+1
   http: ^0.13.4
@@ -25,7 +25,7 @@ dependencies:
  # media_kit_libs_android_video: ^1.0.3           # Android package for video native libraries.
  # media_kit_libs_ios_video: ^1.0.4         # iOS package for video (& audio) native libraries.
   video_player_web_hls: ^1.0.0+3
-  file_picker: ^5.2.2
+  file_picker: ^8.0.3
 
 dev_dependencies:
   flutter_test:

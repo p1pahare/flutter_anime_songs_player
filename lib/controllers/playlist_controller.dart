@@ -382,46 +382,32 @@ class PlaylistController extends GetxController {
       final AnimethemesMain animethemesMain =
           AnimethemesMain.fromJson(apiResponse.data['animetheme']);
 
-      if (Platform.isIOS || Platform.isMacOS) {
-        animemain.AnimeMain? animeMain = await Get.find<sc.SearchController>()
-            .slugToMalId(animethemesMain.anime.slug);
-        if (animeMain == null) return null;
-        log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
+      animemain.AnimeMain? animeMain = await Get.find<sc.SearchController>()
+          .slugToMalId(animethemesMain.anime.slug);
+      if (animeMain == null) return null;
+      log("${animethemesMain.anime.slug} malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
 
-        log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
-        final audioUrl = (await Get.find<sc.SearchController>().webmToMp3(
+      log("malId ${animeMain.resources.first.externalId} themeId ${animethemesMain.slug}${animethemesMain.animethemeentries.first.version == 0 ? '' : ' V${animethemesMain.animethemeentries.first.version}'} ${animethemesMain.animethemeentries.first.videos.first.link}");
+
+      String audioUrl =
+          animethemesMain.animethemeentries.first.videos.first.audio.link;
+      final videoUrl =
+          animethemesMain.animethemeentries.first.videos.first.link;
+      if (Platform.isIOS || Platform.isMacOS) {
+        audioUrl = (await Get.find<sc.SearchController>().webmToMp3(
                 animeMain.resources.first.externalId.toString(),
                 animethemesMain.slug,
                 animethemesMain.animethemeentries.first.videos.first.link))
             .data as String;
-        final videoUrl = Get.find<sc.SearchController>().fileNameToUrl(
-            animethemesMain.animethemeentries.first.videos.first.filename,
-            mediaType: sc.MediaType.video);
-
-        final AudioEntry _audioEntry = AudioEntry(
-            id: animethemesMain.id.toString(),
-            album: animeMain.name,
-            title: animethemesMain.song.title,
-            audioUrl: audioUrl,
-            videoUrl: videoUrl,
-            urlCover:
-                animeMain.images.isEmpty ? '' : animeMain.images.first.link);
-
-        return _audioEntry.toJson();
       }
-      final String audioUrl = Get.find<sc.SearchController>().fileNameToUrl(
-          animethemesMain.animethemeentries.first.videos.first.filename,
-          mediaType: sc.MediaType.audio);
-      final String videoUrl = Get.find<sc.SearchController>().fileNameToUrl(
-          animethemesMain.animethemeentries.first.videos.first.filename,
-          mediaType: sc.MediaType.video);
       final AudioEntry _audioEntry = AudioEntry(
           id: animethemesMain.id.toString(),
-          album: animethemesMain.anime.name,
+          album: animeMain.name,
           title: animethemesMain.song.title,
           audioUrl: audioUrl,
           videoUrl: videoUrl,
-          urlCover: animethemesMain.anime.images.first.link);
+          urlCover:
+              animeMain.images.isEmpty ? '' : animeMain.images.first.link);
 
       return _audioEntry.toJson();
     } else {

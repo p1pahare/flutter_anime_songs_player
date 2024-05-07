@@ -127,12 +127,10 @@ class SongCardForAnimethemes extends StatelessWidget {
                                       "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
                                       animethemeentries!.videos.first.link))
                                   .data as String
-                              : _.fileNameToUrl(animethemeentries!
-                                  .videos.first.audio.filename);
+                              : animethemeentries!.videos.first.audio.link;
                           log(audioUrl);
-                          final videoUrl = _.fileNameToUrl(
-                              animethemeentries!.videos.first.audio.filename,
-                              mediaType: sc.MediaType.video);
+                          final videoUrl =
+                              animethemeentries!.videos.first.audio.link;
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),
