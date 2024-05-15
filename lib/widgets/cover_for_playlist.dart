@@ -15,6 +15,7 @@ class CoverForPlaylist extends StatelessWidget {
 
     return Card(
         elevation: 3.5,
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
         child: ListTile(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),

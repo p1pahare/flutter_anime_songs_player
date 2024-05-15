@@ -35,6 +35,7 @@ class Values {
       fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),
       brightness: Brightness.dark,
+      cardTheme: const CardTheme(color: Color.fromARGB(255, 214, 143, 63)),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all(Colors.white),
