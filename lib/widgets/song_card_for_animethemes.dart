@@ -138,6 +138,10 @@ class SongCardForAnimethemes extends StatelessWidget {
                                 title: animethemes!.song?.title ?? '',
                                 audioUrl: audioUrl,
                                 videoUrl: videoUrl,
+                                artist: animethemes?.song?.artists
+                                        .map((artst) => artst.name)
+                                        .join(",") ??
+                                    "",
                                 urlCover: animeMain!.images.isEmpty
                                     ? ''
                                     : animeMain!.images.first.link)

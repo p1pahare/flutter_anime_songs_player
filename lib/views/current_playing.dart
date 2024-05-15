@@ -27,7 +27,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
 
   @override
   void didChangeDependencies() {
-    audioHeight = Get.height * 0.5;
+    audioHeight = Get.height * 0.28;
     super.didChangeDependencies();
   }
 
@@ -38,6 +38,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
 
   @override
   Widget build(BuildContext context) {
+    final DashboardController _controller = Get.find();
     return Scaffold(
       appBar: PreferredSize(
           child: AppBar(
@@ -50,6 +51,20 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             ),
             centerTitle: true,
             title: const Text(Values.currentlyPlaying),
+            actions: [
+              PopupMenuButton<int>(
+                onSelected: (optionNumber) =>
+                    _onSelected(_controller, optionNumber),
+                itemBuilder: (BuildContext context) {
+                  return [1, 2].map((int choice) {
+                    return PopupMenuItem<int>(
+                      value: choice,
+                      child: _optionButtons(_controller, choice),
+                    );
+                  }).toList();
+                },
+              ),
+            ],
           ),
           preferredSize: const Size.fromHeight(40)),
       body: GetBuilder<DashboardController>(
@@ -68,50 +83,54 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             );
           }
 
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _optionButtons(_),
-                if (!showVideo)
-                  AnimatedContainer(
-                      height: audioHeight,
-                      duration: const Duration(seconds: 2),
-                      curve: Curves.fastOutSlowIn,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _mediaInfo(_.underPlayer!),
-                            _seekBar(_.underPlayer!),
-                            PlayerButtons(
-                              _.underPlayer!,
-                            ),
-                          ],
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!showVideo)
+                AnimatedContainer(
+                    height: audioHeight,
+                    duration: const Duration(seconds: 2),
+                    curve: Curves.fastOutSlowIn,
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        _mediaInfo(_.underPlayer!),
+                        Container(
+                          alignment: Alignment.bottomRight,
+                          width: Get.width * 0.64,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              _seekBar(_.underPlayer!),
+                              PlayerButtons(
+                                _.underPlayer!,
+                              ),
+                            ],
+                          ),
                         ),
-                      )),
-                if (showVideo)
-                  AnimatedContainer(
-                      height: audioHeight,
-                      duration: const Duration(seconds: 2),
-                      curve: Curves.fastOutSlowIn,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            OnlineVideoPlayer(
-                              key:
-                                  Get.find<GlobalKey<OnlineVideoPlayerState>>(),
-                            ),
-                            _mediaInfo(_.underPlayer!, withoutImage: true),
-                            PlayerButtons(
-                              _.underPlayer!,
-                              videoMode: true,
-                            ),
-                          ],
-                        ),
-                      )),
-                ImplicitlyAnimatedReorderableList<MediaItem>(
+                      ],
+                    )),
+              if (showVideo)
+                AnimatedContainer(
+                  height: audioHeight,
+                  duration: const Duration(seconds: 2),
+                  curve: Curves.fastOutSlowIn,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      OnlineVideoPlayer(
+                        key: Get.find<GlobalKey<OnlineVideoPlayerState>>(),
+                      ),
+                      PlayerButtons(
+                        _.underPlayer!,
+                        videoMode: true,
+                      ),
+                    ],
+                  ),
+                ),
+              Expanded(
+                child: ImplicitlyAnimatedReorderableList<MediaItem>(
                   items: _.mediaItems,
                   areItemsTheSame: (oldItem, newItem) =>
                       oldItem.id == newItem.id,
@@ -152,10 +171,10 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                       },
                     );
                   },
-                  shrinkWrap: true,
+                  shrinkWrap: false,
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
@@ -215,78 +234,81 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
     );
   }
 
-  Widget _optionButtons(DashboardController dashboardController) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          TextButton.icon(
-            icon: Icon(
-              Icons.cancel_sharp,
-              color: Get.textTheme.bodyMedium!.color,
-              size: 20,
+  Widget _optionButtons(
+      DashboardController dashboardController, int optionNumber) {
+    switch (optionNumber) {
+      case 1:
+        return Row(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              width: 35,
+              child: Icon(
+                Icons.cancel_sharp,
+                color: Get.textTheme.bodyMedium!.color,
+                size: 20,
+              ),
             ),
-            onPressed: dashboardController.stopPlayer,
-            label: Text(
+            Text(
               Values.closePlayer,
               style: TextStyle(
                   color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            )
+          ],
+        );
+      case 2:
+        return Row(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              width: 35,
+              child: Icon(
+                !showVideo ? Icons.video_file_sharp : Icons.audio_file_sharp,
+                color: Get.textTheme.bodyMedium!.color,
+                size: 20,
+              ),
             ),
-          ),
-          TextButton.icon(
-            icon: Icon(
-              !showVideo ? Icons.video_file_sharp : Icons.audio_file_sharp,
-              color: Get.textTheme.bodyMedium!.color,
-              size: 20,
-            ),
-            onPressed: () async {
-              setState(() {
-                showVideo = !showVideo;
-              });
-              if (showVideo) {
-                await dashboardController.underPlayer?.pause();
-              } else {
-                await dashboardController.underPlayer?.seek(
-                    Get.find<GlobalKey<OnlineVideoPlayerState>>()
-                        .currentState
-                        ?.currentPosition);
-                await dashboardController.underPlayer?.play();
-              }
-            },
-            label: Text(
+            Text(
               !showVideo ? Values.switchToVideo : Values.switchToAudio,
               style: TextStyle(
                   color: Get.textTheme.bodyMedium!.color, fontSize: 12),
             ),
-          ),
-          TextButton.icon(
-            icon: Icon(
-              audioHeight == 0
-                  ? Icons.circle_outlined
-                  : Icons.hide_source_sharp,
-              color: Get.textTheme.bodyMedium!.color,
-              size: 20,
-            ),
-            onPressed: () {
-              setState(() {
-                if (audioHeight == 0) {
-                  audioHeight = Get.height * 0.5;
-                } else {
-                  audioHeight = 0;
-                }
-              });
-            },
-            label: Text(
-              audioHeight == 0 ? Values.showPlayer : Values.hidePlayer,
-              style: TextStyle(
-                  color: Get.textTheme.bodyMedium!.color, fontSize: 12),
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  void _onSelected(
+      DashboardController dashboardController, int optionNumber) async {
+    switch (optionNumber) {
+      case 1:
+        {
+          dashboardController.stopPlayer();
+          Get.back();
+        }
+        break;
+      case 2:
+        {
+          setState(() {
+            showVideo = !showVideo;
+            audioHeight = Get.height * (showVideo ? 0.42 : 0.28);
+          });
+          if (showVideo) {
+            await dashboardController.underPlayer?.pause();
+          } else {
+            await dashboardController.underPlayer?.seek(
+                Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                    .currentState
+                    ?.currentPosition);
+            await dashboardController.underPlayer?.play();
+          }
+        }
+        break;
+      default:
+        {}
+    }
   }
 
   Widget _seekBar(AudioPlayer _audioPlayer) {
@@ -332,7 +354,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
     );
   }
 
-  Widget _mediaInfo(AudioPlayer _audioPlayer, {bool withoutImage = false}) {
+  Widget _mediaInfo(AudioPlayer _audioPlayer) {
     return StreamBuilder<int?>(
         stream: _audioPlayer.currentIndexStream,
         builder: (context, indexShot) {
@@ -350,31 +372,50 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             }
             final mediaItem = _currentSource.sequence.first.tag as MediaItem;
             return Padding(
-              padding:
-                  withoutImage ? const EdgeInsets.all(16.0) : EdgeInsets.zero,
-              child: Column(
+              padding: EdgeInsets.zero,
+              child: Row(
                 children: [
-                  if (!withoutImage)
-                    Container(
-                      width: Get.width * 0.85,
-                      height: Get.width * 0.65,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          mediaItem.artUri.toString(),
+                  Container(
+                    width: Get.width * 0.38,
+                    height: Get.height * 0.28,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      image: CachedNetworkImageProvider(
+                        mediaItem.artUri.toString(),
+                      ),
+                      fit: BoxFit.cover,
+                    )),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 35,
                         ),
-                        fit: BoxFit.fill,
-                      )),
+                        Text(
+                          mediaItem.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          mediaItem.album.toString(),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                        ),
+                        Text(
+                          mediaItem.artist.toString(),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall,
+                          maxLines: 2,
+                        ),
+                        const SizedBox(
+                          height: 45,
+                        ),
+                      ],
                     ),
-                  Text(
-                    mediaItem.title,
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    mediaItem.album.toString(),
-                    maxLines: 2,
-                  ),
+                  )
                 ],
               ),
             );

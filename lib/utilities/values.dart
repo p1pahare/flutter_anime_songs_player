@@ -64,11 +64,11 @@ class Values {
             ),
           )),
       textTheme: const TextTheme(
-        bodySmall: TextStyle(
-            fontSize: 14.0,
-            fontFamily: Values.fontFamilyName,
-            color: Colors.white),
-      ),
+          bodySmall: TextStyle(
+              fontSize: 14.0,
+              fontFamily: Values.fontFamilyName,
+              color: Colors.white),
+          labelSmall: TextStyle(color: Colors.white38)),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.black,
       ),
@@ -113,11 +113,11 @@ class Values {
       backgroundColor: Colors.white,
     ),
     textTheme: const TextTheme(
-      bodySmall: TextStyle(
-          fontSize: 14.0,
-          fontFamily: Values.fontFamilyName,
-          color: Colors.black),
-    ),
+        bodySmall: TextStyle(
+            fontSize: 14.0,
+            fontFamily: Values.fontFamilyName,
+            color: Colors.black),
+        labelSmall: TextStyle(color: Colors.black38)),
     iconTheme: const IconThemeData(color: Colors.black),
     cardColor: const Color.fromARGB(255, 207, 172, 126),
     appBarTheme: const AppBarTheme(

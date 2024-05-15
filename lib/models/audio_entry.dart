@@ -5,6 +5,7 @@ class AudioEntry {
       required this.title,
       required this.audioUrl,
       required this.videoUrl,
+      required this.artist,
       required this.urlCover}) {
     if (urlCover?.isNotEmpty ?? false) {
       art = Uri.parse(urlCover!);
@@ -13,6 +14,7 @@ class AudioEntry {
   late final String id;
   late final String album;
   late final String title;
+  late final String artist;
   late final String? audioUrl;
   late final String? videoUrl;
   late final String? urlCover;
@@ -23,6 +25,7 @@ class AudioEntry {
     id = json['id'];
     album = json['album'];
     title = json['title'];
+    artist = json['artist'];
     audioUrl = json['audioUrl'];
     urlCover = json['urlCover'];
     videoUrl = json['videoUrl'];
@@ -34,6 +37,7 @@ class AudioEntry {
     _data['id'] = id;
     _data['album'] = album;
     _data['title'] = title;
+    _data['artist'] = artist;
     _data['audioUrl'] = audioUrl;
     _data['urlCover'] = urlCover;
     _data['videoUrl'] = videoUrl;

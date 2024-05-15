@@ -97,6 +97,7 @@ class SongCardForThemesMalAni extends StatelessWidget {
                               album: themesMalAni!.name,
                               title: themes!.themeName,
                               audioUrl: songUrl,
+                              artist: "",
                               videoUrl: themes!.mirror.mirrorURL,
                               urlCover: '')
                         ]);
