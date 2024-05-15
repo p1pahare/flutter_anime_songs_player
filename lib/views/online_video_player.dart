@@ -90,7 +90,7 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
   Widget build(BuildContext context) {
     DashboardController dashboardController = Get.find();
     return SizedBox(
-        height: Get.height * 0.32,
+        height: Get.height * 0.28,
         child: GetBuilder<DashboardController>(
           id: "video",
           init: dashboardController,

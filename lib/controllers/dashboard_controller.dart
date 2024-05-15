@@ -67,6 +67,7 @@ class DashboardController extends GetxController {
             tag: MediaItem(
                 id: audioEntry.id,
                 album: audioEntry.album,
+                artist: audioEntry.artist,
                 title: audioEntry.title,
                 artUri: audioEntry.art,
                 extras: {

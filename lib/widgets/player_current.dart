@@ -16,69 +16,117 @@ class PlayerCurrent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 4,
-              ),
-              _closeButton(),
-              Expanded(child: _mediaInfo()),
-              _playButton(),
-              const SizedBox(
-                width: 4,
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: 0.3,
-          color: Get.theme.appBarTheme.backgroundColor,
-        ),
-        Container(
-          color: Get.theme.appBarTheme.backgroundColor,
-          child: StreamBuilder<Duration?>(
-            stream: _audioPlayer.durationStream,
-            builder: (_, fullDurationSnap) {
-              final fullDuration = fullDurationSnap.data;
+    return StreamBuilder<int?>(
+        stream: _audioPlayer.currentIndexStream,
+        builder: (context, indexShot) {
+          if (!indexShot.hasData || indexShot.data == null) {
+            return const SizedBox(
+              width: 0,
+            );
+          } else {
+            final AudioSource? _currentSource = Get.find<DashboardController>()
+                .currentAudioSource(indexShot.data ?? -1);
+            if (_currentSource == null) {
+              return const SizedBox(
+                width: 0,
+              );
+            }
+            final mediaItem = _currentSource.sequence.first.tag as MediaItem;
+            return GestureDetector(
+              onTap: () {
+                Get.toNamed(CurrentPlaying.routeName);
+              },
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  width: 60,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                      mediaItem.artUri.toString(),
+                    ),
+                    fit: BoxFit.cover,
+                  )),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(mediaItem.title),
+                                  Text(
+                                    mediaItem.album.toString(),
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            _closeButton(),
+                            _playButton(),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 0.3,
+                        color: Get.theme.appBarTheme.backgroundColor,
+                      ),
+                      Container(
+                        color: Get.theme.appBarTheme.backgroundColor,
+                        child: StreamBuilder<Duration?>(
+                          stream: _audioPlayer.durationStream,
+                          builder: (_, fullDurationSnap) {
+                            final fullDuration = fullDurationSnap.data;
 
-              if (fullDuration == null) {
-                return const SizedBox(
-                  height: 0,
-                  width: 0,
-                );
-              } else {
-                return StreamBuilder<Duration>(
-                    stream: _audioPlayer.positionStream,
-                    builder: (context, currentDurationSnap) {
-                      final currentDuration = currentDurationSnap.data;
-                      // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
+                            if (fullDuration == null) {
+                              return const SizedBox(
+                                height: 0,
+                                width: 0,
+                              );
+                            } else {
+                              return StreamBuilder<Duration>(
+                                  stream: _audioPlayer.positionStream,
+                                  builder: (context, currentDurationSnap) {
+                                    final currentDuration =
+                                        currentDurationSnap.data;
+                                    // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
 
-                      if (currentDuration == null) {
-                        return const SizedBox(
-                          height: 0,
-                          width: 0,
-                        );
-                      } else {
-                        return Slider(
-                            value: currentDuration.inSeconds >
-                                    fullDuration.inSeconds
-                                ? fullDuration.inSeconds.toDouble()
-                                : currentDuration.inSeconds.toDouble(),
-                            max: fullDuration.inSeconds.toDouble(),
-                            onChanged: (val) {
-                              _audioPlayer.seek(Duration(seconds: val.toInt()));
-                            });
-                      }
-                    });
-              }
-            },
-          ),
-        ),
-      ],
-    );
+                                    if (currentDuration == null) {
+                                      return const SizedBox(
+                                        height: 0,
+                                        width: 0,
+                                      );
+                                    } else {
+                                      return Slider(
+                                          value: currentDuration.inSeconds >
+                                                  fullDuration.inSeconds
+                                              ? fullDuration.inSeconds
+                                                  .toDouble()
+                                              : currentDuration.inSeconds
+                                                  .toDouble(),
+                                          max:
+                                              fullDuration.inSeconds.toDouble(),
+                                          onChanged: (val) {
+                                            _audioPlayer.seek(
+                                                Duration(seconds: val.toInt()));
+                                          });
+                                    }
+                                  });
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            );
+          }
+        });
   }
 
   Widget _playPauseButton(PlayerState playerState) {
@@ -112,68 +160,30 @@ class PlayerCurrent extends StatelessWidget {
     }
   }
 
-  Widget _mediaInfo() {
-    return StreamBuilder<int?>(
-        stream: _audioPlayer.currentIndexStream,
-        builder: (context, indexShot) {
-          if (!indexShot.hasData || indexShot.data == null) {
+  Widget _playButton() {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: StreamBuilder<PlayerState>(
+        stream: _audioPlayer.playerStateStream,
+        builder: (_, snapshot) {
+          final playerState = snapshot.data;
+          if (playerState == null) {
             return const SizedBox(
+              height: 0,
               width: 0,
             );
           } else {
-            final AudioSource? _currentSource = Get.find<DashboardController>()
-                .currentAudioSource(indexShot.data ?? -1);
-            if (_currentSource == null) {
-              return const SizedBox(
-                width: 0,
-              );
-            }
-            final mediaItem = _currentSource.sequence.first.tag as MediaItem;
-            return Material(
-              type: MaterialType.transparency,
-              child: ListTile(
-                onTap: () {
-                  Get.toNamed(CurrentPlaying.routeName);
-                },
-                leading: Container(
-                  width: 60,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      mediaItem.artUri.toString(),
-                    ),
-                    fit: BoxFit.cover,
-                  )),
-                ),
-                title: Text(mediaItem.title),
-                subtitle: Text(
-                  mediaItem.album.toString(),
-                  overflow: TextOverflow.clip,
-                ),
-              ),
-            );
+            return _playPauseButton(playerState);
           }
-        });
-  }
-
-  Widget _playButton() {
-    return StreamBuilder<PlayerState>(
-      stream: _audioPlayer.playerStateStream,
-      builder: (_, snapshot) {
-        final playerState = snapshot.data;
-        if (playerState == null) {
-          return const SizedBox(
-            height: 0,
-            width: 0,
-          );
-        } else {
-          return _playPauseButton(playerState);
-        }
-      },
+        },
+      ),
     );
   }
 
   Widget _closeButton() {
-    return BetterButton(icon: Icons.cancel_sharp, onPressed: stopPlayer);
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: BetterButton(icon: Icons.cancel_sharp, onPressed: stopPlayer),
+    );
   }
 }

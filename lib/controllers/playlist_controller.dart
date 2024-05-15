@@ -338,25 +338,24 @@ class PlaylistController extends GetxController {
 
     status = listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
     update(["detail"]);
-    int successCount = 4;
+    int successCount = 0;
     for (int i = 0; i < themeIds.length; i++) {
       if (box.hasData('theme_${themeIds[i]}')) {
         listings.add(AudioEntry.fromJson(box.read('theme_${themeIds[i]}')));
+        successCount++;
         continue;
       }
 
-      final Map<String, dynamic>? songmetadata =
-          await getMetaDataFromThemeID(themeIds[i]);
-      if (songmetadata != null) {
-        listings.add(AudioEntry.fromJson(songmetadata));
-        await writeSongMetaDataToBox(themeIds[i], songmetadata);
-      } else {
-        successCount--;
-      }
-      if (successCount == 0) {
+      getMetaDataFromThemeID(themeIds[i]).then((songmetadata) {
+        if (songmetadata != null) {
+          listings.add(AudioEntry.fromJson(songmetadata));
+          writeSongMetaDataToBox(themeIds[i], songmetadata)
+              .then((value) => successCount++);
+        } else {}
+      });
+      if (successCount == 0 && i + 1 < themeIds.length) {
         status = RxStatus.error("Something went wrong");
         update(["detail"]);
-        break;
       }
     }
     if (listings.isEmpty) {
@@ -406,6 +405,8 @@ class PlaylistController extends GetxController {
           title: animethemesMain.song.title,
           audioUrl: audioUrl,
           videoUrl: videoUrl,
+          artist:
+              animethemesMain.song.artists.map((artst) => artst.name).join(","),
           urlCover:
               animeMain.images.isEmpty ? '' : animeMain.images.first.link);
 
