@@ -13,6 +13,7 @@ class CoverForAnimeMain extends StatelessWidget {
       width: Get.width - 90,
       child: Card(
           elevation: 0,
+          color: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(

@@ -15,7 +15,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 
       http.StreamedResponse response = await request.send();
 
@@ -51,7 +51,7 @@ class NetworkCalls {
           'GET',
           Uri.parse(isUrl
               ? title
-              : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug,group&fields[animethemeentry]=version&fields[video]=tags,link,filename&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
+              : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug&fields[animethemeentry]=version&fields[video]=tags,link,filename&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}'));
 //&filter[has]=song
       http.StreamedResponse response = await request.send();
 
@@ -303,7 +303,7 @@ class NetworkCalls {
       final request = http.Request(
           'GET',
           Uri.parse(
-              '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,group,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1'));
+              '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1'));
 
       http.StreamedResponse response = await request.send();
 

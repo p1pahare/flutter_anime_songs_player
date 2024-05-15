@@ -53,7 +53,7 @@ class SearchPage extends StatelessWidget {
                           height: 80,
                           child: TextField(
                             controller: _.search,
-                            onSubmitted: (str) => _.onSearch(),
+                            onSubmitted: (str) => _.getCookies(),
                             onChanged: (s) {
                               _.update();
                             },

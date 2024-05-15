@@ -29,6 +29,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
       width: Get.width - 50,
       child: Card(
         elevation: 3.5,
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
         child: InkWell(
           borderRadius: BorderRadius.circular(7),

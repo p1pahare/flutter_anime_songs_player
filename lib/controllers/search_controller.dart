@@ -8,6 +8,7 @@ import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/network_calls.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
 enum MediaType { audio, video }
@@ -21,6 +22,8 @@ class SearchController extends GetxController {
   RxList<dynamic> listings = RxList.empty();
   RxStatus status = RxStatus.success();
   List<ThemesMalAni> animeList = [];
+  late HeadlessInAppWebView headlessWebView;
+  late CookieManager cookieManager;
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
@@ -43,6 +46,21 @@ class SearchController extends GetxController {
     Get.focusScope?.unfocus();
     searchListings();
     update();
+  }
+
+  void getCookies() async {
+    cookieManager = CookieManager.instance();
+    headlessWebView = HeadlessInAppWebView(
+      initialUrlRequest: URLRequest(url: WebUri("https://animethemes.moe")),
+      onLoadStop: (controller, url) async {
+        List<Cookie> cookies = await cookieManager.getCookies(url: url!);
+        for (var cookie in cookies) {
+          log('Cookie: ${cookie.name}=${cookie.value}');
+        }
+        await headlessWebView.dispose();
+      },
+    );
+    headlessWebView.run();
   }
 
   SearchController() {

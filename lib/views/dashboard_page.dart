@@ -57,6 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   centerTitle: true,
                   actions: [
                     Switch(
+                        trackColor: MaterialStateProperty.all(Colors.white54),
                         thumbColor:
                             MaterialStateProperty.all(Colors.grey.shade50),
                         activeThumbImage: const AssetImage(
