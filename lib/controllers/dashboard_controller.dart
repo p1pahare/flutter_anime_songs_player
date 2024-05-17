@@ -15,7 +15,6 @@ class DashboardController extends GetxController {
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
-  RxBool isVideoLoading = RxBool(false);
   List<MediaItem> get mediaItems => _playlist.children
       .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
       .toList();
@@ -43,12 +42,6 @@ class DashboardController extends GetxController {
     selectedIndex.value = index ?? 0;
     await box.write('selected_index', selectedIndex.value);
     update();
-  }
-
-  setVideoLoadingStatus(bool loading) {
-    isVideoLoading = loading.obs;
-
-    update(["video"]);
   }
 
   Future<void> init(List<AudioEntry> audioEntries,

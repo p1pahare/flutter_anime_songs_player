@@ -174,19 +174,21 @@ class PlaylistDetail extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: ListTile(
               onTap: () {},
+              contentPadding: EdgeInsets.zero,
               leading: Handle(
                 child: Container(
                   width: 60,
                   decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
                       image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      audioEntry.art.toString(),
-                    ),
-                    fit: BoxFit.cover,
-                  )),
+                        image: CachedNetworkImageProvider(
+                          audioEntry.art.toString(),
+                        ),
+                        fit: BoxFit.cover,
+                      )),
                 ),
               ),
               title: Text(audioEntry.title),

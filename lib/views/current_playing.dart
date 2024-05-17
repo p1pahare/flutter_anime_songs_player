@@ -115,18 +115,21 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                   height: audioHeight,
                   duration: const Duration(seconds: 2),
                   curve: Curves.fastOutSlowIn,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      OnlineVideoPlayer(
-                        key: Get.find<GlobalKey<OnlineVideoPlayerState>>(),
-                      ),
-                      PlayerButtons(
-                        _.underPlayer!,
-                        videoMode: true,
-                      ),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        OnlineVideoPlayer(
+                          key: Get.find<GlobalKey<OnlineVideoPlayerState>>(),
+                        ),
+                        _mediaInfo(_.underPlayer!, noThumb: true),
+                        PlayerButtons(
+                          _.underPlayer!,
+                          videoMode: true,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               Expanded(
@@ -197,12 +200,13 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                 child: Container(
                   width: 60,
                   decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
                       image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      mediaItem.artUri.toString(),
-                    ),
-                    fit: BoxFit.cover,
-                  )),
+                        image: CachedNetworkImageProvider(
+                          mediaItem.artUri.toString(),
+                        ),
+                        fit: BoxFit.cover,
+                      )),
                 ),
               ),
               title: Text(mediaItem.title),
@@ -210,7 +214,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
               trailing: BetterButton(
                 icon: Icons.play_circle_rounded,
                 onPressed: () async {
-                  await _controller.playFromPlayer(index);
+                  _controller.playFromPlayer(index);
                   if (showVideo) {
                     Get.find<GlobalKey<OnlineVideoPlayerState>>()
                         .currentState
@@ -298,10 +302,6 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
           if (showVideo) {
             await dashboardController.underPlayer?.pause();
           } else {
-            await dashboardController.underPlayer?.seek(
-                Get.find<GlobalKey<OnlineVideoPlayerState>>()
-                    .currentState
-                    ?.currentPosition);
             await dashboardController.underPlayer?.play();
           }
         }
@@ -354,7 +354,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
     );
   }
 
-  Widget _mediaInfo(AudioPlayer _audioPlayer) {
+  Widget _mediaInfo(AudioPlayer _audioPlayer, {bool noThumb = false}) {
     return StreamBuilder<int?>(
         stream: _audioPlayer.currentIndexStream,
         builder: (context, indexShot) {
@@ -374,52 +374,61 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             return Padding(
               padding: EdgeInsets.zero,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: Get.width * 0.38,
-                    height: Get.height * 0.28,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      image: CachedNetworkImageProvider(
-                        mediaItem.artUri.toString(),
-                      ),
-                      fit: BoxFit.cover,
-                    )),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 35,
-                        ),
-                        Text(
-                          mediaItem.title,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          mediaItem.album.toString(),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                        ),
-                        Text(
-                          mediaItem.artist.toString(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelSmall,
-                          maxLines: 2,
-                        ),
-                        const SizedBox(
-                          height: 45,
-                        ),
-                      ],
+                  if (!noThumb)
+                    Container(
+                      width: Get.width * 0.38,
+                      height: Get.height * 0.28,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              mediaItem.artUri.toString(),
+                            ),
+                            fit: BoxFit.cover,
+                          )),
                     ),
-                  )
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: _themeTitleAlbumArtist(
+                        title: mediaItem.title,
+                        album: mediaItem.album,
+                        artist: mediaItem.artist),
+                  ))
                 ],
               ),
             );
           }
         });
+  }
+
+  Widget _themeTitleAlbumArtist(
+      {String? title, String? album, String? artist}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (title != null)
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          ),
+        if (album != null)
+          Text(
+            album.toString(),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+          ),
+        if (artist != null)
+          Text(
+            artist.toString(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall,
+            maxLines: 2,
+          ),
+      ],
+    );
   }
 }

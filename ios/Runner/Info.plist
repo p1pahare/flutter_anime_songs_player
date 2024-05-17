@@ -26,6 +26,11 @@
 		<true/>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
+		<key>NSAppTransportSecurity</key>
+			 <dict>
+   			   <key>NSAllowsArbitraryLoads</key>
+	  		   <true/>
+ 			 </dict>
 		<key>NSPhotoLibraryUsageDescription</key>
 <string>To import playlist from Image File you need to allow permissions to Photos</string>
 		<key>UIBackgroundModes</key>
