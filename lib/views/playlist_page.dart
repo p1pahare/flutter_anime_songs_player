@@ -17,64 +17,80 @@ class PlaylistPage extends StatelessWidget {
           init: PlaylistController(),
           initState: (_) {},
           builder: (_) {
-            return Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  height: 80,
-                  child: Row(
-                    children: [
-                      BetterButton(
-                        icon: Icons.import_export,
-                        onPressed: () => _.importFromFile(),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _pc.playlistName,
-                          onChanged: (str) => _pc.update(),
-                          onSubmitted: (str) => _pc.onCreatePlaylist(),
-                          decoration: InputDecoration(
-                              hintText: 'Create New Playlist ...',
-                              suffixIcon: SizedBox(
-                                width: 70,
-                                child: Row(
-                                  children: [
-                                    if (_pc.playlistName.text.isNotEmpty)
-                                      InkWell(
-                                          onTap: _pc.onCreatePlaylist,
-                                          child:
-                                              const Icon(Icons.check_circle)),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    if (_pc.playlistName.text.isNotEmpty)
-                                      InkWell(
-                                          onTap: _pc.onClear,
-                                          child:
-                                              const Icon(Icons.cancel_rounded)),
-                                  ],
-                                ),
-                              )),
+            return GestureDetector(
+              onTap: () => _.setShowPlaylist(ShowPlayList.defaultView),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    height: 80,
+                    child: Row(
+                      children: [
+                        BetterButton(
+                          icon: Icons.arrow_circle_up_rounded,
+                          onPressed: () => _.importFromFile(),
                         ),
-                      ),
-                    ],
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: (_.getShowPlaylist() ==
+                                  ShowPlayList.defaultView)
+                              ? Text(
+                                  Values.localPlaylists,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                )
+                              : TextField(
+                                  controller: _pc.playlistName,
+                                  onChanged: (str) => _pc.update(),
+                                  onSubmitted: (str) => _pc.onCreatePlaylist(),
+                                  decoration: InputDecoration(
+                                      hintText: 'Create New Playlist ...',
+                                      suffixIcon: SizedBox(
+                                        width: 70,
+                                        child: Row(
+                                          children: [
+                                            if (_pc
+                                                .playlistName.text.isNotEmpty)
+                                              InkWell(
+                                                  onTap: _pc.onCreatePlaylist,
+                                                  child: const Icon(
+                                                      Icons.check_circle)),
+                                            const SizedBox(
+                                              width: 20,
+                                            ),
+                                            if (_pc
+                                                .playlistName.text.isNotEmpty)
+                                              InkWell(
+                                                  onTap: _pc.onClear,
+                                                  child: const Icon(
+                                                      Icons.cancel_rounded)),
+                                          ],
+                                        ),
+                                      )),
+                                ),
+                        ),
+                        BetterButton(
+                          icon: Icons.add_circle_outline_rounded,
+                          onPressed: () =>
+                              _.setShowPlaylist(ShowPlayList.addLocal),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                if (_pc.playlists.isEmpty)
-                  const Center(child: Text(Values.noResults))
-                else
-                  Expanded(
-                    child: ListView.builder(
-                        itemCount: _pc.playlists.length,
-                        itemBuilder: ((context, index) => CoverForPlaylist(
-                              playlist: _pc.playlists[index],
-                              playlistIndex: index,
-                            ))),
-                  )
-              ],
+                  if (_pc.playlists.isEmpty)
+                    const Center(child: Text(Values.noResults))
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: _pc.playlists.length,
+                          itemBuilder: ((context, index) => CoverForPlaylist(
+                                playlist: _pc.playlists[index],
+                                playlistIndex: index,
+                              ))),
+                    )
+                ],
+              ),
             );
           },
         ));
