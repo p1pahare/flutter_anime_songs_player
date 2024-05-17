@@ -49,7 +49,7 @@ class PlaylistDetail extends StatelessWidget {
                 actions: [
                   IconButton(
                     icon: Icon(
-                      Icons.share_rounded,
+                      Icons.arrow_circle_down_rounded,
                       color: Get.theme.iconTheme.color,
                     ),
                     onPressed: () => Get.toNamed(SharePlaylist.routeName,

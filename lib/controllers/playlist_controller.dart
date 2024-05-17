@@ -17,12 +17,42 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:qr_code_vision/qr_code_vision.dart';
 
+enum ShowPlayList { defaultView, addLocal, addOnline }
+
 class PlaylistController extends GetxController {
   NetworkCalls networkCalls = NetworkCalls();
   RxList<Map<int, String>> playlists = RxList.empty();
   GetStorage box = GetStorage();
   RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
+  RxInt showPlaylist = 0.obs;
+  ShowPlayList getShowPlaylist() {
+    switch (showPlaylist.value) {
+      case 1:
+        return ShowPlayList.addLocal;
+      case 2:
+        return ShowPlayList.addOnline;
+      case 0:
+      default:
+        return ShowPlayList.defaultView;
+    }
+  }
+
+  void setShowPlaylist(ShowPlayList showList) {
+    switch (showList) {
+      case ShowPlayList.defaultView:
+        showPlaylist = 0.obs;
+        break;
+      case ShowPlayList.addLocal:
+        showPlaylist = 1.obs;
+        break;
+      case ShowPlayList.addOnline:
+        showPlaylist = 2.obs;
+        break;
+    }
+    update();
+  }
+
   final TextEditingController playlistName = TextEditingController();
   initialize() {
     box = GetStorage();

@@ -25,6 +25,7 @@ class Values {
   static const currentlyPlaying = 'Currently Playing';
   static const fontFamilyName = 'ptsans';
   static const featureNotAddedYet = 'Feature not Added Yet';
+  static const localPlaylists = "Local Playlists";
   static const noThemesBeingPlayed =
       'Currently Playing nothing. Please Play from Playlists or add themes to Queue';
   static const takeAScreenShot =
