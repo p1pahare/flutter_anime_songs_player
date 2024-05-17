@@ -39,14 +39,15 @@ class PlayerCurrent extends StatelessWidget {
               child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(
-                  width: 60,
+                  width: 80,
                   decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
                       image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      mediaItem.artUri.toString(),
-                    ),
-                    fit: BoxFit.cover,
-                  )),
+                        image: CachedNetworkImageProvider(
+                          mediaItem.artUri.toString(),
+                        ),
+                        fit: BoxFit.cover,
+                      )),
                 ),
                 Expanded(
                   child: Column(

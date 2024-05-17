@@ -1,4 +1,3 @@
-import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -123,16 +122,20 @@ class PlayerButtons extends StatelessWidget {
       onPressed: () async {
         if (_audioPlayer.hasPrevious) {
           if (videoMode) {
-            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.pause();
-            Get.find<DashboardController>().setVideoLoadingStatus(true);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.player
+                .pause();
           }
           await _audioPlayer.seekToPrevious();
           if (videoMode) {
             await Get.find<GlobalKey<OnlineVideoPlayerState>>()
                 .currentState
                 ?.setDataSource(index: _audioPlayer.currentIndex);
-            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.play();
-            Get.find<DashboardController>().setVideoLoadingStatus(false);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.player
+                .play();
           }
         }
       },
@@ -145,16 +148,20 @@ class PlayerButtons extends StatelessWidget {
       onPressed: () async {
         if (_audioPlayer.hasNext) {
           if (videoMode) {
-            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.pause();
-            Get.find<DashboardController>().setVideoLoadingStatus(true);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.player
+                .pause();
           }
           await _audioPlayer.seekToNext();
           if (videoMode) {
             await Get.find<GlobalKey<OnlineVideoPlayerState>>()
                 .currentState
                 ?.setDataSource(index: _audioPlayer.currentIndex);
-            Get.find<GlobalKey<OnlineVideoPlayerState>>().currentState?.play();
-            Get.find<DashboardController>().setVideoLoadingStatus(false);
+            Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                .currentState
+                ?.player
+                .play();
           }
         }
       },
