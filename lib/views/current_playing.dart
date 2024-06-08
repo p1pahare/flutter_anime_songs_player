@@ -24,6 +24,7 @@ class CurrentPlaying extends StatefulWidget {
 class _CurrentPlayingState extends State<CurrentPlaying> {
   double audioHeight = 0;
   bool showVideo = false;
+  bool showSearchBar = false;
 
   @override
   void didChangeDependencies() {
@@ -56,7 +57,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                 onSelected: (optionNumber) =>
                     _onSelected(_controller, optionNumber),
                 itemBuilder: (BuildContext context) {
-                  return [1, 2].map((int choice) {
+                  return [1, 2, 3].map((int choice) {
                     return PopupMenuItem<int>(
                       value: choice,
                       child: _optionButtons(_controller, choice),
@@ -86,6 +87,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (showSearchBar) _searchBar(_),
               if (!showVideo)
                 AnimatedContainer(
                     height: audioHeight,
@@ -184,6 +186,47 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
     );
   }
 
+  Widget _searchBar(DashboardController dashboardController) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      height: 80,
+      child: TextField(
+        controller: dashboardController.trackName,
+        onChanged: (str) => dashboardController.update(),
+        onSubmitted: (str) {
+          setState(() {
+            showSearchBar = false;
+          });
+        },
+        autofocus: true,
+        decoration: InputDecoration(
+            hintText: 'Search Track ...',
+            suffixIcon: SizedBox(
+              width: 70,
+              child: Row(
+                children: [
+                  if (dashboardController.trackName.text.isNotEmpty)
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            showSearchBar = false;
+                          });
+                        },
+                        child: const Icon(Icons.check_circle)),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  if (dashboardController.trackName.text.isNotEmpty)
+                    InkWell(
+                        onTap: () => dashboardController.trackName.clear(),
+                        child: const Icon(Icons.cancel_rounded)),
+                ],
+              ),
+            )),
+      ),
+    );
+  }
+
   Widget _mediaInfoFromMediaItem(
       MediaItem mediaItem, int index, DashboardController _controller) {
     return Material(
@@ -214,11 +257,13 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
               trailing: BetterButton(
                 icon: Icons.play_circle_rounded,
                 onPressed: () async {
-                  _controller.playFromPlayer(index);
+                  _controller.playFromPlayer(mediaItem.id);
                   if (showVideo) {
                     Get.find<GlobalKey<OnlineVideoPlayerState>>()
                         .currentState
-                        ?.setDataSource(index: index);
+                        ?.setDataSource(
+                            index:
+                                _controller.getIndexFromAlbumId(mediaItem.id));
                   }
                 },
               ),
@@ -279,6 +324,25 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             ),
           ],
         );
+      case 3:
+        return Row(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              width: 35,
+              child: Icon(
+                Icons.search_outlined,
+                color: Get.textTheme.bodyMedium!.color,
+                size: 20,
+              ),
+            ),
+            Text(
+              Values.search,
+              style: TextStyle(
+                  color: Get.textTheme.bodyMedium!.color, fontSize: 12),
+            ),
+          ],
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -304,6 +368,13 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
           } else {
             await dashboardController.underPlayer?.play();
           }
+        }
+        break;
+      case 3:
+        {
+          setState(() {
+            showSearchBar = true;
+          });
         }
         break;
       default:
