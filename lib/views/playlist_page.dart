@@ -44,6 +44,7 @@ class PlaylistPage extends StatelessWidget {
                                   controller: _pc.playlistName,
                                   onChanged: (str) => _pc.update(),
                                   onSubmitted: (str) => _pc.onCreatePlaylist(),
+                                  autofocus: true,
                                   decoration: InputDecoration(
                                       hintText: 'Create New Playlist ...',
                                       suffixIcon: SizedBox(

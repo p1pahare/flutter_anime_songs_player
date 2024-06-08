@@ -15,8 +15,19 @@ class DashboardController extends GetxController {
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
+  final TextEditingController trackName = TextEditingController();
+
   List<MediaItem> get mediaItems => _playlist.children
       .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
+      .where((element) => trackName.text.isEmpty
+          ? true
+          : (element.title
+                  .toLowerCase()
+                  .contains(trackName.text.toLowerCase()) ||
+              (element.album
+                      ?.toLowerCase()
+                      .contains(trackName.text.toLowerCase()) ??
+                  false)))
       .toList();
   final GlobalKey<OnlineVideoPlayerState> videoPlayerKey = GlobalKey();
   initialize() {
@@ -55,7 +66,7 @@ class DashboardController extends GetxController {
         });
         log("${_playlist.length} is current playlist length");
         if (isPresent == -1 && audioEntry.audioUrl != null) {
-          await _playlist.add(AudioSource.uri(
+          _playlist.add(AudioSource.uri(
             Uri.parse(audioEntry.audioUrl!),
             tag: MediaItem(
                 id: audioEntry.id,
@@ -131,12 +142,28 @@ class DashboardController extends GetxController {
     }
   }
 
-  Future playFromPlayer(int index) async {
+  Future playFromPlayer(String albumId) async {
     if (playerLoaded) {
-      log((_playlist.children.elementAt(index) as ProgressiveAudioSource)
-          .uri
-          .toString());
-      await underPlayer?.seek(Duration.zero, index: index);
+      try {
+        final index = _playlist.children.indexWhere((element) =>
+            (element.sequence.first.tag as MediaItem).id == albumId);
+
+        log((_playlist.children.elementAt(index) as ProgressiveAudioSource)
+            .uri
+            .toString());
+
+        await underPlayer?.seek(Duration.zero, index: index);
+      } catch (_) {}
+    }
+  }
+
+  int getIndexFromAlbumId(String? albumId) {
+    try {
+      final index = _playlist.children.indexWhere(
+          (element) => (element.sequence.first.tag as MediaItem).id == albumId);
+      return index;
+    } catch (_) {
+      return 0;
     }
   }
 
