@@ -54,18 +54,18 @@ class PlaylistPage extends StatelessWidget {
                                             if (_pc
                                                 .playlistName.text.isNotEmpty)
                                               InkWell(
-                                                  onTap: _pc.onCreatePlaylist,
+                                                  onTap: _pc.onClear,
                                                   child: const Icon(
-                                                      Icons.check_circle)),
+                                                      Icons.cancel_rounded)),
                                             const SizedBox(
                                               width: 20,
                                             ),
                                             if (_pc
                                                 .playlistName.text.isNotEmpty)
                                               InkWell(
-                                                  onTap: _pc.onClear,
+                                                  onTap: _pc.onCreatePlaylist,
                                                   child: const Icon(
-                                                      Icons.cancel_rounded)),
+                                                      Icons.check_circle)),
                                           ],
                                         ),
                                       )),
