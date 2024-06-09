@@ -57,7 +57,11 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                 onSelected: (optionNumber) =>
                     _onSelected(_controller, optionNumber),
                 itemBuilder: (BuildContext context) {
-                  return [1, 2, 3].map((int choice) {
+                  return [
+                    1,
+                    if (_controller.trackName.text.isEmpty && !showSearchBar) 2,
+                    if (!showVideo) 3
+                  ].map((int choice) {
                     return PopupMenuItem<int>(
                       value: choice,
                       child: _optionButtons(_controller, choice),
@@ -87,7 +91,13 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (showSearchBar) _searchBar(_),
+              if (showSearchBar)
+                SearchBar(
+                  dashboardController: _,
+                  toggleOffSearchBar: () => setState(() {
+                    showSearchBar = false;
+                  }),
+                ),
               if (!showVideo)
                 AnimatedContainer(
                     height: audioHeight,
@@ -96,14 +106,14 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                     child: Stack(
                       alignment: Alignment.bottomRight,
                       children: [
-                        _mediaInfo(_.underPlayer!),
+                        MediaInfo(audioPlayer: _.underPlayer!),
                         Container(
                           alignment: Alignment.bottomRight,
                           width: Get.width * 0.64,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              _seekBar(_.underPlayer!),
+                              SeekBar(audioPlayer: _.underPlayer!),
                               PlayerButtons(
                                 _.underPlayer!,
                               ),
@@ -125,7 +135,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                         OnlineVideoPlayer(
                           key: Get.find<GlobalKey<OnlineVideoPlayerState>>(),
                         ),
-                        _mediaInfo(_.underPlayer!, noThumb: true),
+                        MediaInfo(audioPlayer: _.underPlayer!, noThumb: true),
                         PlayerButtons(
                           _.underPlayer!,
                           videoMode: true,
@@ -170,7 +180,11 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                             color: color,
                             elevation: elevation ?? 1.0,
                             type: MaterialType.transparency,
-                            child: _mediaInfoFromMediaItem(item, index, _),
+                            child: MediaInfoFromMediaItem(
+                                mediaItem: item,
+                                index: index,
+                                showVideo: showVideo,
+                                dashboardController: _),
                           ),
                         );
                       },
@@ -182,103 +196,6 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _searchBar(DashboardController dashboardController) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      height: 80,
-      child: TextField(
-        controller: dashboardController.trackName,
-        onChanged: (str) => dashboardController.update(),
-        onSubmitted: (str) {
-          setState(() {
-            showSearchBar = false;
-          });
-        },
-        autofocus: true,
-        decoration: InputDecoration(
-            hintText: 'Search Track ...',
-            suffixIcon: SizedBox(
-              width: 70,
-              child: Row(
-                children: [
-                  if (dashboardController.trackName.text.isNotEmpty)
-                    InkWell(
-                        onTap: () {
-                          setState(() {
-                            showSearchBar = false;
-                          });
-                        },
-                        child: const Icon(Icons.check_circle)),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  if (dashboardController.trackName.text.isNotEmpty)
-                    InkWell(
-                        onTap: () => dashboardController.trackName.clear(),
-                        child: const Icon(Icons.cancel_rounded)),
-                ],
-              ),
-            )),
-      ),
-    );
-  }
-
-  Widget _mediaInfoFromMediaItem(
-      MediaItem mediaItem, int index, DashboardController _controller) {
-    return Material(
-      key: ValueKey(mediaItem.id),
-      type: MaterialType.transparency,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: ListTile(
-              onTap: () {},
-              leading: Handle(
-                child: Container(
-                  width: 60,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          mediaItem.artUri.toString(),
-                        ),
-                        fit: BoxFit.cover,
-                      )),
-                ),
-              ),
-              title: Text(mediaItem.title),
-              subtitle: Text(mediaItem.album.toString()),
-              trailing: BetterButton(
-                icon: Icons.play_circle_rounded,
-                onPressed: () async {
-                  _controller.playFromPlayer(mediaItem.id);
-                  if (showVideo) {
-                    Get.find<GlobalKey<OnlineVideoPlayerState>>()
-                        .currentState
-                        ?.setDataSource(
-                            index:
-                                _controller.getIndexFromAlbumId(mediaItem.id));
-                  }
-                },
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: BetterButton(
-              icon: Icons.cancel_rounded,
-              onPressed: () {
-                _controller.removeThemeFromPlayer(index);
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -381,8 +298,86 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
         {}
     }
   }
+}
 
-  Widget _seekBar(AudioPlayer _audioPlayer) {
+class MediaInfoFromMediaItem extends StatelessWidget {
+  const MediaInfoFromMediaItem(
+      {super.key,
+      required this.mediaItem,
+      required this.index,
+      required this.showVideo,
+      required this.dashboardController});
+  final MediaItem mediaItem;
+  final int index;
+  final DashboardController dashboardController;
+  final bool showVideo;
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      key: ValueKey(mediaItem.id),
+      type: MaterialType.transparency,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ListTile(
+              onTap: () {},
+              leading: Handle(
+                child: Container(
+                  width: 60,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      image: DecorationImage(
+                        image: CachedNetworkImageProvider(
+                          mediaItem.artUri.toString(),
+                        ),
+                        fit: BoxFit.cover,
+                      )),
+                ),
+              ),
+              title: Text(mediaItem.title),
+              subtitle: Text(mediaItem.album.toString()),
+              trailing: BetterButton(
+                icon: Icons.play_circle_rounded,
+                onPressed: () async {
+                  dashboardController.playFromPlayer(mediaItem.id);
+                  if (showVideo) {
+                    Get.find<GlobalKey<OnlineVideoPlayerState>>()
+                        .currentState
+                        ?.setDataSource(
+                            index: dashboardController
+                                .getIndexFromAlbumId(mediaItem.id));
+                  }
+                },
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: BetterButton(
+              icon: Icons.cancel_rounded,
+              onPressed: () {
+                dashboardController.removeThemeFromPlayer(index);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SeekBar extends StatelessWidget {
+  const SeekBar({
+    super.key,
+    required AudioPlayer audioPlayer,
+  }) : _audioPlayer = audioPlayer;
+
+  final AudioPlayer _audioPlayer;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
       child: StreamBuilder<Duration?>(
@@ -424,10 +419,16 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
       ),
     );
   }
+}
 
-  Widget _mediaInfo(AudioPlayer _audioPlayer, {bool noThumb = false}) {
+class MediaInfo extends StatelessWidget {
+  const MediaInfo({super.key, required this.audioPlayer, this.noThumb = false});
+  final AudioPlayer audioPlayer;
+  final bool noThumb;
+  @override
+  Widget build(BuildContext context) {
     return StreamBuilder<int?>(
-        stream: _audioPlayer.currentIndexStream,
+        stream: audioPlayer.currentIndexStream,
         builder: (context, indexShot) {
           if (!indexShot.hasData || indexShot.data == null) {
             return const SizedBox(
@@ -463,7 +464,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.only(bottom: 24.0),
-                    child: _themeTitleAlbumArtist(
+                    child: ThemeTitleAlbumArtist(
                         title: mediaItem.title,
                         album: mediaItem.album,
                         artist: mediaItem.artist),
@@ -474,15 +475,25 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
           }
         });
   }
+}
 
-  Widget _themeTitleAlbumArtist(
-      {String? title, String? album, String? artist}) {
+class ThemeTitleAlbumArtist extends StatelessWidget {
+  const ThemeTitleAlbumArtist(
+      {super.key,
+      required this.album,
+      required this.artist,
+      required this.title});
+  final String? title;
+  final String? album;
+  final String? artist;
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (title != null)
           Text(
-            title,
+            title ?? "",
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
           ),
@@ -500,6 +511,53 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
             maxLines: 2,
           ),
       ],
+    );
+  }
+}
+
+class SearchBar extends StatelessWidget {
+  const SearchBar(
+      {super.key,
+      required this.dashboardController,
+      required this.toggleOffSearchBar});
+  final VoidCallback toggleOffSearchBar;
+  final DashboardController dashboardController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      height: 80,
+      child: TextField(
+        controller: dashboardController.trackName,
+        onChanged: (str) => dashboardController.update(),
+        onSubmitted: (str) {
+          toggleOffSearchBar();
+        },
+        autofocus: true,
+        decoration: InputDecoration(
+            hintText: 'Search Track ...',
+            suffixIcon: SizedBox(
+              width: 70,
+              child: Row(
+                children: [
+                  if (dashboardController.trackName.text.isNotEmpty)
+                    InkWell(
+                        onTap: () => dashboardController.trackName.clear(),
+                        child: const Icon(Icons.cancel_rounded)),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  if (dashboardController.trackName.text.isNotEmpty)
+                    InkWell(
+                        onTap: () {
+                          toggleOffSearchBar();
+                        },
+                        child: const Icon(Icons.check_circle)),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
