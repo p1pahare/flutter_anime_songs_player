@@ -6,7 +6,8 @@ import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/linksmain.dart';
 import 'package:anime_themes_player/models/resources_main.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
-import 'package:anime_themes_player/repositories/network_calls.dart';
+import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
+import 'package:anime_themes_player/repositories/themes_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,8 @@ import 'package:get/get.dart';
 enum MediaType { audio, video }
 
 class SearchController extends GetxController {
-  NetworkCalls networkCalls = NetworkCalls();
+  AnimeThemeRepository animeThemesRepository = AnimeThemeRepository();
+  ThemesRepository themesRepository = ThemesRepository();
   final TextEditingController search = TextEditingController();
   int searchByValue = 0;
   bool loadingSong = false;
@@ -83,7 +85,7 @@ class SearchController extends GetxController {
     if (linksMain == null || linksMain?.next == null) return;
     status = RxStatus.loadingMore();
     update();
-    final apiResponse = await networkCalls.loadMore(linksMain?.next);
+    final apiResponse = await animeThemesRepository.loadMore(linksMain?.next);
     if (apiResponse.status) {
       linksMain = LinksMain.fromJson(apiResponse.data['links']);
 
@@ -104,7 +106,7 @@ class SearchController extends GetxController {
                 .toList();
 
         final ApiResponse apiResponse2 =
-            await networkCalls.getAnimesFromAnimeSlugs(resorcesMain
+            await themesRepository.getAnimesFromAnimeSlugs(resorcesMain
                 .where((element) => element.anime.isNotEmpty)
                 .map<String>((e) => e.anime[0].slug)
                 .toList());
@@ -143,7 +145,7 @@ class SearchController extends GetxController {
     ApiResponse apiResponse;
     switch (searchByValue) {
       case 0:
-        apiResponse = await networkCalls.searchAnimeMain(search.text);
+        apiResponse = await animeThemesRepository.searchAnimeMain(search.text);
         if (apiResponse.status) {
           linksMain = LinksMain.fromJson(apiResponse.data['links']);
           listings.addAll((apiResponse.data['anime'] as List<dynamic>)
@@ -153,7 +155,8 @@ class SearchController extends GetxController {
         }
         break;
       case 1:
-        apiResponse = await networkCalls.searchAnimethemesMain(search.text);
+        apiResponse =
+            await animeThemesRepository.searchAnimethemesMain(search.text);
         if (apiResponse.status) {
           linksMain = LinksMain.fromJson(apiResponse.data['links']);
           listings.addAll((apiResponse.data['animethemes'] as List<dynamic>)
@@ -163,7 +166,8 @@ class SearchController extends GetxController {
         }
         break;
       case 2:
-        apiResponse = await networkCalls.searchMyAnimeListProfile(search.text);
+        apiResponse =
+            await animeThemesRepository.searchMyAnimeListProfile(search.text);
         if (apiResponse.status) {
           animeList = (apiResponse.data as List<dynamic>)
               .map((e) => ThemesMalAni.fromJson(e))
@@ -172,7 +176,8 @@ class SearchController extends GetxController {
         }
         break;
       default:
-        apiResponse = await networkCalls.searchAnilistProfile(search.text);
+        apiResponse =
+            await animeThemesRepository.searchAnilistProfile(search.text);
         if (apiResponse.status) {
           animeList = (apiResponse.data as List<dynamic>)
               .map((e) => ThemesMalAni.fromJson(e))
@@ -204,7 +209,7 @@ class SearchController extends GetxController {
     loadingSong = true;
     update();
     ApiResponse apiResponse =
-        await networkCalls.getMP3VersionOfSong(malId, themeId, videoUrl);
+        await themesRepository.getMP3VersionOfSong(malId, themeId, videoUrl);
     loadingSong = false;
     update();
     return apiResponse;
@@ -213,7 +218,7 @@ class SearchController extends GetxController {
   Future<AnimeMain?> slugToMalId(String slug) async {
     loadingSong = true;
     update();
-    ApiResponse apiResponse = await networkCalls.getAnimeFromSlug(slug);
+    ApiResponse apiResponse = await themesRepository.getAnimeFromSlug(slug);
     loadingSong = false;
     update();
     if (apiResponse.status) {
@@ -224,7 +229,7 @@ class SearchController extends GetxController {
 
   Future<List<AnimeMain?>> animesFromMalIds(List<String> malIds) async {
     final ApiResponse apiResponse1 =
-        await networkCalls.getResourcesFromMalIds(malIds);
+        await themesRepository.getResourcesFromMalIds(malIds);
     if (apiResponse1.status) {
       linksMain = LinksMain.fromJson(apiResponse1.data['links']);
       final List<ResourcesMain> resorcesMain =
@@ -233,7 +238,7 @@ class SearchController extends GetxController {
               .toList();
 
       final ApiResponse apiResponse2 =
-          await networkCalls.getAnimesFromAnimeSlugs(resorcesMain
+          await themesRepository.getAnimesFromAnimeSlugs(resorcesMain
               .where((element) => element.anime.isNotEmpty)
               .map<String>((e) => e.anime[0].slug)
               .toList());
