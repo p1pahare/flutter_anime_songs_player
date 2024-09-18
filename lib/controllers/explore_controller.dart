@@ -2,13 +2,15 @@ import 'dart:developer';
 
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
-import 'package:anime_themes_player/repositories/network_calls.dart';
+import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
+import 'package:anime_themes_player/repositories/themes_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class ExploreController extends GetxController
     with StateMixin<List<AnimeMain>> {
-  NetworkCalls networkCalls = NetworkCalls();
+  AnimeThemeRepository animeThemeRepositiory = AnimeThemeRepository();
+  ThemesRepository themesRepository = ThemesRepository();
   int currentPage = 0;
   ScrollController scroll = ScrollController();
   bool loadingSong = false;
@@ -50,7 +52,7 @@ class ExploreController extends GetxController
     change(listings,
         status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
     ApiResponse apiResponse;
-    apiResponse = await networkCalls.searchByAnimeYearSeason(
+    apiResponse = await themesRepository.searchByAnimeYearSeason(
         yearValuesMap[yearValue] ?? DateTime.now().year,
         seasonValuesMap[seasonValue]!.toLowerCase());
     if (apiResponse.status) {

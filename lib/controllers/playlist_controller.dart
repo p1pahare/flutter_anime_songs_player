@@ -8,7 +8,7 @@ import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/animethemes_main.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
-import 'package:anime_themes_player/repositories/network_calls.dart';
+import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ import 'package:qr_code_vision/qr_code_vision.dart';
 enum ShowPlayList { defaultView, addLocal, addOnline }
 
 class PlaylistController extends GetxController {
-  NetworkCalls networkCalls = NetworkCalls();
+  AnimeThemeRepository networkCalls = AnimeThemeRepository();
   RxList<Map<int, String>> playlists = RxList.empty();
   GetStorage box = GetStorage();
   RxList<AudioEntry> listings = RxList.empty();
