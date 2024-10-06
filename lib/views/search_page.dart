@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime_main.dart';
 import 'package:anime_themes_player/models/animethemes_main.dart';
@@ -16,6 +17,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<sc.SearchController>();
+    final _dc = Get.find<DashboardController>();
     return SizedBox(
       height: Get.height,
       child: Center(
@@ -25,7 +27,7 @@ class SearchPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: 130,
+                // height: 130,
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: GetBuilder<sc.SearchController>(
                   init: sc.SearchController(),
@@ -53,7 +55,7 @@ class SearchPage extends StatelessWidget {
                           height: 80,
                           child: TextField(
                             controller: _.search,
-                            onSubmitted: (str) => _.getCookies(),
+                            onSubmitted: (str) => _.onSearch,
                             onChanged: (s) {
                               _.update();
                             },
@@ -81,6 +83,22 @@ class SearchPage extends StatelessWidget {
                                 )),
                           ),
                         ),
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () => _dc.getCookies(),
+                                icon: const Icon(Icons.access_alarm_outlined)),
+                            IconButton(
+                                onPressed: () => _dc.onGetCSRFToken(),
+                                icon: const Icon(Icons.access_alarm_outlined)),
+                            IconButton(
+                                onPressed: () => _dc.onLoginInBrowser(),
+                                icon: const Icon(Icons.access_alarm_outlined)),
+                            IconButton(
+                                onPressed: () => _dc.onGetPlaylist(),
+                                icon: const Icon(Icons.access_alarm_outlined)),
+                          ],
+                        )
                       ],
                     );
                   },

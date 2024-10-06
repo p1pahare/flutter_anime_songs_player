@@ -39,8 +39,8 @@ class Values {
       cardTheme: const CardTheme(color: Color.fromARGB(255, 214, 143, 63)),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all(Colors.white),
-              backgroundColor: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(Colors.white),
+              backgroundColor: WidgetStateProperty.all(
                   const Color.fromARGB(255, 214, 143, 63)))),
       sliderTheme: SliderThemeData(
           overlayShape: SliderComponentShape.noOverlay,
@@ -89,8 +89,8 @@ class Values {
     primaryColorDark: const Color.fromARGB(255, 226, 172, 236),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(Colors.black),
-            backgroundColor: MaterialStateProperty.all(
+            foregroundColor: WidgetStateProperty.all(Colors.black),
+            backgroundColor: WidgetStateProperty.all(
                 const Color.fromARGB(255, 214, 143, 63)))),
     sliderTheme: SliderThemeData(
         trackHeight: 10,
