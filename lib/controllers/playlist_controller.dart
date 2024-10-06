@@ -10,12 +10,11 @@ import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_themes_player/models/anime_main.dart' as animemain;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:qr_code_vision/qr_code_vision.dart';
 
 enum ShowPlayList { defaultView, addLocal, addOnline }
 
@@ -126,36 +125,36 @@ class PlaylistController extends GetxController {
   }
 
   importFromFile() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
+    // FilePickerResult? result =
+    //     await FilePicker.platform.pickFiles(type: FileType.image);
 
-    if (result != null) {
-      File imageFile = File(result.files.single.path!);
-      ui.Image image = await getImage(imageFile);
-      final byteData =
-          (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!
-              .buffer
-              .asUint8List();
+    // if (result != null) {
+    //   File imageFile = File(result.files.single.path!);
+    //   ui.Image image = await getImage(imageFile);
+    //   final byteData =
+    //       (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!
+    //           .buffer
+    //           .asUint8List();
 
-      final qrCode = QrCode();
-      qrCode.scanRgbaBytes(byteData, image.width, image.height);
+    //   final qrCode = QrCode();
+    //   qrCode.scanRgbaBytes(byteData, image.width, image.height);
 
-      if (qrCode.location == null) {
-        showMessage('No QR code found');
-      } else {
-        log('QR code here: ${qrCode.location}');
+    //   if (qrCode.location == null) {
+    //     showMessage('No QR code found');
+    //   } else {
+    //     log('QR code here: ${qrCode.location}');
 
-        if (qrCode.content == null ||
-            (qrCode.content?.text.length ?? 0) < 7089) {
-          showMessage('The content of the QR code could not be decoded');
-        } else {
-          log('This is the content: ${qrCode.content?.text}');
-          await importPlaylist(qrCode.content?.text);
-        }
-      }
-    } else {
-      // User canceled the picker
-    }
+    //     if (qrCode.content == null ||
+    //         (qrCode.content?.text.length ?? 0) < 7089) {
+    //       showMessage('The content of the QR code could not be decoded');
+    //     } else {
+    //       log('This is the content: ${qrCode.content?.text}');
+    //       await importPlaylist(qrCode.content?.text);
+    //     }
+    //   }
+    // } else {
+    //   // User canceled the picker
+    // }
   }
 
   Future<ui.Image> getImage(File imageFile) async {

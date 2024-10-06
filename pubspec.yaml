@@ -11,21 +11,22 @@ dependencies:
   get_storage: ^2.0.3
   fancy_bottom_navigation_2: ^0.3.5
   flutter_native_splash: ^2.1.6
-  just_audio: ^0.9.37
-  just_audio_background: ^0.0.1-beta.11
+  just_audio: ^0.9.40
+  just_audio_background: ^0.0.1-beta.13
   cached_network_image: ^3.3.0
   audio_session: ^0.1.6+1
   http: ^0.13.4
   tap_to_expand: ^0.0.1
   qr_code_vision: ^0.1.0
-  qr_flutter: ^4.0.0
   intl: ^0.17.0
-  implicitly_animated_reorderable_list_2: ^0.5.1
-  media_kit: ^1.1.10+1                             # Primary package.
-  media_kit_video: ^1.2.4                        # For video rendering.
+  implicitly_animated_reorderable_list_2: ^0.6.0
+  media_kit: ^1.1.11                             # Primary package.
+  media_kit_video: ^1.2.5                        # For video rendering.
   media_kit_libs_video: ^1.0.4                   # Native video dependencies.
-  file_picker: ^8.0.3
-  flutter_inappwebview: ^6.0.0
+  flutter_inappwebview: ^6.1.4
+
+dependency_overrides:
+  win32: ^5.5.4
 
 dev_dependencies:
   flutter_test:

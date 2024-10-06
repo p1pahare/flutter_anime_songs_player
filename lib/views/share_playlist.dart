@@ -5,7 +5,6 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class SharePlaylist extends StatelessWidget {
   const SharePlaylist({Key? key, this.playlist}) : super(key: key);
@@ -19,9 +18,9 @@ class SharePlaylist extends StatelessWidget {
       builder: (_) {
         String number = _.encodePlayListToString(playlist!);
         log(number);
-        QrCode qrCode = QrCode(40, QrErrorCorrectLevel.L);
-        qrCode.addNumeric(number);
-        qrCode.make();
+        // QrCode qrCode = QrCode(40, QrErrorCorrectLevel.L);
+        // qrCode.addNumeric(number);
+        // qrCode.make();
         return Scaffold(
           appBar: PreferredSize(
               child: AppBar(
@@ -40,14 +39,6 @@ class SharePlaylist extends StatelessWidget {
               preferredSize: const Size.fromHeight(40)),
           body: Column(
             children: [
-              QrImage.withQr(
-                qr: qrCode,
-                version: QrVersions.max,
-                errorCorrectionLevel: QrErrorCorrectLevel.L,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                size: Get.width,
-              ),
               Text(DateFormat('h:m a , d MMM y').format(DateTime.now())),
               Text("${_.listings.length} Themes",
                   style: const TextStyle(
