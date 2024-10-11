@@ -4,20 +4,19 @@ import 'dart:io';
 
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class ThemesRepository {
+  GetConnect conn = GetConnect();
+
   Future<ApiResponse> getMP3VersionOfSong(
       String malId, String themeId, String videoUrl) async {
     try {
-      final request = http.Request('POST',
-          Uri.parse('https://themes.moe/api/themes/$malId/$themeId/audio'));
-      request.body = videoUrl;
+      final response = await conn.post(
+          'https://themes.moe/api/themes/$malId/$themeId/audio', videoUrl);
 
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        String body = await response.stream.bytesToString();
+      if (response.isOk) {
+        String body = response.body;
         log(body);
         return ApiResponse.fromJson({
           "status": true,
@@ -25,7 +24,7 @@ class ThemesRepository {
           "data": body
         });
       } else {
-        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        String message = response.body ?? 'Something Went Wrong';
         log(message);
         return ApiResponse.fromJson({"status": false, "message": message});
       }
@@ -43,13 +42,10 @@ class ThemesRepository {
 
   Future<ApiResponse> getAnimeFromSlug(String slug) async {
     try {
-      final request = http.Request('GET',
-          Uri.parse('${Values.baseUrl}/anime/$slug?include=resources,images'));
-
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        String body = await response.stream.bytesToString();
+      final response = await conn
+          .get('${Values.baseUrl}/anime/$slug?include=resources,images');
+      String body = response.bodyString ?? 'Something Went Wrong';
+      if (response.isOk) {
         log(body);
         return ApiResponse.fromJson({
           "status": true,
@@ -57,7 +53,7 @@ class ThemesRepository {
           "data": jsonDecode(body)
         });
       } else {
-        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        String message = body;
         log(message);
         return ApiResponse.fromJson({"status": false, "message": message});
       }
@@ -82,15 +78,11 @@ class ThemesRepository {
       }
     }
     try {
-      final request = http.Request(
-          'GET',
-          Uri.parse(
-              '${Values.baseUrl}/resource?include=anime&filter[external_id]=$malIdString&filter[site]=MyAnimeList'));
+      final response = await conn.get(
+          '${Values.baseUrl}/resource?include=anime&filter[external_id]=$malIdString&filter[site]=MyAnimeList');
 
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        String body = await response.stream.bytesToString();
+      String body = response.bodyString ?? 'Something Went Wrong';
+      if (response.isOk) {
         log(body);
         return ApiResponse.fromJson({
           "status": true,
@@ -98,7 +90,7 @@ class ThemesRepository {
           "data": jsonDecode(body)
         });
       } else {
-        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        String message = body;
         log(message);
         return ApiResponse.fromJson({"status": false, "message": message});
       }
@@ -123,15 +115,11 @@ class ThemesRepository {
       }
     }
     try {
-      final request = http.Request(
-          'GET',
-          Uri.parse(
-              '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1'));
+      final response = await conn.get(
+          '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1');
 
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        String body = await response.stream.bytesToString();
+      String body = response.bodyString ?? 'Something Went Wrong';
+      if (response.isOk) {
         log(body);
         return ApiResponse.fromJson({
           "status": true,
@@ -139,7 +127,7 @@ class ThemesRepository {
           "data": jsonDecode(body)
         });
       } else {
-        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        String message = body;
         log(message);
         return ApiResponse.fromJson({"status": false, "message": message});
       }
@@ -157,15 +145,12 @@ class ThemesRepository {
 
   Future<ApiResponse> searchByAnimeYearSeason(int year, String season) async {
     try {
-      final request = http.Request(
-          'GET',
-          Uri.parse(
-              '${Values.baseUrl}/anime?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images'));
+      final response = await conn.get(
+          '${Values.baseUrl}/anime?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images');
 
-      http.StreamedResponse response = await request.send();
+      String body = response.bodyString ?? 'Something Went Wrong';
 
-      if (response.statusCode == 200) {
-        String body = await response.stream.bytesToString();
+      if (response.isOk) {
         log(body);
         return ApiResponse.fromJson({
           "status": true,
@@ -173,7 +158,7 @@ class ThemesRepository {
           "data": jsonDecode(body)
         });
       } else {
-        String message = response.reasonPhrase ?? 'Something Went Wrong';
+        String message = body;
         log(message);
         return ApiResponse.fromJson({"status": false, "message": message});
       }
