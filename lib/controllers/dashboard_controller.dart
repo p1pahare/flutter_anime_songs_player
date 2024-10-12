@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/repositories/playlists_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:audio_session/audio_session.dart';
@@ -15,7 +16,7 @@ class DashboardController extends GetxController {
   bool? darkMode;
   bool initializedWidgets = false;
   final TextEditingController trackName = TextEditingController();
-
+  final PlaylistRepo playlistRepo = PlaylistRepo();
   List<MediaItem> get mediaItems => _playlist.children
       .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
       .where((element) => trackName.text.isEmpty
@@ -174,13 +175,21 @@ class DashboardController extends GetxController {
 
   bool get playerLoaded => underPlayer != null;
 
-  void getCookies() {}
+  void getCookies() {
+    playlistRepo.getCookie();
+  }
 
-  void onLoginInBrowser() {}
+  void onGetCSRFToken() {
+    playlistRepo.getToken();
+  }
 
-  void onGetCSRFToken() {}
+  void onLoginInBrowser() {
+    playlistRepo.loginUser();
+  }
 
-  void onGetPlaylist() {}
+  void onGetPlaylist() {
+    playlistRepo.getUserDetails();
+  }
 
   @override
   void dispose() {
