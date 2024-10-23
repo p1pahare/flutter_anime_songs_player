@@ -23,7 +23,7 @@ class CoverForPlaylist extends StatelessWidget {
             Get.toNamed(PlaylistDetail.routeName,
                 arguments: [playlistIndex, playlist]);
           },
-          title: Text(_pc.getReadablePlaylistName(playlist?[1] ?? '')),
+          title: const Text("track name"),
           subtitle: Text(_pc.songCount(playlist!)),
           trailing: IconButton(
               onPressed: () => _pc.deletePlayList(playlist!),

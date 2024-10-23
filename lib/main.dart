@@ -6,7 +6,6 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/playlist_detail.dart';
-import 'package:anime_themes_player/views/share_playlist.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -55,14 +54,6 @@ class MyApp extends StatelessWidget {
             case CurrentPlaying.routeName:
               return CupertinoPageRoute(builder: (context) {
                 return const CurrentPlaying();
-              });
-            case SharePlaylist.routeName:
-              Map<int, String>? playlist =
-                  settings.arguments as Map<int, String>;
-              return CupertinoPageRoute(builder: (context) {
-                return SharePlaylist(
-                  playlist: playlist,
-                );
               });
             case PlaylistDetail.routeName:
               int playlistIndex =

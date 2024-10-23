@@ -101,14 +101,11 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                     int? selectedOption = await showOptions(options: {
                       0: 'Add to Current Queue',
                       for (int i = 1; i <= playlists.length; i++)
-                        i: 'Add to ' +
-                            _pc.getReadablePlaylistName(
-                                playlists[i - 1][1] ?? '')
+                        i: 'Add to Playlist'
                     });
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
-                    final Map<String, dynamic>? songmetadata = await _pc
-                        .getMetaDataFromThemeID(animethemesMain!.id.toString());
+                    final Map<String, dynamic>? songmetadata = {};
                     if (songmetadata == null) {
                       showMessage("Something went wrong");
                       return;
