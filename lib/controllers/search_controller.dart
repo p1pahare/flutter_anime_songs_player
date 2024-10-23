@@ -26,8 +26,8 @@ class SearchController extends GetxController {
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
     1: 'Theme Title',
-    // 2: 'MyAnimeList Profile',
-    // 3: 'Anilist Profile'
+    2: 'MyAnimeList Profile',
+    3: 'Anilist Profile'
   };
   void changesearchByValue(int? newValue) {
     searchByValue = newValue ?? 0;

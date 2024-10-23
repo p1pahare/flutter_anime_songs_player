@@ -4,7 +4,6 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/views/share_playlist.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -43,8 +42,8 @@ class PlaylistDetail extends StatelessWidget {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                title: Text(
-                  _.getReadablePlaylistName(playlist?[1] ?? ''),
+                title: const Text(
+                  "Play List NAME ",
                 ),
                 actions: [
                   IconButton(
@@ -52,8 +51,7 @@ class PlaylistDetail extends StatelessWidget {
                       Icons.arrow_circle_down_rounded,
                       color: Get.theme.iconTheme.color,
                     ),
-                    onPressed: () => Get.toNamed(SharePlaylist.routeName,
-                        arguments: playlist),
+                    onPressed: () {},
                   )
                 ],
               )),

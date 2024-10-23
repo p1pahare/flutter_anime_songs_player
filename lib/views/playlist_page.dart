@@ -18,7 +18,7 @@ class PlaylistPage extends StatelessWidget {
           initState: (_) {},
           builder: (_) {
             return GestureDetector(
-              onTap: () => _.setShowPlaylist(ShowPlayList.defaultView),
+              onTap: () {},
               child: Column(
                 children: [
                   Container(
@@ -28,53 +28,17 @@ class PlaylistPage extends StatelessWidget {
                       children: [
                         BetterButton(
                           icon: Icons.arrow_circle_up_rounded,
-                          onPressed: () => _.importFromFile(),
+                          onPressed: () {},
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          child: (_.getShowPlaylist() ==
-                                  ShowPlayList.defaultView)
-                              ? Text(
-                                  Values.localPlaylists,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                )
-                              : TextField(
-                                  controller: _pc.playlistName,
-                                  onChanged: (str) => _pc.update(),
-                                  onSubmitted: (str) => _pc.onCreatePlaylist(),
-                                  autofocus: true,
-                                  decoration: InputDecoration(
-                                      hintText: 'Create New Playlist ...',
-                                      suffixIcon: SizedBox(
-                                        width: 70,
-                                        child: Row(
-                                          children: [
-                                            if (_pc
-                                                .playlistName.text.isNotEmpty)
-                                              InkWell(
-                                                  onTap: _pc.onClear,
-                                                  child: const Icon(
-                                                      Icons.cancel_rounded)),
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
-                                            if (_pc
-                                                .playlistName.text.isNotEmpty)
-                                              InkWell(
-                                                  onTap: _pc.onCreatePlaylist,
-                                                  child: const Icon(
-                                                      Icons.check_circle)),
-                                          ],
-                                        ),
-                                      )),
-                                ),
+                          child: Container(),
                         ),
                         BetterButton(
                           icon: Icons.add_circle_outline_rounded,
-                          onPressed: () =>
-                              _.setShowPlaylist(ShowPlayList.addLocal),
+                          onPressed: () {},
                         ),
                       ],
                     ),
