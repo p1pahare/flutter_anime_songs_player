@@ -7,6 +7,28 @@ class Values {
   static const videoUrl = "https://v.animethemes.moe";
   static const audioUrl = "https://a.animethemes.moe";
   static const title = "Anime Themes";
+  static const loginNote =
+      "Login now to keep your favorite themes in a playlist and enjoy them any time on any device.";
+  static const registerNote = "Create an account here...";
+  static const forgotNote =
+      "Enter your email address and we will send a link to reset password.";
+  static const login = "Log in";
+  static const notHavingAnAccount = "Don't have an account?";
+  static const alreadyhaveAnAccount = "Already have an account?";
+  static const backTo = "Back to";
+  static const login1 = "Login";
+  static const agree = "Agree";
+  static const tAC = "T&Cs";
+  static const privacyPolicy = "Privacy Policy";
+  static const and = "and";
+  static const signMeup = "Sign me up";
+  static const register = "Register";
+  static const enterEmail = "Enter Email";
+  static const enterUsername = "Enter Username";
+  static const enterPassword = "Enter password";
+  static const reenterPassword = "Re-enter password";
+  static const rememberMe = "Remember me";
+  static const forgotPassword = "Forgot Password";
   static const nightModeAsset = 'lib/assets/night-mode.png';
   static const dayModeAsset = 'lib/assets/sunny-day.png';
   static const explore = 'Explore';

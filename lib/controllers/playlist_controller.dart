@@ -4,9 +4,20 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+
+enum LoginMode {
+  loading,
+  loggedIn,
+  login,
+  register,
+  forgotPassword,
+  changePassword,
+  updateUserDetails
+}
 
 class PlaylistController extends GetxController {
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
@@ -14,6 +25,84 @@ class PlaylistController extends GetxController {
   GetStorage box = GetStorage();
   RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
+  Rxn<LoginMode> mode = Rxn(LoginMode.login);
+  final usernameTec = TextEditingController();
+  final emailTec = TextEditingController();
+  final passwordTec = TextEditingController();
+  final confirmPassTec = TextEditingController();
+  RxBool agree = false.obs;
+  RxBool rememberMe = false.obs;
+
+  void setRememberMe(bool? rememberMe) {
+    this.rememberMe.value = rememberMe ?? true;
+    update();
+  }
+
+  void setAgree(bool? agree) {
+    this.agree.value = agree ?? true;
+    update();
+  }
+
+  bool showEmail() =>
+      mode.value == LoginMode.login ||
+      mode.value == LoginMode.register ||
+      mode.value == LoginMode.forgotPassword;
+
+  bool showPassoword() =>
+      mode.value == LoginMode.login || mode.value == LoginMode.register;
+
+  bool showCPassoword() => mode.value == LoginMode.register;
+
+  bool showAgree() => mode.value == LoginMode.register;
+
+  bool showUsername() => mode.value == LoginMode.register;
+
+  bool showRemember() => mode.value == LoginMode.login;
+
+  Future setMode(LoginMode loginMode) async {
+    mode.value = loginMode;
+    await Future.delayed(const Duration(milliseconds: 500));
+    update();
+  }
+
+  String getTitle() {
+    if (mode.value == LoginMode.login) {
+      return Values.loginNote;
+    }
+    if (mode.value == LoginMode.forgotPassword) {
+      return Values.forgotNote;
+    }
+    if (mode.value == LoginMode.register) {
+      return Values.registerNote;
+    }
+    return "";
+  }
+
+  String getLinkTitle() {
+    if (mode.value == LoginMode.login) {
+      return Values.notHavingAnAccount;
+    }
+    if (mode.value == LoginMode.forgotPassword) {
+      return Values.backTo;
+    }
+    if (mode.value == LoginMode.register) {
+      return Values.alreadyhaveAnAccount;
+    }
+    return "";
+  }
+
+  MapEntry<String, LoginMode> getLink() {
+    if (mode.value == LoginMode.login) {
+      return const MapEntry(Values.register, LoginMode.register);
+    }
+    if (mode.value == LoginMode.forgotPassword) {
+      return const MapEntry(Values.login1, LoginMode.login);
+    }
+    if (mode.value == LoginMode.register) {
+      return const MapEntry(Values.login1, LoginMode.login);
+    }
+    return const MapEntry(Values.register, LoginMode.register);
+  }
 
   final TextEditingController playlistName = TextEditingController();
   initialize() {

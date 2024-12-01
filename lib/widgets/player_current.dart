@@ -63,6 +63,7 @@ class PlayerCurrent extends StatelessWidget {
                                   Text(
                                     mediaItem.album.toString(),
                                     overflow: TextOverflow.clip,
+                                    maxLines: 1,
                                   ),
                                 ],
                               ),
