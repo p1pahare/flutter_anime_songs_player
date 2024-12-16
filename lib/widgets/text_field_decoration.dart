@@ -7,6 +7,7 @@ InputDecoration getTextFieldDecoration(BuildContext context, String label) {
       labelStyle: TextStyle(
         color: Theme.of(context).hintColor,
       ),
+      errorMaxLines: 2,
       focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).hintColor,

@@ -113,10 +113,6 @@ class PlaylistDetail extends StatelessWidget {
                                   // reordered.
                                   _.listings.removeAt(from);
                                   _.listings.insert(to, item);
-                                  _.editPlaylistsAndSave(
-                                      0,
-                                      playlist?.values.first ?? '',
-                                      playlist?.values.toList()[1] ?? '');
                                 },
                                 itemBuilder:
                                     (context, itemAnimation, item, index) {
@@ -202,10 +198,7 @@ class PlaylistDetail extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: BetterButton(
-              onPressed: () {
-                Get.find<PlaylistController>().deleteFromPlayList(
-                    playlist?.values.first ?? "", audioEntry.id, context);
-              },
+              onPressed: () {},
               icon: Icons.cancel_rounded,
             ),
           ),

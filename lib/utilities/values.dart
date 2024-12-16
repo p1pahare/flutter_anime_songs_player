@@ -29,8 +29,8 @@ class Values {
   static const reenterPassword = "Re-enter password";
   static const rememberMe = "Remember me";
   static const forgotPassword = "Forgot Password";
-  static const nightModeAsset = 'lib/assets/night-mode.png';
-  static const dayModeAsset = 'lib/assets/sunny-day.png';
+  static const nightModeAsset = 'lib/assets/night_icon.png';
+  static const dayModeAsset = 'lib/assets/day_icon.png';
   static const explore = 'Explore';
   static const search = 'Search';
   static const closePlayer = 'Close Player';

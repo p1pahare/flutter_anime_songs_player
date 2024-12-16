@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
-import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,13 +20,14 @@ enum LoginMode {
 
 class PlaylistController extends GetxController {
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
-  RxList<Map<int, String>> playlists = RxList.empty();
   GetStorage box = GetStorage();
   RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rxn<LoginMode> mode = Rxn(LoginMode.login);
   final usernameTec = TextEditingController();
   final emailTec = TextEditingController();
+  final oldPasswordTec = TextEditingController();
   final passwordTec = TextEditingController();
   final confirmPassTec = TextEditingController();
   RxBool agree = false.obs;
@@ -59,8 +59,11 @@ class PlaylistController extends GetxController {
 
   bool showRemember() => mode.value == LoginMode.login;
 
+  bool showOldPassword() => mode.value == LoginMode.changePassword;
+
   Future setMode(LoginMode loginMode) async {
     mode.value = loginMode;
+    formKey.currentState?.reset();
     await Future.delayed(const Duration(milliseconds: 500));
     update();
   }
@@ -78,6 +81,117 @@ class PlaylistController extends GetxController {
     return "";
   }
 
+  String? unifiedValidator(String? field) {
+    log(field.toString());
+    switch (mode.value) {
+      case LoginMode.loading:
+        return null;
+      case LoginMode.loggedIn:
+        return null;
+      case LoginMode.login:
+        if (field == Values.enterEmail) {
+          return isValidEmail(emailTec.text);
+        } else if (field == Values.enterPassword) {
+          if (isValidEmail(emailTec.text) != null) return null;
+          return isValidPassword(passwordTec.text);
+        } else {
+          return null;
+        }
+      case LoginMode.register:
+        if (field == Values.enterUsername) {
+          return isValidUsername(usernameTec.text);
+        } else if (field == Values.enterEmail) {
+          if (isValidUsername(usernameTec.text) != null) return null;
+          return isValidEmail(emailTec.text);
+        } else if (field == Values.enterPassword) {
+          if (isValidUsername(usernameTec.text) != null ||
+              isValidEmail(emailTec.text) != null) return null;
+          return isValidPassword(passwordTec.text);
+        } else if (field == Values.reenterPassword) {
+          if (isValidUsername(usernameTec.text) != null ||
+              isValidEmail(emailTec.text) != null ||
+              isValidPassword(passwordTec.text) != null) return null;
+          return isValidCPassword(passwordTec.text, confirmPassTec.text);
+        } else if (field == Values.agree) {
+          if (isValidUsername(usernameTec.text) != null ||
+              isValidEmail(emailTec.text) != null ||
+              isValidPassword(passwordTec.text) != null ||
+              isValidCPassword(passwordTec.text, confirmPassTec.text) != null) {
+            return null;
+          }
+          return isAgreed(agree.value);
+        } else {
+          return null;
+        }
+      case LoginMode.forgotPassword:
+        if (field == Values.enterEmail) {
+          return isValidEmail(emailTec.text);
+        } else {
+          return null;
+        }
+      case LoginMode.changePassword:
+        return null;
+      case LoginMode.updateUserDetails:
+        return null;
+      case null:
+        return null;
+    }
+  }
+
+  String? isValidEmail(String email) {
+    final emailRegExp = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
+    if (email.isEmpty) {
+      return "This field cannot be left empty.";
+    }
+    if (!emailRegExp.hasMatch(email)) {
+      return "Please enter a valid email id.";
+    }
+    return null;
+  }
+
+  void unifiedSubmitAction() {
+    if (formKey.currentState?.validate() == true) {}
+  }
+
+  String? isValidPassword(String password) {
+    final passwordRegExp = RegExp(r'^(?=.*\d)(?=.*[a-zA-Z]).{8,}$');
+    if (password.isEmpty) {
+      return "This field cannot be left empty.";
+    }
+    if (!passwordRegExp.hasMatch(password)) {
+      return "Password must have at least 8 characters including letter/digit/special characters.";
+    }
+    return null;
+  }
+
+  String? isValidCPassword(String password, String confirm) {
+    if (confirm.isEmpty) {
+      return "This field cannot be left empty.";
+    }
+    if (confirm != password) {
+      return "Confirm password should be same as password.";
+    }
+    return null;
+  }
+
+  String? isAgreed(bool? isAgree) {
+    if (isAgree != true) {
+      return "Please Accept the T&C to proceed with register.";
+    }
+    return null;
+  }
+
+  String? isValidUsername(String username) {
+    final usernameRegExp = RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$');
+    if (username.isEmpty) {
+      return "This field cannot be left empty.";
+    }
+    if (!usernameRegExp.hasMatch(username)) {
+      return "Password must have at least 8 characters including letter/digit/special characters.";
+    }
+    return null;
+  }
+
   String getLinkTitle() {
     if (mode.value == LoginMode.login) {
       return Values.notHavingAnAccount;
@@ -87,6 +201,19 @@ class PlaylistController extends GetxController {
     }
     if (mode.value == LoginMode.register) {
       return Values.alreadyhaveAnAccount;
+    }
+    return "";
+  }
+
+  String getActionName() {
+    if (mode.value == LoginMode.login) {
+      return Values.login;
+    }
+    if (mode.value == LoginMode.forgotPassword) {
+      return Values.forgotPassword;
+    }
+    if (mode.value == LoginMode.register) {
+      return Values.register;
     }
     return "";
   }
@@ -107,21 +234,8 @@ class PlaylistController extends GetxController {
   final TextEditingController playlistName = TextEditingController();
   initialize() {
     box = GetStorage();
-    playlists.add({0: "SONGGGG"});
-    playlists.refresh();
     log("initialized");
     update();
-  }
-
-  String songCount(Map<int, String> playlist) =>
-      "${(playlist.values.where((element) => element != "0000000").length - 2)} Songs";
-
-  bool containsPlaylistId(String playlistId) {
-    bool exists = false;
-    for (final element in playlists) {
-      if (element[0] == playlistId) exists = true;
-    }
-    return exists;
   }
 
   void onClear() {
@@ -138,93 +252,6 @@ class PlaylistController extends GetxController {
       playlistName.clear();
     }
     update();
-  }
-
-  addToPlayList(String playlistId, String themeId,
-      Map<String, dynamic> songmetadata) async {
-    int playlistIndex =
-        playlists.indexWhere((element) => element[0] == playlistId);
-    int emptyIndex = playlists[playlistIndex]
-        .entries
-        .firstWhere(
-          (element) => element.value == '0000000',
-        )
-        .key;
-    String paddedThemeId = themeId.padLeft(7, '0');
-    int existingId = playlists[playlistIndex]
-        .entries
-        .toList()
-        .indexWhere((element) => element.value == paddedThemeId);
-
-    if (existingId != -1) {
-      showMessage("This theme already present in the playlist.");
-      return;
-    }
-    playlists[playlistIndex][emptyIndex] = paddedThemeId;
-    for (MapEntry me in playlists[playlistIndex].entries) {
-      if (me.value != '0000000') log("${me.key}  _______:______ ${me.value}");
-    }
-    playlists.refresh();
-    await writePlayliststoBox();
-    await writeSongMetaDataToBox(paddedThemeId, songmetadata);
-    showMessage("Song added to the playlist 'Playlist name' Successfully.");
-  }
-
-  Future editPlaylistsAndSave(
-      int playlistIndex, String playListId, String playlistName) async {
-    List<String> stringList =
-        listings.map((e) => e.id.padLeft(7, '0')).toList();
-    stringList.insert(0, playListId);
-    stringList.insert(1, playlistName);
-    stringList.insertAll(stringList.length,
-        List.generate(1002 - stringList.length, (index) => '0000000'));
-    playlists[playlistIndex].clear();
-    playlists[playlistIndex].addAll(Map.fromIterables(
-        List.generate(stringList.length, (index) => index), stringList));
-    await writePlayliststoBox();
-  }
-
-  Future deleteFromPlayList(
-      String playlistId, String themeId, BuildContext context) async {
-    update(['detail']);
-    showMessage("Song removed from the playlist 'playlist name Successfully.");
-  }
-
-  bool playlistIsFull(String playlistId) => playlists
-      .where((p0) => p0[0] == playlistId)
-      .first
-      .values
-      .where((element) => element == "0000000")
-      .isEmpty;
-
-  deletePlayList(Map<int, String> playList) async {
-    bool? delete = await Get.defaultDialog<bool>(
-        buttonColor: Get.theme.unselectedWidgetColor,
-        cancelTextColor: Get.theme.primaryColor,
-        confirmTextColor: Get.theme.textTheme.bodySmall!.color,
-        content: const Text(
-            "Do you really want to delete playlist 'Playlist Name' with 333 Themes ?"),
-        onConfirm: () => Get.back(result: true),
-        textConfirm: 'Confirm',
-        onCancel: () => Get.back(result: false));
-    if (delete == null || !delete) return;
-    playlists.removeWhere((element) => element[0] == playList[0]);
-
-    playlists.refresh();
-
-    await writePlayliststoBox();
-  }
-
-  Future writePlayliststoBox() async {
-    await box.write(
-        'playlists', playlists.map<String>((element) => "").toList());
-    update();
-  }
-
-  Future<void> writeSongMetaDataToBox(
-      String themeId, Map<String, dynamic> songmetadata) async {
-    await box.write('theme_$themeId', songmetadata);
-    update(['detail']);
   }
 
   metadataFromThemeId(List<String> themeIds) async {

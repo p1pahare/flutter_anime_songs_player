@@ -97,11 +97,9 @@ class SongCardForAnimethemesMain extends StatelessWidget {
               InkWell(
                   onTap: () async {
                     PlaylistController _pc = Get.find<PlaylistController>();
-                    List<Map<int, String>> playlists = _pc.playlists;
                     int? selectedOption = await showOptions(options: {
                       0: 'Add to Current Queue',
-                      for (int i = 1; i <= playlists.length; i++)
-                        i: 'Add to Playlist'
+                      1: 'Login now to add theme'
                     });
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
@@ -115,10 +113,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                       await Get.find<DashboardController>().init(
                           [AudioEntry.fromJson(songmetadata)],
                           addToQueueOnly: true);
-                    } else {
-                      _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
-                          animethemesMain?.id.toString() ?? '', songmetadata);
-                    }
+                    } else {}
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),

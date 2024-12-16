@@ -53,20 +53,22 @@ class _DashboardPageState extends State<DashboardPage> {
                               bottomRight: Radius.circular(12)),
                           color: Colors.white.withAlpha(122)),
                       child: Image.asset('lib/assets/at_comm_icon.png')),
-                  title: const Text(Values.title),
-                  centerTitle: true,
+                  title: Text(
+                    Values.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
                   actions: [
-                    Switch(
-                        trackColor: WidgetStateProperty.all(Colors.white54),
-                        thumbColor:
-                            WidgetStateProperty.all(Colors.grey.shade50),
-                        activeThumbImage: const AssetImage(
-                          Values.nightModeAsset,
-                        ),
-                        inactiveThumbImage:
-                            const AssetImage(Values.dayModeAsset),
-                        value: c.darkMode ?? false,
-                        onChanged: c.changeDarkMode)
+                    IconButton(
+                      icon: (c.darkMode ?? false)
+                          ? Image.asset(
+                              Values.nightModeAsset,
+                            )
+                          : Image.asset(Values.dayModeAsset),
+                      onPressed: () => c.changeDarkMode(!c.darkMode!),
+                    )
                   ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(!c.playerLoaded ? 0 : 60),
