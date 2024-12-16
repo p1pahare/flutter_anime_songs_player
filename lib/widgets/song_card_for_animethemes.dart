@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
-import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -15,9 +15,9 @@ class SongCardForAnimethemes extends StatelessWidget {
   const SongCardForAnimethemes(
       {Key? key, this.animethemes, this.animethemeentries, this.animeMain})
       : super(key: key);
-  final AnimeMain? animeMain;
-  final Animethemes? animethemes;
-  final Animethemeentries? animethemeentries;
+  final Anime? animeMain;
+  final AmAnimethemes? animethemes;
+  final AmAnimethemeentries? animethemeentries;
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -29,7 +29,10 @@ class SongCardForAnimethemes extends StatelessWidget {
               border: Border.all(
                   color: Theme.of(context).textTheme.bodyMedium!.color!)),
           padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.symmetric(vertical: 2),
+          margin: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 20,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -69,11 +72,9 @@ class SongCardForAnimethemes extends StatelessWidget {
               InkWell(
                   onTap: () async {
                     PlaylistController _pc = Get.find<PlaylistController>();
-                    List<Map<int, String>> playlists = _pc.playlists;
                     int? selectedOption = await showOptions(options: {
                       0: 'Add to Current Queue',
-                      for (int i = 1; i <= playlists.length; i++)
-                        i: 'Add to Playlist Name'
+                      1: 'Login to Add Theme'
                     });
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
@@ -87,10 +88,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                       await Get.find<DashboardController>().init(
                           [AudioEntry.fromJson(songmetadata)],
                           addToQueueOnly: true);
-                    } else {
-                      _pc.addToPlayList(playlists[selectedOption - 1][0] ?? '',
-                          animethemes?.id.toString() ?? '', songmetadata);
-                    }
+                    } else {}
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),

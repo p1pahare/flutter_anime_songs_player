@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/playlists_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
@@ -9,12 +11,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DashboardController extends GetxController {
   var selectedIndex = 0.obs;
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
+  Me? me;
   final TextEditingController trackName = TextEditingController();
   final PlaylistRepo playlistRepo = PlaylistRepo();
   List<MediaItem> get mediaItems => _playlist.children
@@ -38,6 +43,7 @@ class DashboardController extends GetxController {
     initializedWidgets = true;
     Get.put<GlobalKey<OnlineVideoPlayerState>>(videoPlayerKey);
     log("initialized");
+    isLogin();
   }
 
   changeDarkMode(bool? status) async {
@@ -175,25 +181,41 @@ class DashboardController extends GetxController {
 
   bool get playerLoaded => underPlayer != null;
 
-  void getCookies() {
-    playlistRepo.getCookie();
+  Future isLogin() async {
+    PlaylistController playlistController = Get.find();
+    playlistController.mode.value = LoginMode.loading;
+    playlistController.update();
+    final isLogin = await playlistRepo.getUserDetails();
+    if (isLogin.data == false) {
+      playlistController.mode.value = LoginMode.failed;
+    } else if (isLogin.status) {
+      me = meFromJson(isLogin.data);
+      playlistController.mode.value = LoginMode.loggedIn;
+    } else {
+      playlistController.mode.value = LoginMode.login;
+    }
+    playlistController.update();
   }
 
-  void onGetCSRFToken() {
-    playlistRepo.getToken();
+  Future<String> getVersionInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    return "V$version (Build $buildNumber)";
   }
 
-  void onLoginInBrowser() {
-    playlistRepo.loginUser();
-  }
-
-  void onGetPlaylist() {
-    playlistRepo.getUserDetails();
+  Future<void> launchURL(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      Get.snackbar("Error", "Could not launch $url");
+    }
   }
 
   @override
   void dispose() {
     underPlayer?.dispose();
+    playlistRepo.dispose();
     super.dispose();
   }
 }

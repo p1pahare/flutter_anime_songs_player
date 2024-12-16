@@ -1,4 +1,5 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/widgets/better_icon_button.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -36,96 +37,179 @@ class PlayerCurrent extends StatelessWidget {
               onTap: () {
                 Get.toNamed(CurrentPlaying.routeName);
               },
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                  width: 80,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          mediaItem.artUri.toString(),
-                        ),
-                        fit: BoxFit.cover,
-                      )),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
+              child: Stack(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: mediaItem.artUri.toString(),
+                    fit: BoxFit.fill,
+                    height: double.infinity,
+                    width: 100,
+                    alignment: Alignment.center,
+                    placeholder: (context, child) =>
+                        const ProgressIndicatorButton(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      Values.noImage,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 100,
+                          ),
+                          Expanded(
+                            child: Container(
+                              color:
+                                  (Get.isDarkMode ? Colors.black : Colors.white)
+                                      .withOpacity(0.75),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(mediaItem.title),
-                                  Text(
-                                    mediaItem.album.toString(),
-                                    overflow: TextOverflow.clip,
-                                    maxLines: 1,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, bottom: 5),
+                                    child: Text(
+                                      Values.nowPlaying,
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          Get.textTheme.headlineSmall?.copyWith(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 70,
+                                    color:
+                                        Get.theme.appBarTheme.backgroundColor,
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      width:
+                                                          context.width * 0.45,
+                                                      child: Text(
+                                                        mediaItem.artist
+                                                            .toString(),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: Get
+                                                            .textTheme.bodySmall
+                                                            ?.copyWith(
+                                                                fontSize: 11),
+                                                        maxLines: 1,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      mediaItem.title,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Get
+                                                          .textTheme.bodyLarge,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 5, 5, 5),
+                                          child: StreamBuilder<Duration?>(
+                                            stream: _audioPlayer.durationStream,
+                                            builder: (_, fullDurationSnap) {
+                                              final fullDuration =
+                                                  fullDurationSnap.data;
+
+                                              if (fullDuration == null) {
+                                                return const SizedBox(
+                                                  height: 0,
+                                                  width: 0,
+                                                );
+                                              } else {
+                                                return StreamBuilder<Duration>(
+                                                    stream: _audioPlayer
+                                                        .positionStream,
+                                                    builder: (context,
+                                                        currentDurationSnap) {
+                                                      final currentDuration =
+                                                          currentDurationSnap
+                                                              .data;
+
+                                                      if (currentDuration ==
+                                                          null) {
+                                                        return const SizedBox(
+                                                          height: 0,
+                                                          width: 0,
+                                                        );
+                                                      } else {
+                                                        return Slider(
+                                                            value: currentDuration
+                                                                        .inSeconds >
+                                                                    fullDuration
+                                                                        .inSeconds
+                                                                ? fullDuration
+                                                                    .inSeconds
+                                                                    .toDouble()
+                                                                : currentDuration
+                                                                    .inSeconds
+                                                                    .toDouble(),
+                                                            max: fullDuration
+                                                                .inSeconds
+                                                                .toDouble(),
+                                                            onChanged: (val) {
+                                                              _audioPlayer.seek(
+                                                                  Duration(
+                                                                      seconds: val
+                                                                          .toInt()));
+                                                            });
+                                                      }
+                                                    });
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            _closeButton(),
-                            _playButton(),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 0.3,
-                        color: Get.theme.appBarTheme.backgroundColor,
-                      ),
-                      Container(
-                        color: Get.theme.appBarTheme.backgroundColor,
-                        child: StreamBuilder<Duration?>(
-                          stream: _audioPlayer.durationStream,
-                          builder: (_, fullDurationSnap) {
-                            final fullDuration = fullDurationSnap.data;
-
-                            if (fullDuration == null) {
-                              return const SizedBox(
-                                height: 0,
-                                width: 0,
-                              );
-                            } else {
-                              return StreamBuilder<Duration>(
-                                  stream: _audioPlayer.positionStream,
-                                  builder: (context, currentDurationSnap) {
-                                    final currentDuration =
-                                        currentDurationSnap.data;
-                                    // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
-
-                                    if (currentDuration == null) {
-                                      return const SizedBox(
-                                        height: 0,
-                                        width: 0,
-                                      );
-                                    } else {
-                                      return Slider(
-                                          value: currentDuration.inSeconds >
-                                                  fullDuration.inSeconds
-                                              ? fullDuration.inSeconds
-                                                  .toDouble()
-                                              : currentDuration.inSeconds
-                                                  .toDouble(),
-                                          max:
-                                              fullDuration.inSeconds.toDouble(),
-                                          onChanged: (val) {
-                                            _audioPlayer.seek(
-                                                Duration(seconds: val.toInt()));
-                                          });
-                                    }
-                                  });
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+                          )
+                        ]),
                   ),
-                ),
-              ]),
+                  Positioned(
+                    top: 5,
+                    right: 10,
+                    child: _closeButton(),
+                  ),
+                  Positioned(
+                    top: 5,
+                    right: 55,
+                    child: _playButton(),
+                  ),
+                ],
+              ),
             );
           }
         });
@@ -135,13 +219,17 @@ class PlayerCurrent extends StatelessWidget {
     final processingState = playerState.processingState;
     if (processingState == ProcessingState.loading ||
         processingState == ProcessingState.buffering) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-        width: 16.0,
-        height: 16.0,
-        child: const ProgressIndicatorButton(
-          radius: 8,
+      return BetterButton(
+        alternate: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+          width: 24.0,
+          height: 24.0,
+          alignment: Alignment.center,
+          child: const ProgressIndicatorButton(
+            radius: 8,
+          ),
         ),
+        onPressed: () {},
       );
     } else if (_audioPlayer.playing != true) {
       return BetterButton(

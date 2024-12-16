@@ -1,13 +1,13 @@
-import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/explore_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
-import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/models/theme_album.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/album_detail_page.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/playlist_detail.dart';
+import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -22,7 +22,8 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,11 +31,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(DashboardController());
-    Get.put(ExploreController());
-    Get.put(SearchController());
-    Get.put(PlaylistController());
-
     return GestureDetector(
       onTap: () {
         Get.focusScope?.unfocus();
@@ -56,16 +52,21 @@ class MyApp extends StatelessWidget {
                 return const CurrentPlaying();
               });
             case PlaylistDetail.routeName:
-              int playlistIndex =
-                  ((settings.arguments as List<dynamic>?)?[0] ?? 0);
-              Map<int, String> playlist =
-                  ((settings.arguments as List<dynamic>?)?[1] ?? {});
-
               return CupertinoPageRoute(builder: (context) {
-                return PlaylistDetail(
-                  playlist: playlist,
-                  playlistIndex: playlistIndex,
-                );
+                return const PlaylistDetail();
+              });
+            case SettingsPage.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                return const SettingsPage();
+              });
+            case AlbumDetailPage.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                if (settings.arguments is ThemeAlbum) {
+                  return AlbumDetailPage(
+                    themeAlbum: settings.arguments as ThemeAlbum,
+                  );
+                }
+                return const SizedBox.expand();
               });
             case '/':
             default:

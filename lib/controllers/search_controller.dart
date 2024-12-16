@@ -1,13 +1,14 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/models/anime_main.dart';
-import 'package:anime_themes_player/models/animethemes_main.dart';
+import 'package:anime_themes_player/models/anime.dart';
+import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/linksmain.dart';
-import 'package:anime_themes_player/models/resources_main.dart';
+import 'package:anime_themes_player/models/resources.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/themes_repo.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -73,18 +74,18 @@ class SearchController extends GetxController {
 
       if (apiResponse.data['anime'] != null) {
         listings.addAll((apiResponse.data['anime'] as List<dynamic>)
-            .map((e) => AnimeMain.fromJson(e))
+            .map((e) => Anime.fromJson(e))
             .toList());
       }
       if (apiResponse.data['animethemes'] != null) {
         listings.addAll((apiResponse.data['animethemes'] as List<dynamic>)
-            .map((e) => AnimethemesMain.fromJson(e))
+            .map((e) => Animethemes.fromJson(e))
             .toList());
       }
       if (apiResponse.data['resources'] != null) {
-        final List<ResourcesMain> resorcesMain =
+        final List<Resources> resorcesMain =
             (apiResponse.data['resources'] as List<dynamic>)
-                .map<ResourcesMain>((e) => ResourcesMain.fromJson(e))
+                .map<Resources>((e) => Resources.fromJson(e))
                 .toList();
 
         final ApiResponse apiResponse2 =
@@ -95,22 +96,24 @@ class SearchController extends GetxController {
 
         if (apiResponse2.status) {
           listings.addAll((apiResponse2.data['anime'] as List<dynamic>)
-              .map<AnimeMain>((e) => AnimeMain.fromJson(e))
+              .map<Anime>((e) => Anime.fromJson(e))
               .toList());
         }
       }
       listings.refresh();
-
+      status = RxStatus.success();
+      update();
+    } else {
+      status = RxStatus.error(Values.loadMoreFailed);
       update();
     }
-    status = RxStatus.success();
   }
 
   Future fetchAnimeLists() async {
     status = RxStatus.loadingMore();
 
-    final List<AnimeMain?> animeMain = await animesFromMalIds(
-        animeList.map<String>((e) => "${e.malID}").toList());
+    final List<Anime?> animeMain = await animesFromMalIds(
+        animeList.map<String>((e) => "${e.malID}").toSet().toList());
     if (animeMain.isNotEmpty) {
       listings.addAll(animeMain);
       listings.refresh();
@@ -131,7 +134,7 @@ class SearchController extends GetxController {
         if (apiResponse.status) {
           linksMain = LinksMain.fromJson(apiResponse.data['links']);
           listings.addAll((apiResponse.data['anime'] as List<dynamic>)
-              .map((e) => AnimeMain.fromJson(e))
+              .map((e) => Anime.fromJson(e))
               .toList());
           listings.refresh();
         }
@@ -142,7 +145,7 @@ class SearchController extends GetxController {
         if (apiResponse.status) {
           linksMain = LinksMain.fromJson(apiResponse.data['links']);
           listings.addAll((apiResponse.data['animethemes'] as List<dynamic>)
-              .map((e) => AnimethemesMain.fromJson(e))
+              .map((e) => Animethemes.fromJson(e))
               .toList());
           listings.refresh();
         }
@@ -164,7 +167,6 @@ class SearchController extends GetxController {
           animeList = (apiResponse.data as List<dynamic>)
               .map((e) => ThemesMalAni.fromJson(e))
               .toList();
-
           await fetchAnimeLists();
         }
     }
@@ -197,26 +199,26 @@ class SearchController extends GetxController {
     return apiResponse;
   }
 
-  Future<AnimeMain?> slugToMalId(String slug) async {
+  Future<Anime?> slugToMalId(String slug) async {
     loadingSong = true;
     update();
     ApiResponse apiResponse = await themesRepository.getAnimeFromSlug(slug);
     loadingSong = false;
     update();
     if (apiResponse.status) {
-      return AnimeMain.fromJson(apiResponse.data['anime']);
+      return Anime.fromJson(apiResponse.data['anime']);
     }
     return null;
   }
 
-  Future<List<AnimeMain?>> animesFromMalIds(List<String> malIds) async {
+  Future<List<Anime?>> animesFromMalIds(List<String> malIds) async {
     final ApiResponse apiResponse1 =
         await themesRepository.getResourcesFromMalIds(malIds);
     if (apiResponse1.status) {
       linksMain = LinksMain.fromJson(apiResponse1.data['links']);
-      final List<ResourcesMain> resorcesMain =
+      final List<Resources> resorcesMain =
           (apiResponse1.data['resources'] as List<dynamic>)
-              .map<ResourcesMain>((e) => ResourcesMain.fromJson(e))
+              .map<Resources>((e) => Resources.fromJson(e))
               .toList();
 
       final ApiResponse apiResponse2 =
@@ -227,7 +229,7 @@ class SearchController extends GetxController {
 
       if (apiResponse2.status) {
         return (apiResponse2.data['anime'] as List<dynamic>)
-            .map<AnimeMain>((e) => AnimeMain.fromJson(e))
+            .map<Anime>((e) => Anime.fromJson(e))
             .toList();
       }
     }
@@ -238,6 +240,8 @@ class SearchController extends GetxController {
   void dispose() {
     log("dispose");
     scroll.dispose();
+    themesRepository.dispose();
+    animeThemesRepository.dispose();
     listings.clear();
     super.dispose();
   }

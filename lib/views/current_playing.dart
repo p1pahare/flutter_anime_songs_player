@@ -28,7 +28,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
 
   @override
   void didChangeDependencies() {
-    audioHeight = Get.height * 0.28;
+    audioHeight = context.height * 0.28;
     super.didChangeDependencies();
   }
 
@@ -109,7 +109,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
                         MediaInfo(audioPlayer: _.underPlayer!),
                         Container(
                           alignment: Alignment.bottomRight,
-                          width: Get.width * 0.64,
+                          width: context.width * 0.64,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -278,7 +278,7 @@ class _CurrentPlayingState extends State<CurrentPlaying> {
         {
           setState(() {
             showVideo = !showVideo;
-            audioHeight = Get.height * (showVideo ? 0.42 : 0.28);
+            audioHeight = context.height * (showVideo ? 0.42 : 0.28);
           });
           if (showVideo) {
             await dashboardController.underPlayer?.pause();
@@ -450,8 +450,8 @@ class MediaInfo extends StatelessWidget {
                 children: [
                   if (!noThumb)
                     Container(
-                      width: Get.width * 0.38,
-                      height: Get.height * 0.28,
+                      width: context.width * 0.38,
+                      height: context.height * 0.28,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(6),
                           image: DecorationImage(

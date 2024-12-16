@@ -8,7 +8,7 @@ class CoverForThemesMalani extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: Get.width - 90,
+      width: context.width - 90,
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),

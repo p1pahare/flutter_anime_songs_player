@@ -1,0 +1,20 @@
+{
+    "user": {
+        "id": 1223,
+        "name": "p_pahare",
+        "email": "p1pahare@rediffmail.com",
+        "email_verified_at": "2024-10-16T16:35:06.000000Z",
+        "two_factor_confirmed_at": null,
+        "permissions": [],
+        "roles": [
+            {
+                "id": 6,
+                "name": "Playlist User",
+                "guard_name": "web",
+                "default": true,
+                "color": null,
+                "priority": null
+            }
+        ]
+    }
+}

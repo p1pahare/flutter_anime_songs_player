@@ -24,10 +24,9 @@ class CoverForPlaylist extends StatelessWidget {
                 arguments: [playlistIndex, playlist]);
           },
           title: const Text("track name"),
-          subtitle: Text(_pc.songCount(playlist!)),
+          subtitle: const Text("0 Songs"),
           trailing: IconButton(
-              onPressed: () => _pc.deletePlayList(playlist!),
-              icon: const Icon(Icons.cancel_outlined)),
+              onPressed: () {}, icon: const Icon(Icons.cancel_outlined)),
         ));
   }
 }

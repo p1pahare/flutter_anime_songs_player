@@ -9,15 +9,15 @@ dependencies:
     sdk: flutter
   get: ^4.6.1
   get_storage: ^2.0.3
-  fancy_bottom_navigation_2: ^0.3.5
+  flutter_snake_navigationbar: ^0.6.1
   flutter_native_splash: ^2.1.6
+  url_launcher: ^6.3.1
   just_audio: ^0.9.40
   just_audio_background: ^0.0.1-beta.13
   cached_network_image: ^3.3.0
-  audio_session: ^0.1.6+1
-  tap_to_expand: ^0.0.1
-  qr_code_vision: ^0.1.0
+  package_info: ^2.0.0
   intl: ^0.17.0
+  float_column: ^2.1.8
   implicitly_animated_reorderable_list_2: ^0.6.0
   media_kit: ^1.1.11                             # Primary package.
   media_kit_video: ^1.2.5                        # For video rendering.

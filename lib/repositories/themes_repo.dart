@@ -114,7 +114,7 @@ class ThemesRepository extends GetConnect {
     }
     try {
       final response = await get(
-          '${Values.baseUrl}/anime?include=animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,resources,animethemes.song.artists,studios&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&page[size]=15&page[number]=1');
+          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&fields[anime]=name,slug,year,season,synopsis&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&include=images,resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,animethemes.song.artists');
 
       String body = response.bodyString ?? 'Something Went Wrong';
       if (response.isOk) {
@@ -144,7 +144,7 @@ class ThemesRepository extends GetConnect {
   Future<ApiResponse> searchByAnimeYearSeason(int year, String season) async {
     try {
       final response = await get(
-          '${Values.baseUrl}/anime?page[size]=50&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images');
+          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,animethemes.song.artists');
 
       String body = response.bodyString ?? 'Something Went Wrong';
 

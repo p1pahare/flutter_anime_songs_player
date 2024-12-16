@@ -8,6 +8,8 @@ class MainFlutterWindow: NSWindow {
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
 
+    self.minSize = NSSize(width: 400, height: 800)
+    self.maxSize = NSSize(width: 400, height: 800)
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     super.awakeFromNib()

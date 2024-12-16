@@ -1,20 +1,22 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/api_response.dart';
+import 'package:anime_themes_player/models/linksmain.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/themes_repo.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
-class ExploreController extends GetxController
-    with StateMixin<List<AnimeMain>> {
-  AnimeThemeRepository animeThemeRepositiory = AnimeThemeRepository();
+class ExploreController extends GetxController {
+  AnimeThemeRepository animeThemesRepository = AnimeThemeRepository();
   ThemesRepository themesRepository = ThemesRepository();
   int currentPage = 0;
   ScrollController scroll = ScrollController();
-  bool loadingSong = false;
-  List<AnimeMain> listings = [];
+  RxList<dynamic> listings = RxList.empty();
+  RxStatus status = RxStatus.success();
+  LinksMain? linksMain;
   int seasonValue = (DateTime.now().month - 1) ~/ 3;
   Map<int, String> seasonValuesMap = {
     0: 'Winter',
@@ -40,38 +42,72 @@ class ExploreController extends GetxController
   }
 
   ExploreController() {
-    scroll.addListener(() {
+    scroll.addListener(() async {
       if (scroll.position.maxScrollExtent == scroll.position.pixels) {
-        currentPage++;
+        if (!status.isLoadingMore) {
+          await fetchMoreEntries();
+        }
       }
     });
   }
 
   searchListings() async {
     listings.clear();
-    change(listings,
-        status: listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore());
+    listings.refresh();
+    status = listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
+    update();
     ApiResponse apiResponse;
     apiResponse = await themesRepository.searchByAnimeYearSeason(
         yearValuesMap[yearValue] ?? DateTime.now().year,
         seasonValuesMap[seasonValue]!.toLowerCase());
     if (apiResponse.status) {
-      listings = [
+      linksMain = LinksMain.fromJson(apiResponse.data['links']);
+      listings.value = [
         ...listings,
         ...(apiResponse.data["anime"] ?? [])
-            .map((e) => AnimeMain.fromJson(e))
+            .map((e) => Anime.fromJson(e))
             .toList()
       ];
     }
 
     if (apiResponse.status) {
       if (listings.isEmpty) {
-        change(listings, status: RxStatus.empty());
+        listings.refresh();
+        status = RxStatus.empty();
+        update();
       } else {
-        change(listings, status: RxStatus.success());
+        listings.refresh();
+        status = RxStatus.success();
+        update();
       }
     } else {
-      change(null, status: RxStatus.error(apiResponse.message));
+      status = RxStatus.error(apiResponse.message);
+      listings.clear();
+      listings.refresh();
+      update();
+    }
+  }
+
+  Future fetchMoreEntries() async {
+    log(linksMain?.toJson().toString() ?? '');
+    if (linksMain == null || linksMain?.next == null) return;
+    status = RxStatus.loadingMore();
+    update();
+    final apiResponse = await animeThemesRepository.loadMore(linksMain?.next);
+    if (apiResponse.status) {
+      linksMain = LinksMain.fromJson(apiResponse.data['links']);
+
+      if (apiResponse.data['anime'] != null) {
+        listings.addAll((apiResponse.data['anime'] as List<dynamic>)
+            .map((e) => Anime.fromJson(e))
+            .toList());
+      }
+      listings.refresh();
+      status = RxStatus.success();
+      update();
+    } else {
+      status = RxStatus.error(Values.loadMoreFailed);
+      update();
     }
   }
 
@@ -79,6 +115,9 @@ class ExploreController extends GetxController
   void dispose() {
     log("dispose");
     scroll.dispose();
+    listings.clear();
+    themesRepository.dispose();
+    animeThemesRepository.dispose();
     super.dispose();
   }
 }
