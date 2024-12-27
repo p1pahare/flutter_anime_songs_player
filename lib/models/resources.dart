@@ -1,5 +1,5 @@
-class ResourcesMain {
-  ResourcesMain({
+class Resources {
+  Resources({
     required this.id,
     required this.link,
     required this.externalId,
@@ -16,9 +16,9 @@ class ResourcesMain {
   late final String createdAt;
   late final String updatedAt;
   late final String deletedAt;
-  late final List<Anime> anime;
+  late final List<RmAnime> anime;
 
-  ResourcesMain.fromJson(Map<String, dynamic> json) {
+  Resources.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     link = json['link'] ?? '';
     externalId = json['external_id'] ?? '';
@@ -26,7 +26,7 @@ class ResourcesMain {
     createdAt = json['created_at'] ?? '';
     updatedAt = json['updated_at'] ?? '';
     deletedAt = json['deleted_at']?.toString() ?? '';
-    anime = List.from(json['anime']).map((e) => Anime.fromJson(e)).toList();
+    anime = List.from(json['anime']).map((e) => RmAnime.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -43,8 +43,8 @@ class ResourcesMain {
   }
 }
 
-class Anime {
-  Anime({
+class RmAnime {
+  RmAnime({
     required this.id,
     required this.name,
     required this.slug,
@@ -63,7 +63,7 @@ class Anime {
   late final String createdAt;
   late final String updatedAt;
 
-  Anime.fromJson(Map<String, dynamic> json) {
+  RmAnime.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     slug = json['slug'];

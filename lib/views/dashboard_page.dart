@@ -3,6 +3,7 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/playlist_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
+import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:fancy_bottom_navigation_2/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashboardController>(
-        init: DashboardController(),
+        init: Get.find<DashboardController>(),
         initState: (_) {
           //
           // _init();
@@ -62,13 +63,14 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   actions: [
                     IconButton(
-                      icon: (c.darkMode ?? false)
-                          ? Image.asset(
-                              Values.nightModeAsset,
-                            )
-                          : Image.asset(Values.dayModeAsset),
-                      onPressed: () => c.changeDarkMode(!c.darkMode!),
-                    )
+                      icon: Image.asset(
+                        Values.settingsAsset,
+                        color:
+                            Theme.of(context).textTheme.displaySmall?.color ??
+                                Colors.white,
+                      ),
+                      onPressed: () => Get.toNamed(SettingsPage.routeName),
+                    ),
                   ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(!c.playerLoaded ? 0 : 60),
@@ -95,13 +97,17 @@ class _DashboardPageState extends State<DashboardPage> {
                       .backgroundColor,
                   tabs: [
                     TabData(
-                        iconData: Icons.dashboard_outlined,
-                        title: Values.explore),
+                      iconData: Icons.dashboard_outlined,
+                      title: Values.explore,
+                    ),
                     TabData(
-                        iconData: Icons.search_outlined, title: Values.search),
+                      iconData: Icons.search_outlined,
+                      title: Values.search,
+                    ),
                     TabData(
-                        iconData: Icons.queue_music_outlined,
-                        title: Values.playlist)
+                      iconData: Icons.queue_music_outlined,
+                      title: Values.playlist,
+                    )
                   ],
                   onTabChangedListener: c.updateIndex),
             ),

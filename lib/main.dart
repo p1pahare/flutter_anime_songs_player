@@ -6,6 +6,7 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/playlist_detail.dart';
+import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -30,10 +31,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(DashboardController());
-    Get.put(ExploreController());
-    Get.put(SearchController());
-    Get.put(PlaylistController());
+    Get.lazyPut(() => DashboardController());
+    Get.lazyPut(() => ExploreController());
+    Get.lazyPut(() => SearchController());
+    Get.lazyPut(() => PlaylistController());
 
     return GestureDetector(
       onTap: () {
@@ -56,16 +57,12 @@ class MyApp extends StatelessWidget {
                 return const CurrentPlaying();
               });
             case PlaylistDetail.routeName:
-              int playlistIndex =
-                  ((settings.arguments as List<dynamic>?)?[0] ?? 0);
-              Map<int, String> playlist =
-                  ((settings.arguments as List<dynamic>?)?[1] ?? {});
-
               return CupertinoPageRoute(builder: (context) {
-                return PlaylistDetail(
-                  playlist: playlist,
-                  playlistIndex: playlistIndex,
-                );
+                return const PlaylistDetail();
+              });
+            case SettingsPage.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                return const SettingsPage();
               });
             case '/':
             default:

@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/models/theme_album.dart';
 import 'package:anime_themes_player/repositories/playlists_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/album_detail_page.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +11,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:package_info/package_info.dart';
 
 class DashboardController extends GetxController {
   var selectedIndex = 0.obs;
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
+  ThemeAlbum? themeAlbum;
   final TextEditingController trackName = TextEditingController();
   final PlaylistRepo playlistRepo = PlaylistRepo();
   List<MediaItem> get mediaItems => _playlist.children
@@ -53,6 +57,11 @@ class DashboardController extends GetxController {
     selectedIndex.value = index ?? 0;
     await box.write('selected_index', selectedIndex.value);
     update();
+  }
+
+  launchAlbumDetails(ThemeAlbum themeAlbum) {
+    this.themeAlbum = themeAlbum;
+    Get.to(AlbumDetailPage.routeName);
   }
 
   Future<void> init(List<AudioEntry> audioEntries,
@@ -189,6 +198,13 @@ class DashboardController extends GetxController {
 
   void onGetPlaylist() {
     playlistRepo.getUserDetails();
+  }
+
+  Future<String> getVersionInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+    return "V$version (Build $buildNumber)";
   }
 
   @override

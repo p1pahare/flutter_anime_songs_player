@@ -1,20 +1,19 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/themes_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class ExploreController extends GetxController
-    with StateMixin<List<AnimeMain>> {
+class ExploreController extends GetxController with StateMixin<List<Anime>> {
   AnimeThemeRepository animeThemeRepositiory = AnimeThemeRepository();
   ThemesRepository themesRepository = ThemesRepository();
   int currentPage = 0;
   ScrollController scroll = ScrollController();
   bool loadingSong = false;
-  List<AnimeMain> listings = [];
+  List<Anime> listings = [];
   int seasonValue = (DateTime.now().month - 1) ~/ 3;
   Map<int, String> seasonValuesMap = {
     0: 'Winter',
@@ -59,7 +58,7 @@ class ExploreController extends GetxController
       listings = [
         ...listings,
         ...(apiResponse.data["anime"] ?? [])
-            .map((e) => AnimeMain.fromJson(e))
+            .map((e) => Anime.fromJson(e))
             .toList()
       ];
     }

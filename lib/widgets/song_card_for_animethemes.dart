@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
-import 'package:anime_themes_player/models/anime_main.dart';
+import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -15,9 +15,9 @@ class SongCardForAnimethemes extends StatelessWidget {
   const SongCardForAnimethemes(
       {Key? key, this.animethemes, this.animethemeentries, this.animeMain})
       : super(key: key);
-  final AnimeMain? animeMain;
-  final Animethemes? animethemes;
-  final Animethemeentries? animethemeentries;
+  final Anime? animeMain;
+  final AmAnimethemes? animethemes;
+  final AmAnimethemeentries? animethemeentries;
   @override
   Widget build(BuildContext context) {
     return Material(

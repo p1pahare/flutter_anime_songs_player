@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
-import 'package:anime_themes_player/models/anime_main.dart' as animemain;
-import 'package:anime_themes_player/models/animethemes_main.dart';
+import 'package:anime_themes_player/models/anime.dart' as animemain;
+import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
@@ -17,8 +17,8 @@ class SongCardForAnimethemesMain extends StatelessWidget {
   const SongCardForAnimethemesMain(
       {Key? key, this.animethemesMain, this.animethemeentries})
       : super(key: key);
-  final AnimethemesMain? animethemesMain;
-  final Animethemeentries? animethemeentries;
+  final Animethemes? animethemesMain;
+  final AtmAnimethemeentries? animethemeentries;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +44,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                           bottomLeft: Radius.circular(7))),
                   width: Get.width * 0.26,
                   child: Image.network(
-                    animethemesMain?.anime.images.first.link ??
-                        Values.errorImage,
+                    animethemesMain?.anime.images.first.link ?? Values.noImage,
                     height: 95,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProcess) =>
@@ -143,7 +142,7 @@ class SongCardForAnimethemesMain extends StatelessWidget {
                           final videoUrl = animethemeentries!.videos.first.link;
                           log(audioUrl);
                           if (Platform.isIOS || Platform.isMacOS) {
-                            animemain.AnimeMain? animeMain = await _
+                            animemain.Anime? animeMain = await _
                                 .slugToMalId(animethemesMain!.anime.slug);
                             if (animeMain != null) {
                               audioUrl = (await _.webmToMp3(

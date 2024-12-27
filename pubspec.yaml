@@ -14,9 +14,7 @@ dependencies:
   just_audio: ^0.9.40
   just_audio_background: ^0.0.1-beta.13
   cached_network_image: ^3.3.0
-  audio_session: ^0.1.6+1
-  tap_to_expand: ^0.0.1
-  qr_code_vision: ^0.1.0
+  package_info: ^2.0.0
   intl: ^0.17.0
   implicitly_animated_reorderable_list_2: ^0.6.0
   media_kit: ^1.1.11                             # Primary package.

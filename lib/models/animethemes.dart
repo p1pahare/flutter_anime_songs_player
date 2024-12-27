@@ -1,5 +1,7 @@
-class AnimethemesMain {
-  AnimethemesMain({
+import 'package:anime_themes_player/models/theme_album.dart';
+
+class Animethemes implements ThemeAlbum {
+  Animethemes({
     required this.id,
     required this.type,
     required this.sequence,
@@ -14,20 +16,20 @@ class AnimethemesMain {
   late final int sequence;
   late final String group;
   late final String slug;
-  late final Anime anime;
-  late final Song song;
-  late final List<Animethemeentries> animethemeentries;
+  late final AtmAnime anime;
+  late final AtmSong song;
+  late final List<AtmAnimethemeentries> animethemeentries;
 
-  AnimethemesMain.fromJson(Map<String, dynamic> json) {
+  Animethemes.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     type = json['type'];
     sequence = json['sequence'] ?? 0;
     group = json['group']?.toString() ?? '';
     slug = json['slug'];
-    anime = Anime.fromJson(json['anime']);
-    song = Song.fromJson(json['song']);
+    anime = AtmAnime.fromJson(json['anime']);
+    song = AtmSong.fromJson(json['song']);
     animethemeentries = List.from(json['animethemeentries'])
-        .map((e) => Animethemeentries.fromJson(e))
+        .map((e) => AtmAnimethemeentries.fromJson(e))
         .toList();
   }
 
@@ -46,8 +48,8 @@ class AnimethemesMain {
   }
 }
 
-class Anime {
-  Anime({
+class AtmAnime {
+  AtmAnime({
     required this.name,
     required this.slug,
     required this.year,
@@ -58,14 +60,15 @@ class Anime {
   late final String slug;
   late final int year;
   late final String season;
-  late final List<Images> images;
+  late final List<AtmImages> images;
 
-  Anime.fromJson(Map<String, dynamic> json) {
+  AtmAnime.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     slug = json['slug'];
     year = json['year'];
     season = json['season'];
-    images = List.from(json['images']).map((e) => Images.fromJson(e)).toList();
+    images =
+        List.from(json['images']).map((e) => AtmImages.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -79,15 +82,15 @@ class Anime {
   }
 }
 
-class Images {
-  Images({
+class AtmImages {
+  AtmImages({
     required this.facet,
     required this.link,
   });
   late final String facet;
   late final String link;
 
-  Images.fromJson(Map<String, dynamic> json) {
+  AtmImages.fromJson(Map<String, dynamic> json) {
     facet = json['facet'];
     link = json['link'];
   }
@@ -100,18 +103,18 @@ class Images {
   }
 }
 
-class Song {
-  Song({
+class AtmSong {
+  AtmSong({
     required this.title,
     required this.artists,
   });
   late final String title;
-  late final List<Artists> artists;
+  late final List<AtmArtists> artists;
 
-  Song.fromJson(Map<String, dynamic> json) {
+  AtmSong.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     artists =
-        List.from(json['artists']).map((e) => Artists.fromJson(e)).toList();
+        List.from(json['artists']).map((e) => AtmArtists.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -122,8 +125,8 @@ class Song {
   }
 }
 
-class Artists {
-  Artists({
+class AtmArtists {
+  AtmArtists({
     required this.name,
     required this.slug,
     required this.as,
@@ -132,7 +135,7 @@ class Artists {
   late final String slug;
   late final String as;
 
-  Artists.fromJson(Map<String, dynamic> json) {
+  AtmArtists.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     slug = json['slug'];
     as = json['as'] ?? '';
@@ -147,17 +150,18 @@ class Artists {
   }
 }
 
-class Animethemeentries {
-  Animethemeentries({
+class AtmAnimethemeentries {
+  AtmAnimethemeentries({
     required this.version,
     required this.videos,
   });
   late final int version;
-  late final List<Videos> videos;
+  late final List<AtmVideos> videos;
 
-  Animethemeentries.fromJson(Map<String, dynamic> json) {
+  AtmAnimethemeentries.fromJson(Map<String, dynamic> json) {
     version = int.tryParse(json['version']?.toString() ?? '0') ?? 0;
-    videos = List.from(json['videos']).map((e) => Videos.fromJson(e)).toList();
+    videos =
+        List.from(json['videos']).map((e) => AtmVideos.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -168,8 +172,8 @@ class Animethemeentries {
   }
 }
 
-class Videos {
-  Videos({
+class AtmVideos {
+  AtmVideos({
     required this.id,
     required this.basename,
     required this.filename,
@@ -208,9 +212,9 @@ class Videos {
   late final String? deletedAt;
   late final String? tags;
   late final String link;
-  late final Audio audio;
+  late final AtmAudio audio;
 
-  Videos.fromJson(Map<String, dynamic> json) {
+  AtmVideos.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     basename = json['basename'];
     filename = json['filename'];
@@ -230,7 +234,7 @@ class Videos {
     tags = json['tags'];
     link = json['link'];
     if (json['audio'] != null) {
-      audio = Audio.fromJson(json['audio']);
+      audio = AtmAudio.fromJson(json['audio']);
     }
   }
 
@@ -259,8 +263,8 @@ class Videos {
   }
 }
 
-class Audio {
-  Audio({
+class AtmAudio {
+  AtmAudio({
     required this.id,
     required this.basename,
     required this.filename,
@@ -275,7 +279,7 @@ class Audio {
   late final int size;
   late final String link;
 
-  Audio.fromJson(Map<String, dynamic> json) {
+  AtmAudio.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     basename = json['basename'];
     filename = json['filename'];
