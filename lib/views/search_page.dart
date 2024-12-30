@@ -4,9 +4,10 @@ import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/widgets/cover_for_anime.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:anime_themes_player/widgets/song_card_for_atm_animethemes.dart';
 import 'package:anime_themes_player/widgets/text_field_decoration.dart';
-import 'package:anime_themes_player/views/album_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,7 +27,7 @@ class SearchPage extends StatelessWidget {
             children: [
               Container(
                 // height: 130,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: GetBuilder<sc.SearchController>(
                   init: sc.SearchController(),
                   initState: (_) {},
@@ -108,10 +109,16 @@ class SearchPage extends StatelessWidget {
                   itemCount: controller.listings.length,
                   itemBuilder: (context, index) {
                     if (controller.listings[index] is Animethemes) {
-                      return const AlbumDetailPage();
+                      return SongCardForAtmAnimethemes(
+                        animethemesMain: controller.listings[index],
+                        animethemeentries:
+                            (controller.listings[index] as Animethemes)
+                                .animethemeentries
+                                .first,
+                      );
                     }
                     if (controller.listings[index] is Anime) {
-                      return const AlbumDetailPage();
+                      return CoverForAnime(anime: controller.listings[index]);
                     }
 
                     return const SizedBox.shrink();
@@ -124,16 +131,22 @@ class SearchPage extends StatelessWidget {
                   return (_.status.isLoadingMore || _.status.isLoading)
                       ? const Center(
                           child: ProgressIndicatorButton(
-                          radius: 20,
-                        ))
+                            radius: 20,
+                          ),
+                        )
                       : (_.status.isEmpty)
                           ? const Center(child: Text(Values.noResults))
                           : (_.status.isError)
                               ? Center(
-                                  child: Text(
-                                  _.status.errorMessage ?? '',
-                                  textAlign: TextAlign.center,
-                                ))
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0),
+                                    child: Text(
+                                      _.status.errorMessage ?? '',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
                               : const SizedBox(
                                   height: 0,
                                 );

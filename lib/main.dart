@@ -2,7 +2,9 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/explore_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/models/theme_album.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/album_detail_page.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
 import 'package:anime_themes_player/views/playlist_detail.dart';
@@ -63,6 +65,15 @@ class MyApp extends StatelessWidget {
             case SettingsPage.routeName:
               return CupertinoPageRoute(builder: (context) {
                 return const SettingsPage();
+              });
+            case AlbumDetailPage.routeName:
+              return CupertinoPageRoute(builder: (context) {
+                if (settings.arguments is ThemeAlbum) {
+                  return AlbumDetailPage(
+                    themeAlbum: settings.arguments as ThemeAlbum,
+                  );
+                }
+                return const SizedBox.expand();
               });
             case '/':
             default:

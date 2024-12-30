@@ -16,119 +16,141 @@ class PlayerCurrent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<int?>(
-        stream: _audioPlayer.currentIndexStream,
-        builder: (context, indexShot) {
-          if (!indexShot.hasData || indexShot.data == null) {
-            return const SizedBox(
-              width: 0,
-            );
-          } else {
-            final AudioSource? _currentSource = Get.find<DashboardController>()
-                .currentAudioSource(indexShot.data ?? -1);
-            if (_currentSource == null) {
+    return Container(
+      child: StreamBuilder<int?>(
+          stream: _audioPlayer.currentIndexStream,
+          builder: (context, indexShot) {
+            if (!indexShot.hasData || indexShot.data == null) {
               return const SizedBox(
                 width: 0,
               );
-            }
-            final mediaItem = _currentSource.sequence.first.tag as MediaItem;
-            return GestureDetector(
-              onTap: () {
-                Get.toNamed(CurrentPlaying.routeName);
-              },
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                  width: 80,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          mediaItem.artUri.toString(),
-                        ),
-                        fit: BoxFit.cover,
-                      )),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(mediaItem.title),
-                                  Text(
-                                    mediaItem.album.toString(),
-                                    overflow: TextOverflow.clip,
-                                    maxLines: 1,
+            } else {
+              final AudioSource? _currentSource =
+                  Get.find<DashboardController>()
+                      .currentAudioSource(indexShot.data ?? -1);
+              if (_currentSource == null) {
+                return const SizedBox(
+                  width: 0,
+                );
+              }
+              final mediaItem = _currentSource.sequence.first.tag as MediaItem;
+              return GestureDetector(
+                onTap: () {
+                  Get.toNamed(CurrentPlaying.routeName);
+                },
+                child: Stack(
+                  children: [
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(mediaItem.title),
+                                            Text(
+                                              mediaItem.album.toString(),
+                                              overflow: TextOverflow.clip,
+                                              maxLines: 1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      _closeButton(),
+                                      _playButton(),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Container(
+                                  height: 0.3,
+                                  color: Get.theme.appBarTheme.backgroundColor,
+                                ),
+                                Container(
+                                  color: Get.theme.appBarTheme.backgroundColor,
+                                  child: StreamBuilder<Duration?>(
+                                    stream: _audioPlayer.durationStream,
+                                    builder: (_, fullDurationSnap) {
+                                      final fullDuration =
+                                          fullDurationSnap.data;
+
+                                      if (fullDuration == null) {
+                                        return const SizedBox(
+                                          height: 0,
+                                          width: 0,
+                                        );
+                                      } else {
+                                        return StreamBuilder<Duration>(
+                                            stream: _audioPlayer.positionStream,
+                                            builder:
+                                                (context, currentDurationSnap) {
+                                              final currentDuration =
+                                                  currentDurationSnap.data;
+                                              // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
+
+                                              if (currentDuration == null) {
+                                                return const SizedBox(
+                                                  height: 0,
+                                                  width: 0,
+                                                );
+                                              } else {
+                                                return Slider(
+                                                    value: currentDuration
+                                                                .inSeconds >
+                                                            fullDuration
+                                                                .inSeconds
+                                                        ? fullDuration.inSeconds
+                                                            .toDouble()
+                                                        : currentDuration
+                                                            .inSeconds
+                                                            .toDouble(),
+                                                    max: fullDuration.inSeconds
+                                                        .toDouble(),
+                                                    onChanged: (val) {
+                                                      _audioPlayer.seek(
+                                                          Duration(
+                                                              seconds:
+                                                                  val.toInt()));
+                                                    });
+                                              }
+                                            });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            _closeButton(),
-                            _playButton(),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 0.3,
-                        color: Get.theme.appBarTheme.backgroundColor,
-                      ),
-                      Container(
-                        color: Get.theme.appBarTheme.backgroundColor,
-                        child: StreamBuilder<Duration?>(
-                          stream: _audioPlayer.durationStream,
-                          builder: (_, fullDurationSnap) {
-                            final fullDuration = fullDurationSnap.data;
-
-                            if (fullDuration == null) {
-                              return const SizedBox(
-                                height: 0,
-                                width: 0,
-                              );
-                            } else {
-                              return StreamBuilder<Duration>(
-                                  stream: _audioPlayer.positionStream,
-                                  builder: (context, currentDurationSnap) {
-                                    final currentDuration =
-                                        currentDurationSnap.data;
-                                    // log("${currentDuration?.inSeconds} ${fullDuration.inSeconds}");
-
-                                    if (currentDuration == null) {
-                                      return const SizedBox(
-                                        height: 0,
-                                        width: 0,
-                                      );
-                                    } else {
-                                      return Slider(
-                                          value: currentDuration.inSeconds >
-                                                  fullDuration.inSeconds
-                                              ? fullDuration.inSeconds
-                                                  .toDouble()
-                                              : currentDuration.inSeconds
-                                                  .toDouble(),
-                                          max:
-                                              fullDuration.inSeconds.toDouble(),
-                                          onChanged: (val) {
-                                            _audioPlayer.seek(
-                                                Duration(seconds: val.toInt()));
-                                          });
-                                    }
-                                  });
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                          ),
+                        ]),
+                    Container(
+                      width: 100,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              mediaItem.artUri.toString(),
+                            ),
+                            fit: BoxFit.cover,
+                          )),
+                    ),
+                  ],
                 ),
-              ]),
-            );
-          }
-        });
+              );
+            }
+          }),
+    );
   }
 
   Widget _playPauseButton(PlayerState playerState) {

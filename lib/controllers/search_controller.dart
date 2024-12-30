@@ -8,6 +8,7 @@ import 'package:anime_themes_player/models/resources.dart';
 import 'package:anime_themes_player/models/themesmalani.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/themes_repo.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -100,10 +101,12 @@ class SearchController extends GetxController {
         }
       }
       listings.refresh();
-
+      status = RxStatus.success();
+      update();
+    } else {
+      status = RxStatus.error(Values.loadMoreFailed);
       update();
     }
-    status = RxStatus.success();
   }
 
   Future fetchAnimeLists() async {
@@ -237,6 +240,8 @@ class SearchController extends GetxController {
   void dispose() {
     log("dispose");
     scroll.dispose();
+    themesRepository.dispose();
+    animeThemesRepository.dispose();
     listings.clear();
     super.dispose();
   }

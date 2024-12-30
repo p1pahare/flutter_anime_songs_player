@@ -16,11 +16,14 @@ class Values {
   static const notHavingAnAccount = "Don't have an account?";
   static const alreadyhaveAnAccount = "Already have an account?";
   static const backTo = "Back to";
+  static const loadMoreFailed =
+      "Failed to fetch more data from server. Scroll Down to try again.";
   static const login1 = "Login";
   static const agree = "Agree";
   static const tAC = "T&Cs";
   static const privacyPolicy = "Privacy Policy";
   static const and = "and";
+  static const largeCover = "Large Cover";
   static const signMeup = "Sign me up";
   static const register = "Register";
   static const enterEmail = "Enter Email";
@@ -57,6 +60,8 @@ class Values {
   static const language = "Language";
   static const termsConditions = "Terms & Conditions";
   static const appVersion = "App Version";
+  static const themes = "Themes";
+  static const theme = "Theme";
   static const noThemesBeingPlayed =
       'Currently Playing nothing. Please Play from Playlists or add themes to Queue';
   static const takeAScreenShot =
@@ -64,6 +69,16 @@ class Values {
   // static const errorImage =
   //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcNsW42LouEo4S1FC103szBVQyAuRYoZwsgg&usqp=CAU';
   static const noImage = "lib/assets/no-image.jpg";
+  static const cdTitle = TextStyle(
+      fontSize: 18.6,
+      fontWeight: FontWeight.bold,
+      color: Color(0xffd9d6d3),
+      shadows: [Shadow(color: Colors.black, offset: Offset(0.8, 0.6))]);
+  static const cdSubtitle = TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      color: Color(0xffd9d6d3),
+      shadows: [Shadow(color: Colors.black, offset: Offset(0.8, 0.6))]);
   static final darkTheme = ThemeData(
       fontFamily: Values.fontFamilyName,
       iconTheme: const IconThemeData(color: Colors.white),

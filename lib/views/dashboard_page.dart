@@ -44,72 +44,77 @@ class _DashboardPageState extends State<DashboardPage> {
             right: false,
             left: false,
             child: Scaffold(
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(!c.playerLoaded ? 40 : 100),
-                child: AppBar(
-                  leading: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(12),
-                              bottomRight: Radius.circular(12)),
-                          color: Colors.white.withAlpha(122)),
-                      child: Image.asset('lib/assets/at_comm_icon.png')),
-                  title: Text(
-                    Values.title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: Image.asset(
-                        Values.settingsAsset,
-                        color:
-                            Theme.of(context).textTheme.displaySmall?.color ??
-                                Colors.white,
-                      ),
-                      onPressed: () => Get.toNamed(SettingsPage.routeName),
+              appBar: AppBar(
+                leading: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            bottomRight: Radius.circular(12)),
+                        color: Colors.white.withAlpha(122)),
+                    child: Image.asset('lib/assets/at_comm_icon.png')),
+                title: Text(
+                  Values.title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Image.asset(
+                      Values.settingsAsset,
+                      color: Theme.of(context).textTheme.displaySmall?.color ??
+                          Colors.white,
+                      height: 26,
                     ),
-                  ],
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(!c.playerLoaded ? 0 : 60),
-                    child: !c.playerLoaded
+                    onPressed: () => Get.toNamed(SettingsPage.routeName),
+                  ),
+                ],
+              ),
+              body: getTabFromIndex(c.selectedIndex.value),
+              bottomNavigationBar: Container(
+                alignment: Alignment.bottomCenter,
+                height: !c.playerLoaded ? 60 : 180,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    !c.playerLoaded
                         ? const SizedBox(
                             height: 0,
                           )
                         : Container(
-                            height: 70,
-                            color:
-                                Theme.of(context).appBarTheme.backgroundColor,
+                            height: 120,
+                            // padding: const EdgeInsets.only(bottom: 26),
+
                             child: PlayerCurrent(c.underPlayer!,
-                                stopPlayer: c.stopPlayer)),
-                  ),
+                                stopPlayer: c.stopPlayer),
+                          ),
+                    FancyBottomNavigation(
+                      initialSelection: c.selectedIndex.value,
+                      circleColor: Get.theme.primaryColor,
+                      activeIconColor: Get.theme.textTheme.bodyMedium!.color,
+                      barBackgroundColor: Theme.of(context)
+                          .bottomNavigationBarTheme
+                          .backgroundColor,
+                      tabs: [
+                        TabData(
+                          iconData: Icons.dashboard_outlined,
+                          title: Values.explore,
+                        ),
+                        TabData(
+                          iconData: Icons.search_outlined,
+                          title: Values.search,
+                        ),
+                        TabData(
+                          iconData: Icons.queue_music_outlined,
+                          title: Values.playlist,
+                        )
+                      ],
+                      onTabChangedListener: c.updateIndex,
+                    ),
+                  ],
                 ),
               ),
-              body: getTabFromIndex(c.selectedIndex.value),
-              bottomNavigationBar: FancyBottomNavigation(
-                  initialSelection: c.selectedIndex.value,
-                  circleColor: Get.theme.primaryColor,
-                  activeIconColor: Get.theme.textTheme.bodyMedium!.color,
-                  barBackgroundColor: Theme.of(context)
-                      .bottomNavigationBarTheme
-                      .backgroundColor,
-                  tabs: [
-                    TabData(
-                      iconData: Icons.dashboard_outlined,
-                      title: Values.explore,
-                    ),
-                    TabData(
-                      iconData: Icons.search_outlined,
-                      title: Values.search,
-                    ),
-                    TabData(
-                      iconData: Icons.queue_music_outlined,
-                      title: Values.playlist,
-                    )
-                  ],
-                  onTabChangedListener: c.updateIndex),
             ),
           );
         });

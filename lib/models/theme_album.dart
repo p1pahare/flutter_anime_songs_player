@@ -1,7 +1,9 @@
-import 'dart:developer';
+abstract class ThemeAlbum {
+  List<dynamic> items();
 
-class ThemeAlbum {
-  ThemeAlbum() {
-    log("...Initialized...");
-  }
+  String getImageUrl();
+  String getTitle();
+  String getRelease();
+  String getStudio();
+  String getSynopsis();
 }

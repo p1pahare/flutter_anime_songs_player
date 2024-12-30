@@ -25,6 +25,7 @@ class PlaylistController extends GetxController {
   RxStatus status = RxStatus.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rxn<LoginMode> mode = Rxn(LoginMode.login);
+  ScrollController scroll = ScrollController();
   final usernameTec = TextEditingController();
   final emailTec = TextEditingController();
   final oldPasswordTec = TextEditingController();
@@ -284,5 +285,13 @@ class PlaylistController extends GetxController {
     if (listings.isNotEmpty) {
       Get.find<DashboardController>().init(listings);
     }
+  }
+
+  @override
+  void dispose() {
+    scroll.dispose();
+    listings.clear();
+    networkCalls.dispose();
+    super.dispose();
   }
 }

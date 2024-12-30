@@ -1,4 +1,5 @@
 import 'package:anime_themes_player/models/theme_album.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 
 class Animethemes implements ThemeAlbum {
   Animethemes({
@@ -45,6 +46,46 @@ class Animethemes implements ThemeAlbum {
     _data['animethemeentries'] =
         animethemeentries.map((e) => e.toJson()).toList();
     return _data;
+  }
+
+  @override
+  List items() {
+    return animethemeentries;
+  }
+
+  @override
+  String getImageUrl() {
+    return anime.images
+        .firstWhere((img) => img.facet == Values.largeCover,
+            orElse: () => anime.images.first)
+        .link;
+  }
+
+  @override
+  String getRelease() {
+    return "${anime.season.isEmpty ? '??' : anime.season}/${anime.year < 1940 ? '??' : anime.year}";
+  }
+
+  @override
+  String getStudio() {
+    String studs = "";
+    // for (int s = 0; s < anime.studios.length; s++) {
+    //   studs += anime.studios[s].name;
+    //   if (s != studios.length - 1) {
+    //     studs += ", ";
+    //   }
+    // }
+    return studs;
+  }
+
+  @override
+  String getTitle() {
+    return anime.name;
+  }
+
+  @override
+  String getSynopsis() {
+    return "";
   }
 }
 

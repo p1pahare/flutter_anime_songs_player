@@ -27,22 +27,23 @@ class SettingsPage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
           )),
+      bottomNavigationBar: PreferredSize(
+        preferredSize: Size.fromHeight(
+            Get.find<DashboardController>().playerLoaded ? 100 : 0),
+        child: GetBuilder<DashboardController>(builder: (c) {
+          return !c.playerLoaded
+              ? const SizedBox(
+                  height: 0,
+                )
+              : Container(
+                  height: 90,
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  child:
+                      PlayerCurrent(c.underPlayer!, stopPlayer: c.stopPlayer));
+        }),
+      ),
       body: Column(
         children: [
-          GetBuilder<DashboardController>(
-              init: Get.find<DashboardController>(),
-              initState: (_) {},
-              builder: (c) {
-                return !c.playerLoaded
-                    ? const SizedBox(height: 0)
-                    : Container(
-                        height: 70,
-                        color: Theme.of(context).appBarTheme.backgroundColor,
-                        child: PlayerCurrent(
-                          c.underPlayer!,
-                          stopPlayer: c.stopPlayer,
-                        ));
-              }),
           Expanded(
             child: ListView(
               children: [

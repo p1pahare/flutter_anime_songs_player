@@ -1,6 +1,4 @@
-import 'package:anime_themes_player/models/theme_album.dart';
-
-class ThemesMalAni implements ThemeAlbum {
+class ThemesMalAni {
   ThemesMalAni({
     required this.malID,
     required this.name,

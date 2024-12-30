@@ -20,26 +20,29 @@ class BlurredImageBackground extends StatelessWidget {
           Positioned.fill(
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: imagePath == Values.noImage
-                  ? Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    )
-                  : Image.network(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      loadingBuilder: (context, child, loadingProcess) =>
-                          loadingProcess == null
-                              ? child
-                              : const ProgressIndicatorButton(),
-                      errorBuilder: (context, url, error) => Image.asset(
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  (Get.isDarkMode ? Colors.black : Colors.white)
+                      .withOpacity(0.3), // Adjust opacity for tint
+                  BlendMode.darken, // Blend mode to darken the image
+                ),
+                child: imagePath == Values.noImage
+                    ? Image.asset(
                         imagePath,
                         fit: BoxFit.cover,
                         alignment: Alignment.center,
+                      )
+                    : Image.network(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (context, url, error) => Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
           // Centered Smaller Image

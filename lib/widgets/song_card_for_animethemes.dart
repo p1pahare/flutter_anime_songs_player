@@ -29,7 +29,10 @@ class SongCardForAnimethemes extends StatelessWidget {
               border: Border.all(
                   color: Theme.of(context).textTheme.bodyMedium!.color!)),
           padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.symmetric(vertical: 2),
+          margin: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 20,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

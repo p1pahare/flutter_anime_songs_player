@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anime_themes_player/controllers/explore_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/cover_for_anime.dart';
@@ -6,12 +8,12 @@ import 'package:anime_themes_player/widgets/text_field_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ExplorePage extends GetView<ExploreController> {
+class ExplorePage extends StatelessWidget {
   const ExplorePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    controller.searchListings();
+    final controller = Get.find<ExploreController>();
     return SizedBox(
       height: Get.height,
       child: SingleChildScrollView(
@@ -23,8 +25,10 @@ class ExplorePage extends GetView<ExploreController> {
               height: 130,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GetBuilder<ExploreController>(
-                init: Get.find<ExploreController>(),
-                initState: (_) {},
+                init: controller,
+                initState: (_) {
+                  controller.searchListings();
+                },
                 builder: (_) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,26 +68,43 @@ class ExplorePage extends GetView<ExploreController> {
                 },
               ),
             ),
-            // if (controller.listings.isNotEmpty)
-            controller.obx(
-              (state) => ListView.builder(
+            Obx(
+              () => ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: (state!.length),
+                  itemCount: (controller.listings.length),
                   itemBuilder: (context, index) {
-                    return CoverForAnime(anime: state[index]);
-                    // Get.find<ExploreController>()
-                    // return const AlbumDetailPage();
+                    return CoverForAnime(anime: controller.listings[index]);
                   }),
-
-              // here you can put your custom loading indicator, but
-              // by default would be Center(child:CircularProgressIndicator())
-              onLoading: const Center(child: ProgressIndicatorButton()),
-              onEmpty: const Center(child: Text(Values.noResults)),
-
-              // here also you can set your own error widget, but by
-              // default will be an Center(child:Text(error))
-              onError: (error) => Center(child: Text(error ?? '')),
+            ),
+            GetBuilder<ExploreController>(
+              init: controller,
+              initState: (_) {},
+              builder: (_) {
+                log(_.status.isLoadingMore.toString());
+                return (_.status.isLoadingMore || _.status.isLoading)
+                    ? const Center(
+                        child: ProgressIndicatorButton(
+                          radius: 20,
+                        ),
+                      )
+                    : (_.status.isEmpty)
+                        ? const Center(child: Text(Values.noResults))
+                        : (_.status.isError)
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Text(
+                                    _.status.errorMessage ?? '',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(
+                                height: 0,
+                              );
+              },
             ),
           ],
         ),

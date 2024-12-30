@@ -13,8 +13,8 @@ import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SongCardForAnimethemesMain extends StatelessWidget {
-  const SongCardForAnimethemesMain(
+class SongCardForAtmAnimethemes extends StatelessWidget {
+  const SongCardForAtmAnimethemes(
       {Key? key, this.animethemesMain, this.animethemeentries})
       : super(key: key);
   final Animethemes? animethemesMain;

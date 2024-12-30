@@ -1,5 +1,6 @@
 import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/models/theme_album.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 
 class Anime implements ThemeAlbum {
   Anime(
@@ -51,6 +52,52 @@ class Anime implements ThemeAlbum {
     _data['images'] = images.map((e) => e.toJson()).toList();
 
     return _data;
+  }
+
+  @override
+  List items() {
+    List<MapEntry<AmAnimethemes, AmAnimethemeentries>> themes = [];
+    for (final at in animethemes) {
+      for (final ate in at.animethemeentries) {
+        themes.add(MapEntry(at, ate));
+      }
+    }
+    return themes;
+  }
+
+  @override
+  String getImageUrl() {
+    return images
+        .firstWhere((img) => img.facet == Values.largeCover,
+            orElse: () => images.first)
+        .link;
+  }
+
+  @override
+  String getRelease() {
+    return "${season.isEmpty ? '??' : season}/${year < 1940 ? '??' : year}";
+  }
+
+  @override
+  String getStudio() {
+    String studs = "";
+    for (int s = 0; s < studios.length; s++) {
+      studs += studios[s].name;
+      if (s != studios.length - 1) {
+        studs += ", ";
+      }
+    }
+    return studs;
+  }
+
+  @override
+  String getTitle() {
+    return name;
+  }
+
+  @override
+  String getSynopsis() {
+    return "";
   }
 }
 
