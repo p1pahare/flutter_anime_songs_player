@@ -7,6 +7,8 @@ class Values {
   static const videoUrl = "https://v.animethemes.moe";
   static const audioUrl = "https://a.animethemes.moe";
   static const title = "Anime Themes";
+  static const iconA = 'lib/assets/at_comm_icon.png';
+  static const nowPlaying = "Now Playing";
   static const loginNote =
       "Login now to keep your favorite themes in a playlist and enjoy them any time on any device.";
   static const registerNote = "Create an account here...";

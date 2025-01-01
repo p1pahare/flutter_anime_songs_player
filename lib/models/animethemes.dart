@@ -85,7 +85,7 @@ class Animethemes implements ThemeAlbum {
 
   @override
   String getSynopsis() {
-    return "";
+    return anime.synopsis;
   }
 }
 
@@ -96,10 +96,14 @@ class AtmAnime {
     required this.year,
     required this.season,
     required this.images,
+    required this.synopsis,
+    required this.mediaFormat,
   });
   late final String name;
   late final String slug;
   late final int year;
+  late final String mediaFormat;
+  late final String synopsis;
   late final String season;
   late final List<AtmImages> images;
 
@@ -108,6 +112,8 @@ class AtmAnime {
     slug = json['slug'];
     year = json['year'];
     season = json['season'];
+    mediaFormat = json['media_format'] ?? "";
+    synopsis = json['synopsis'] ?? "";
     images =
         List.from(json['images']).map((e) => AtmImages.fromJson(e)).toList();
   }
@@ -117,6 +123,8 @@ class AtmAnime {
     _data['name'] = name;
     _data['slug'] = slug;
     _data['year'] = year;
+    _data['media_format'] = mediaFormat;
+    _data['synopsis'] = synopsis;
     _data['season'] = season;
     _data['images'] = images.map((e) => e.toJson()).toList();
     return _data;

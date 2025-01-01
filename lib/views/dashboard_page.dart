@@ -51,7 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             topRight: Radius.circular(12),
                             bottomRight: Radius.circular(12)),
                         color: Colors.white.withAlpha(122)),
-                    child: Image.asset('lib/assets/at_comm_icon.png')),
+                    child: Image.asset(Values.iconA)),
                 title: Text(
                   Values.title,
                   style: Theme.of(context)
@@ -71,49 +71,46 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ],
               ),
-              body: getTabFromIndex(c.selectedIndex.value),
-              bottomNavigationBar: Container(
-                alignment: Alignment.bottomCenter,
-                height: !c.playerLoaded ? 60 : 180,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    !c.playerLoaded
-                        ? const SizedBox(
-                            height: 0,
-                          )
-                        : Container(
-                            height: 120,
-                            // padding: const EdgeInsets.only(bottom: 26),
-
-                            child: PlayerCurrent(c.underPlayer!,
-                                stopPlayer: c.stopPlayer),
-                          ),
-                    FancyBottomNavigation(
-                      initialSelection: c.selectedIndex.value,
-                      circleColor: Get.theme.primaryColor,
-                      activeIconColor: Get.theme.textTheme.bodyMedium!.color,
-                      barBackgroundColor: Theme.of(context)
-                          .bottomNavigationBarTheme
-                          .backgroundColor,
-                      tabs: [
-                        TabData(
-                          iconData: Icons.dashboard_outlined,
-                          title: Values.explore,
-                        ),
-                        TabData(
-                          iconData: Icons.search_outlined,
-                          title: Values.search,
-                        ),
-                        TabData(
-                          iconData: Icons.queue_music_outlined,
-                          title: Values.playlist,
-                        )
-                      ],
-                      onTabChangedListener: c.updateIndex,
-                    ),
-                  ],
-                ),
+              body: Stack(
+                children: [
+                  getTabFromIndex(c.selectedIndex.value),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: GetBuilder<DashboardController>(builder: (c) {
+                      return !c.playerLoaded
+                          ? const SizedBox(
+                              height: 0,
+                            )
+                          : Container(
+                              margin: const EdgeInsets.only(bottom: 36),
+                              height: 100,
+                              child: PlayerCurrent(c.underPlayer!,
+                                  stopPlayer: c.stopPlayer));
+                    }),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: FancyBottomNavigation(
+                initialSelection: c.selectedIndex.value,
+                circleColor: Get.theme.primaryColor,
+                activeIconColor: Get.theme.textTheme.bodyMedium!.color,
+                barBackgroundColor:
+                    Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+                tabs: [
+                  TabData(
+                    iconData: Icons.dashboard_outlined,
+                    title: Values.explore,
+                  ),
+                  TabData(
+                    iconData: Icons.search_outlined,
+                    title: Values.search,
+                  ),
+                  TabData(
+                    iconData: Icons.queue_music_outlined,
+                    title: Values.playlist,
+                  )
+                ],
+                onTabChangedListener: c.updateIndex,
               ),
             ),
           );

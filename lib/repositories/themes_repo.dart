@@ -144,7 +144,7 @@ class ThemesRepository extends GetConnect {
   Future<ApiResponse> searchByAnimeYearSeason(int year, String season) async {
     try {
       final response = await get(
-          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images');
+          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&filter[season]=$season&filter[year]=$year&sort=random&include=resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,images,animethemes.song.artists');
 
       String body = response.bodyString ?? 'Something Went Wrong';
 

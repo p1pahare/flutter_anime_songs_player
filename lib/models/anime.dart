@@ -11,11 +11,15 @@ class Anime implements ThemeAlbum {
       required this.animethemes,
       required this.resources,
       required this.images,
+      required this.synopsis,
+      required this.mediaFormat,
       required this.studios});
   late final String name;
   late final String slug;
   late final int year;
   late final String season;
+  late final String mediaFormat;
+  late final String synopsis;
   late final List<AmAnimethemes> animethemes;
   late final List<AmResources> resources;
   late final List<AmImages> images;
@@ -26,6 +30,8 @@ class Anime implements ThemeAlbum {
     slug = json['slug'];
     year = json['year'];
     season = json['season'];
+    mediaFormat = json['media_format'] ?? "";
+    synopsis = json['synopsis'] ?? "";
     animethemes = List.from(json['animethemes'] ?? [])
         .map((e) => AmAnimethemes.fromJson(e))
         .toList();
@@ -46,6 +52,8 @@ class Anime implements ThemeAlbum {
     _data['slug'] = slug;
     _data['year'] = year;
     _data['season'] = season;
+    _data['media_format'] = mediaFormat;
+    _data['synopsis'] = synopsis;
     _data['animethemes'] = animethemes.map((e) => e.toJson()).toList();
     _data['resources'] = resources.map((e) => e.toJson()).toList();
     _data['studios'] = studios.map((e) => e.toJson()).toList();
@@ -97,7 +105,7 @@ class Anime implements ThemeAlbum {
 
   @override
   String getSynopsis() {
-    return "";
+    return synopsis;
   }
 }
 

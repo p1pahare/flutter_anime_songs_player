@@ -24,7 +24,7 @@ class ExploreController extends GetxController {
     2: 'Summer',
     3: 'Fall'
   };
-  int yearValue = DateTime.now().year - 1963;
+  int yearValue = DateTime.now().year - 1963 - 1;
   Map<int, int> yearValuesMap = <int, int>{
     for (int i = 1963; i <= DateTime.now().year; i++) i - 1963: i
   };

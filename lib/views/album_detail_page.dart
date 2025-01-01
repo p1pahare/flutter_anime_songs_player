@@ -32,58 +32,65 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: PreferredSize(
-        preferredSize: Size.fromHeight(
-            Get.find<DashboardController>().playerLoaded ? 100 : 0),
-        child: GetBuilder<DashboardController>(builder: (c) {
-          return !c.playerLoaded
-              ? const SizedBox(
-                  height: 0,
-                )
-              : Container(
-                  height: 90,
-                  color: Theme.of(context).appBarTheme.backgroundColor,
-                  child:
-                      PlayerCurrent(c.underPlayer!, stopPlayer: c.stopPlayer));
-        }),
+      appBar: AppBar(
+        toolbarHeight: 0,
       ),
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: AnimeMetaHeader(
-              imagePath: widget.themeAlbum.getImageUrl(),
-              scrollController: scrollController,
-              title: widget.themeAlbum.getTitle(),
-              releaseText: widget.themeAlbum.getRelease(),
-              studioText: widget.themeAlbum.getStudio(),
-            ),
-          ),
-          SliverList.list(children: [
-            ListTile(
-              title: Text(widget.themeAlbum.getSynopsis()),
-            ),
-          ]),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, int index) {
-                return SongCardForAnimethemes(
-                  animeMain: widget.themeAlbum as Anime,
-                  animethemes: widget.themeAlbum.items()[index].key,
-                  animethemeentries: widget.themeAlbum.items()[index].value,
-                );
-              },
-              childCount: widget.themeAlbum.items().length,
-            ),
-          ),
-          SliverList.list(
-            children: List.generate(
-              15,
-              (i) => const SizedBox(
-                height: 50,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: AnimeMetaHeader(
+                  imagePath: widget.themeAlbum.getImageUrl(),
+                  scrollController: scrollController,
+                  title: widget.themeAlbum.getTitle(),
+                  releaseText: widget.themeAlbum.getRelease(),
+                  studioText: widget.themeAlbum.getStudio(),
+                ),
               ),
-            ),
+              SliverList.list(children: [
+                ListTile(
+                  title: Text(widget.themeAlbum.getSynopsis()),
+                ),
+              ]),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (_, int index) {
+                    return SongCardForAnimethemes(
+                      animeMain: widget.themeAlbum as Anime,
+                      animethemes: widget.themeAlbum.items()[index].key,
+                      animethemeentries: widget.themeAlbum.items()[index].value,
+                    );
+                  },
+                  childCount: widget.themeAlbum.items().length,
+                ),
+              ),
+              SliverList.list(
+                children: List.generate(
+                  widget.themeAlbum.items().length < 12
+                      ? 12 - widget.themeAlbum.items().length
+                      : 0,
+                  (i) => const SizedBox(
+                    height: 50,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: GetBuilder<DashboardController>(builder: (c) {
+              return !c.playerLoaded
+                  ? const SizedBox(
+                      height: 0,
+                    )
+                  : SizedBox(
+                      height: 100,
+                      child: PlayerCurrent(c.underPlayer!,
+                          stopPlayer: c.stopPlayer));
+            }),
           ),
         ],
       ),
@@ -170,9 +177,11 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
+                        Get.theme.appBarTheme.backgroundColor
+                                ?.withOpacity(0.9) ??
+                            (Get.isDarkMode ? Colors.black : Colors.white)
+                                .withOpacity(0.9),
                         Colors.transparent,
-                        (Get.isDarkMode ? Colors.black : Colors.white)
-                            .withOpacity(0.9)
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -190,12 +199,14 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
             width: Get.width,
             color: Get.theme.canvasColor,
             padding: EdgeInsets.only(
-                left: 14 +
-                    max(
-                        shrinkOffset < (Get.width * 0.3)
-                            ? shrinkOffset
-                            : (Get.width * 0.4),
-                        0)),
+              left: 14 +
+                  max(
+                      shrinkOffset < (Get.width * 0.3)
+                          ? shrinkOffset
+                          : (Get.width * 0.4),
+                      0),
+              right: 12,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,13 +238,13 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
             child: imagePath == Values.noImage
                 ? Image.asset(
                     imagePath,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     height: 160,
                     width: Get.width * 0.32,
                   )
                 : Image.network(
                     imagePath,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.contain,
                     height: 160,
                     width: Get.width * 0.32,
                     alignment: Alignment.center,
@@ -255,13 +266,14 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
             onTap: () => Get.back(),
             child: Container(
               margin: const EdgeInsets.only(
-                left: 14,
-                top: 45,
+                left: 15,
+                top: 15,
               ),
               height: Get.width * 0.12,
               width: Get.width * 0.12,
               decoration: BoxDecoration(
-                color: Get.isDarkMode ? Colors.black45 : Colors.white38,
+                color: Get.theme.appBarTheme.backgroundColor?.withOpacity(0.5),
+                //Get.isDarkMode ? Colors.black45 : Colors.white38,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.arrow_back_ios_rounded),
