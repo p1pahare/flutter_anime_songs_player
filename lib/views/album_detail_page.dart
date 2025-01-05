@@ -7,6 +7,7 @@ import 'package:anime_themes_player/models/theme_album.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:anime_themes_player/widgets/see_more_less_widget.dart';
 import 'package:anime_themes_player/widgets/song_card_for_animethemes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,8 +52,8 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
                 ),
               ),
               SliverList.list(children: [
-                ListTile(
-                  title: Text(widget.themeAlbum.getSynopsis()),
+                SeeMoreLessWidget(
+                  textData: widget.themeAlbum.getSynopsis(),
                 ),
               ]),
               SliverList(
@@ -215,7 +216,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                     // width: Get.width / 2,
                     child: Text(
                   title,
-                  maxLines: shrinkOffset == 0 ? 2 : 3,
+                  maxLines: shrinkOffset < 40 ? 2 : 3,
                   overflow: TextOverflow.ellipsis,
                   style: Get.theme.textTheme.headlineSmall,
                 )),

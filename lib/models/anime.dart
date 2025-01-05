@@ -105,7 +105,7 @@ class Anime implements ThemeAlbum {
 
   @override
   String getSynopsis() {
-    return synopsis;
+    return synopsis.replaceAll('<br>\n', ' ');
   }
 }
 

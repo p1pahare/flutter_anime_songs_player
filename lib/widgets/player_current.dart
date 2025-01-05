@@ -39,16 +39,19 @@ class PlayerCurrent extends StatelessWidget {
               },
               child: Stack(
                 children: [
-                  Container(
-                    width: 100,
+                  CachedNetworkImage(
+                    imageUrl: mediaItem.artUri.toString(),
+                    fit: BoxFit.fill,
                     height: double.infinity,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      image: CachedNetworkImageProvider(
-                        mediaItem.artUri.toString(),
-                      ),
+                    width: 100,
+                    alignment: Alignment.center,
+                    placeholder: (context, child) =>
+                        const ProgressIndicatorButton(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      Values.noImage,
                       fit: BoxFit.cover,
-                    )),
+                      alignment: Alignment.center,
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -100,16 +103,19 @@ class PlayerCurrent extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      mediaItem.artist
-                                                          .toString(),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: Get
-                                                          .textTheme.bodySmall
-                                                          ?.copyWith(
-                                                              fontSize: 11),
-                                                      maxLines: 1,
+                                                    SizedBox(
+                                                      width: Get.width * 0.45,
+                                                      child: Text(
+                                                        mediaItem.artist
+                                                            .toString(),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: Get
+                                                            .textTheme.bodySmall
+                                                            ?.copyWith(
+                                                                fontSize: 11),
+                                                        maxLines: 1,
+                                                      ),
                                                     ),
                                                     Text(
                                                       mediaItem.title,
