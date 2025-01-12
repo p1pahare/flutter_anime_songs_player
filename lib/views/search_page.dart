@@ -141,9 +141,26 @@ class SearchPage extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0),
-                                    child: Text(
-                                      _.status.errorMessage ?? '',
-                                      textAlign: TextAlign.center,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          _.status.errorMessage ?? '',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        OutlinedButton(
+                                          onPressed: _.onSearch,
+                                          child: const Text(Values.retry),
+                                          style: Theme.of(context)
+                                              .elevatedButtonTheme
+                                              .style
+                                              ?.copyWith(
+                                                backgroundColor:
+                                                    WidgetStateProperty.all(
+                                                        Theme.of(context)
+                                                            .cardColor),
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 )
