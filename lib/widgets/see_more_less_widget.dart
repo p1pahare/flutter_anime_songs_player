@@ -52,7 +52,7 @@ class _SeeMoreLessWidgetState extends State<SeeMoreLessWidget> {
                   float: FCFloat.right,
                   padding: const EdgeInsets.only(right: 8),
                   child: SizedBox(
-                    width: Get.width * 0.25,
+                    width: context.width * 0.25,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

@@ -121,10 +121,10 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     // Calculate size of Box A
-    final double sizeA = Get.height * 0.44 - shrinkOffset;
+    final double sizeA = context.height * 0.44 - shrinkOffset;
     final double scaledSizeA = max(sizeA - 26, 0);
     if (!scrolled && shrinkOffset > 50 && shrinkOffset < 150) {
-      scrollController.animateTo(Get.height * 0.33,
+      scrollController.animateTo(context.height * 0.33,
           duration: const Duration(milliseconds: 1400),
           curve: Curves.bounceOut);
       scrolled = true;
@@ -133,7 +133,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
       scrolled = false;
     }
     // Calculate Box B's position and size
-    final double boxBStartOffset = Get.width * 0.25;
+    final double boxBStartOffset = context.width * 0.25;
     const double boxBEndOffset = 50.0;
     final double boxBOffset = boxBStartOffset -
         ((shrinkOffset / (maxExtent - minExtent)) *
@@ -197,14 +197,14 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
           alignment: Alignment.bottomCenter,
           child: Container(
             height: maxExtent - scaledSizeA,
-            width: Get.width,
+            width: context.width,
             color: Get.theme.canvasColor,
             padding: EdgeInsets.only(
               left: 14 +
                   max(
-                      shrinkOffset < (Get.width * 0.3)
+                      shrinkOffset < (context.width * 0.3)
                           ? shrinkOffset
-                          : (Get.width * 0.4),
+                          : (context.width * 0.4),
                       0),
               right: 12,
             ),
@@ -213,7 +213,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                    // width: Get.width / 2,
+                    // width: context.width / 2,
                     child: Text(
                   title,
                   maxLines: shrinkOffset < 40 ? 2 : 3,
@@ -229,7 +229,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: boxBOffset * 0.8,
+          top: boxBOffset * 0.6,
           left: boxBOffset * 0.9,
           child: Container(
             height: boxBOffset * 2.5,
@@ -241,13 +241,13 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                     imagePath,
                     fit: BoxFit.cover,
                     height: 160,
-                    width: Get.width * 0.32,
+                    width: context.width * 0.32,
                   )
                 : Image.network(
                     imagePath,
                     fit: BoxFit.contain,
                     height: 160,
-                    width: Get.width * 0.32,
+                    width: context.width * 0.32,
                     alignment: Alignment.center,
                     loadingBuilder: (context, child, loadingProcess) =>
                         loadingProcess == null
@@ -270,8 +270,8 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                 left: 15,
                 top: 15,
               ),
-              height: Get.width * 0.12,
-              width: Get.width * 0.12,
+              height: 50,
+              width: 50,
               decoration: BoxDecoration(
                 color: Get.theme.appBarTheme.backgroundColor?.withOpacity(0.5),
                 //Get.isDarkMode ? Colors.black45 : Colors.white38,

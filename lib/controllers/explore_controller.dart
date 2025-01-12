@@ -55,6 +55,7 @@ class ExploreController extends GetxController {
     listings.clear();
     listings.refresh();
     status = listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
+    update();
     ApiResponse apiResponse;
     apiResponse = await themesRepository.searchByAnimeYearSeason(
         yearValuesMap[yearValue] ?? DateTime.now().year,

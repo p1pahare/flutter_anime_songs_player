@@ -24,7 +24,7 @@ class CoverForAnime extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
         ),
         height: 160,
-        width: Get.width * 0.9,
+        width: context.height * 0.9,
         child: Stack(
           children: [
             BlurredImageBackground(
@@ -32,7 +32,7 @@ class CoverForAnime extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(
-                left: max((Get.width * 0.4), 25) - 25,
+                left: max((context.width * 0.4), 25) - 25,
                 right: 10,
               ),
               child: Column(

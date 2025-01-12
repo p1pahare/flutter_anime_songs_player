@@ -15,7 +15,7 @@ class ExplorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ExploreController>();
     return SizedBox(
-      height: Get.height,
+      height: context.height,
       child: SingleChildScrollView(
         controller: controller.scroll,
         child: Column(
@@ -95,9 +95,29 @@ class ExplorePage extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20.0),
-                                  child: Text(
-                                    _.status.errorMessage ?? '',
-                                    textAlign: TextAlign.center,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        _.status.errorMessage ?? '',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: controller.searchListings,
+                                        child: const Text(Values.retry),
+                                        style: Theme.of(context)
+                                            .elevatedButtonTheme
+                                            .style
+                                            ?.copyWith(
+                                              backgroundColor:
+                                                  WidgetStateProperty.all(
+                                                      Theme.of(context)
+                                                          .cardColor),
+                                            ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               )

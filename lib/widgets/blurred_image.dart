@@ -13,7 +13,7 @@ class BlurredImageBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 160,
-      width: Get.width * 0.9,
+      width: context.width * 0.9,
       child: Stack(
         clipBehavior: Clip.hardEdge,
         children: [
@@ -53,13 +53,13 @@ class BlurredImageBackground extends StatelessWidget {
                     imagePath,
                     fit: BoxFit.fill,
                     height: 160,
-                    width: Get.width * 0.32,
+                    width: context.width * 0.32,
                   )
                 : Image.network(
                     imagePath,
                     fit: BoxFit.fill,
                     height: 160,
-                    width: Get.width * 0.32,
+                    width: context.width * 0.32,
                     alignment: Alignment.center,
                     loadingBuilder: (context, child, loadingProcess) =>
                         loadingProcess == null

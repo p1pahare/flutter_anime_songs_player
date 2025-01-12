@@ -104,7 +104,8 @@ class PlayerCurrent extends StatelessWidget {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
-                                                      width: Get.width * 0.45,
+                                                      width:
+                                                          context.width * 0.45,
                                                       child: Text(
                                                         mediaItem.artist
                                                             .toString(),

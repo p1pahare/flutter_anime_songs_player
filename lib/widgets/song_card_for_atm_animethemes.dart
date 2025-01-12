@@ -26,7 +26,7 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
         "[${animethemesMain!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}] ";
 
     return SizedBox(
-      width: Get.width - 50,
+      width: context.width - 50,
       child: Card(
         elevation: 3.5,
         color: Theme.of(context).cardColor,
@@ -42,7 +42,7 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(7),
                           bottomLeft: Radius.circular(7))),
-                  width: Get.width * 0.26,
+                  width: context.width * 0.26,
                   child: Image.network(
                     animethemesMain?.anime.images.first.link ?? Values.noImage,
                     height: 95,

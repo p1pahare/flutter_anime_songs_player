@@ -18,7 +18,7 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<sc.SearchController>();
     return SizedBox(
-      height: Get.height,
+      height: context.height,
       child: Center(
         child: SingleChildScrollView(
           controller: controller.scroll,

@@ -18,6 +18,7 @@ class Values {
   static const notHavingAnAccount = "Don't have an account?";
   static const alreadyhaveAnAccount = "Already have an account?";
   static const backTo = "Back to";
+  static const retry = "Retry";
   static const loadMoreFailed =
       "Failed to fetch more data from server. Scroll Down to try again.";
   static const login1 = "Login";

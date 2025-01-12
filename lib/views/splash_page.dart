@@ -1,3 +1,6 @@
+import 'package:anime_themes_player/controllers/search_controller.dart'
+    as get_search;
+import 'package:anime_themes_player/controllers/explore_controller.dart';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
@@ -21,11 +24,14 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   loadData() async {
+    Get.lazyPut(() => DashboardController());
+    Get.lazyPut(() => ExploreController());
+    Get.putAsync(() async => get_search.SearchController());
+    Get.lazyPut(() => PlaylistController());
     await GetStorage.init();
     Get.find<DashboardController>().initialize();
     Get.find<PlaylistController>().initialize();
     await Future.delayed(const Duration(seconds: 2));
-
     FlutterNativeSplash.remove();
     Get.offAllNamed(DashboardPage.routeName);
   }

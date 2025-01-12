@@ -72,7 +72,7 @@ class OnlineVideoPlayerState extends State<OnlineVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Get.height * 0.28,
+      height: context.height * 0.28,
       child: ObxValue<RxBool>((loading) {
         return loading.isTrue
             ? const Center(child: ProgressIndicatorButton())
