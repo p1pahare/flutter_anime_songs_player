@@ -114,7 +114,7 @@ class ThemesRepository extends GetConnect {
     }
     try {
       final response = await get(
-          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&fields[anime]=name,slug,year,season&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&include=images,resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,animethemes.song.artists');
+          '${Values.baseUrl}/anime?page[size]=15&page[number]=1&fields[anime]=name,slug,year,season,synopsis&fields[animetheme]=type,sequence,slug,id&fields[animethemeentry]=version,episodes,spoiler,nsfw&fields[video]=tags,resolution,nc,subbed,lyrics,uncen,source,overlap,link&fields[image]=facet,link&fields[song]=title&filter[slug]=$animeSlugString&include=images,resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,animethemes.song.artists');
 
       String body = response.bodyString ?? 'Something Went Wrong';
       if (response.isOk) {
