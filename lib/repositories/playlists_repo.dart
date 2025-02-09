@@ -210,7 +210,14 @@ class PlaylistRepo extends GetConnect {
       },
     );
 
-    if (response.isOk) {
+    if (response.status.connectionError) {
+      log('No internet connection');
+      return ApiResponse(
+        status: false,
+        message: "No internet connection",
+        data: false,
+      );
+    } else if (response.isOk) {
       saveCookies(response);
       log('Fourth Response: ${response.body}');
       return ApiResponse(

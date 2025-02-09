@@ -107,7 +107,15 @@ class PlaylistFormsPage extends StatelessWidget {
                 if (_pc.showAgree()) AgreeTCPP(pc: _pc),
                 if (_pc.showRemember()) RememberForgot(pc: _pc),
                 Obx(() {
-                  return Text(_pc.toastMessage.value);
+                  if (_pc.toastMessage.value.isEmpty) return const SizedBox();
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(
+                      _pc.toastMessage.value,
+                      style: Get.textTheme.bodyMedium
+                          ?.copyWith(color: Get.theme.colorScheme.error),
+                    ),
+                  );
                 }),
                 Obx(() {
                   return _pc.wait.value

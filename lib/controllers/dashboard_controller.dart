@@ -182,12 +182,19 @@ class DashboardController extends GetxController {
   bool get playerLoaded => underPlayer != null;
 
   Future isLogin() async {
+    PlaylistController playlistController = Get.find();
+    playlistController.mode.value = LoginMode.loading;
+    playlistController.update();
     final isLogin = await playlistRepo.getUserDetails();
-    if (isLogin.status) {
+    if (isLogin.data == false) {
+      playlistController.mode.value = LoginMode.failed;
+    } else if (isLogin.status) {
       me = meFromJson(isLogin.data);
-      PlaylistController playlistController = Get.find();
       playlistController.mode.value = LoginMode.loggedIn;
+    } else {
+      playlistController.mode.value = LoginMode.login;
     }
+    playlistController.update();
   }
 
   Future<String> getVersionInfo() async {

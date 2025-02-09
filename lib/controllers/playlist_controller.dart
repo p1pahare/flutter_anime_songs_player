@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 enum LoginMode {
+  loading,
+  failed,
   loggedIn,
   login,
   register,
@@ -28,7 +30,7 @@ class PlaylistController extends GetxController {
   RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  Rxn<LoginMode> mode = Rxn(LoginMode.login);
+  Rxn<LoginMode> mode = Rxn(LoginMode.loading);
   ScrollController scroll = ScrollController();
   final usernameTec = TextEditingController();
   final emailTec = TextEditingController();
@@ -139,6 +141,10 @@ class PlaylistController extends GetxController {
         return null;
       case null:
         return null;
+      case LoginMode.loading:
+        return null;
+      case LoginMode.failed:
+        return null;
     }
   }
 
@@ -172,6 +178,10 @@ class PlaylistController extends GetxController {
         case LoginMode.updateUserDetails:
           break;
         case null:
+          break;
+        case LoginMode.loading:
+          break;
+        case LoginMode.failed:
           break;
       }
     }

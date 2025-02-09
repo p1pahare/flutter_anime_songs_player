@@ -15,6 +15,8 @@ class Values {
   static const nowPlaying = "Now Playing";
   static const loginNote =
       "Login now to keep your favorite themes in a playlist and enjoy them any time on any device.";
+  static const noInternetMessage =
+      "Unable to connect to the server. Please check your internet connection.";
   static const registerNote = "Create an account here...";
   static const forgotNote =
       "Enter your email address and we will send a link to reset password.";
