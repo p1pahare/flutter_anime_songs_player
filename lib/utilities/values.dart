@@ -6,6 +6,10 @@ class Values {
   static const baseUrl = "https://api.animethemes.moe";
   static const videoUrl = "https://v.animethemes.moe";
   static const audioUrl = "https://a.animethemes.moe";
+  static const siteUrl = "https://animethemes.moe";
+  static const faqsUrl = "https://animethemes.moe/about/faq";
+  static const privacyUrl = "https://animethemes.moe/about/privacy-policy";
+  static const tncUrl = "https://animethemes.moe/about/terms-of-service";
   static const title = "Anime Themes";
   static const iconA = 'lib/assets/at_comm_icon.png';
   static const nowPlaying = "Now Playing";

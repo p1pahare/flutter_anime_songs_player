@@ -26,6 +26,11 @@
 		<true/>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+ 			 <string>sms</string>
+ 			 <string>tel</string>
+		</array>
 		<key>NSAppTransportSecurity</key>
 			 <dict>
    			   <key>NSAllowsArbitraryLoads</key>

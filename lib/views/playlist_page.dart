@@ -15,6 +15,11 @@ class PlaylistPage extends StatelessWidget {
           init: _pc,
           initState: (_) {},
           builder: (_) {
+            if (_.mode.value == LoginMode.loggedIn) {
+              return Container(
+                color: Colors.pink,
+              );
+            }
             return PlaylistFormsPage(pc: _pc);
           },
         ));

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/animethemes.dart';
@@ -61,7 +62,10 @@ class SearchPage extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 20),
                           child: TextField(
                             controller: _.search,
-                            onSubmitted: (str) => _.onSearch,
+                            onSubmitted: (str) {
+                              Get.find<PlaylistController>().doLogout();
+                              // _.onSearch();
+                            },
                             onChanged: (s) {
                               _.update();
                             },

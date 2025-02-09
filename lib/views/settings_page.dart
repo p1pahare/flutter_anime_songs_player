@@ -79,17 +79,26 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const DividerB(),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Get.find<DashboardController>()
+                            .launchURL(Values.faqsUrl);
+                      },
                       title: const Text(Values.faqs),
                     ),
                     const DividerB(),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Get.find<DashboardController>()
+                            .launchURL(Values.tncUrl);
+                      },
                       title: const Text(Values.termsConditions),
                     ),
                     const DividerB(),
                     ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Get.find<DashboardController>()
+                            .launchURL(Values.privacyUrl);
+                      },
                       title: const Text(Values.privacyPolicy),
                     ),
                     const DividerB(),

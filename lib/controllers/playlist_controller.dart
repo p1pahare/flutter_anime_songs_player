@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
+import 'package:anime_themes_player/repositories/playlists_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 enum LoginMode {
-  loading,
   loggedIn,
   login,
   register,
@@ -20,6 +21,9 @@ enum LoginMode {
 
 class PlaylistController extends GetxController {
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
+  final PlaylistRepo playlistRepo = PlaylistRepo();
+  final RxBool wait = false.obs;
+  final RxString toastMessage = "".obs;
   GetStorage box = GetStorage();
   RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
@@ -64,6 +68,7 @@ class PlaylistController extends GetxController {
 
   Future setMode(LoginMode loginMode) async {
     mode.value = loginMode;
+    toastMessage.value = "";
     formKey.currentState?.reset();
     await Future.delayed(const Duration(milliseconds: 500));
     update();
@@ -85,8 +90,6 @@ class PlaylistController extends GetxController {
   String? unifiedValidator(String? field) {
     log(field.toString());
     switch (mode.value) {
-      case LoginMode.loading:
-        return null;
       case LoginMode.loggedIn:
         return null;
       case LoginMode.login:
@@ -151,7 +154,27 @@ class PlaylistController extends GetxController {
   }
 
   void unifiedSubmitAction() {
-    if (formKey.currentState?.validate() == true) {}
+    if (formKey.currentState?.validate() == true) {
+      switch (mode.value) {
+        case LoginMode.loggedIn:
+          break;
+        case LoginMode.login:
+          doLogin();
+          break;
+        case LoginMode.register:
+          register();
+          break;
+        case LoginMode.forgotPassword:
+          forgotPassword();
+          break;
+        case LoginMode.changePassword:
+          break;
+        case LoginMode.updateUserDetails:
+          break;
+        case null:
+          break;
+      }
+    }
   }
 
   String? isValidPassword(String password) {
@@ -285,6 +308,58 @@ class PlaylistController extends GetxController {
     if (listings.isNotEmpty) {
       Get.find<DashboardController>().init(listings);
     }
+  }
+
+  Future register() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    final response = await playlistRepo.registerUser();
+    wait.value = false;
+    toastMessage.value = response.message;
+    update();
+  }
+
+  Future forgotPassword() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    final response = await playlistRepo.forgotPassword();
+    wait.value = false;
+    toastMessage.value = response.message;
+    update();
+  }
+
+  Future doLogin() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    await playlistRepo.loginUser();
+    final isLogin = await playlistRepo.getUserDetails();
+    wait.value = false;
+    if (isLogin.status) {
+      final DashboardController dashboardController =
+          Get.find<DashboardController>();
+      dashboardController.me = meFromJson(isLogin.data);
+      mode.value = LoginMode.loggedIn;
+      update();
+    } else {
+      toastMessage.value = isLogin.message;
+    }
+  }
+
+  Future doLogout() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    wait.value = false;
+    mode.value = LoginMode.login;
+    final DashboardController dashboardController =
+        Get.find<DashboardController>();
+    toastMessage.value =
+        "${dashboardController.me?.user.name} logged out successfully";
+    dashboardController.me = null;
+    update();
   }
 
   @override

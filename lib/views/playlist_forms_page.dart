@@ -1,8 +1,11 @@
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlist_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/animated_size_and_fade.dart';
+import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/text_field_decoration.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class PlaylistFormsPage extends StatelessWidget {
   const PlaylistFormsPage({
@@ -79,6 +82,7 @@ class PlaylistFormsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       controller: _pc.passwordTec,
+                      obscureText: true,
                       validator: (str) =>
                           _pc.unifiedValidator(Values.enterPassword),
                       decoration:
@@ -92,6 +96,7 @@ class PlaylistFormsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       controller: _pc.confirmPassTec,
+                      obscureText: true,
                       validator: (str) =>
                           _pc.unifiedValidator(Values.reenterPassword),
                       decoration: getTextFieldDecoration(
@@ -101,15 +106,28 @@ class PlaylistFormsPage extends StatelessWidget {
                 ),
                 if (_pc.showAgree()) AgreeTCPP(pc: _pc),
                 if (_pc.showRemember()) RememberForgot(pc: _pc),
-                OutlinedButton(
-                  onPressed: _pc.unifiedSubmitAction,
-                  child: Text(_pc.getActionName()),
-                  style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                        backgroundColor: WidgetStateProperty.all(
-                            Theme.of(context).cardColor),
-                        // other properties
-                      ),
-                ),
+                Obx(() {
+                  return Text(_pc.toastMessage.value);
+                }),
+                Obx(() {
+                  return _pc.wait.value
+                      ? const Center(
+                          child: ProgressIndicatorButton(
+                            radius: 20,
+                          ),
+                        )
+                      : OutlinedButton(
+                          onPressed: _pc.unifiedSubmitAction,
+                          child: Text(_pc.getActionName()),
+                          style: Theme.of(context)
+                              .elevatedButtonTheme
+                              .style
+                              ?.copyWith(
+                                backgroundColor: WidgetStateProperty.all(
+                                    Theme.of(context).cardColor),
+                              ),
+                        );
+                }),
                 SignUpRow(
                   pc: _pc,
                 ),
@@ -155,7 +173,9 @@ class AgreeTCPP extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.find<DashboardController>().launchURL(Values.tncUrl);
+                },
                 child: Material(
                   type: MaterialType.transparency,
                   child: Padding(
@@ -177,7 +197,9 @@ class AgreeTCPP extends StatelessWidget {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Get.find<DashboardController>().launchURL(Values.privacyUrl);
+                },
                 child: Material(
                   type: MaterialType.transparency,
                   child: Padding(

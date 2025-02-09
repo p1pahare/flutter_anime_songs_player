@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:anime_themes_player/models/api_response.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -19,8 +21,8 @@ class PlaylistRepo extends GetConnect {
     currentToken = box.read("LOGIN_TOKEN") ?? "";
   }
   final headerCommon = {
-    'Origin': 'https://animethemes.moe',
-    'Referer': ' https://animethemes.moe/',
+    'Origin': Values.siteUrl,
+    'Referer': ' ${Values.siteUrl}/',
     'X-Requested-With': 'XMLHttpRequest',
   };
   Future saveCookies(Response response) async {
@@ -44,9 +46,8 @@ class PlaylistRepo extends GetConnect {
   }
 
   Future<void> getCookie() async {
-    Response response =
-        await get('https://api.animethemes.moe/', headers: headerCommon);
-    response = await get('https://api.animethemes.moe/', headers: headerCommon);
+    Response response = await get('${Values.baseUrl}/', headers: headerCommon);
+    response = await get('${Values.baseUrl}/', headers: headerCommon);
     saveCookies(response);
   }
 
@@ -64,7 +65,7 @@ class PlaylistRepo extends GetConnect {
   Future<void> getToken() async {
     String? cookies = getStoredCookies();
     final response = await get(
-      'https://api.animethemes.moe/sanctum/csrf-cookie',
+      '${Values.baseUrl}/sanctum/csrf-cookie',
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
@@ -81,11 +82,11 @@ class PlaylistRepo extends GetConnect {
     }
   }
 
-  Future<void> loginUser() async {
+  Future<ApiResponse> loginUser() async {
     String? cookies = getStoredCookies();
     final response = await post(
-      'https://api.animethemes.moe/auth/login',
-      '{"email":"p1pahare@gmail.com","password":"@Chalbechal55","remember":true}',
+      '${Values.baseUrl}/auth/login',
+      '{"email":"p1pahare@rediffmail.com","password":"@Chalbechal55","remember":true}',
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
@@ -105,15 +106,103 @@ class PlaylistRepo extends GetConnect {
     if (response.isOk) {
       saveCookies(response);
       log('Third Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
     } else {
       log('Failed: ${response.bodyString} $currentToken ${extractCSRFFromCookies(cookies)}');
+      return ApiResponse(
+        status: false,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
     }
   }
 
-  Future<void> getUserDetails() async {
+  Future<ApiResponse> registerUser() async {
+    String? cookies = getStoredCookies();
+    final response = await post(
+      '${Values.baseUrl}/auth/register',
+      '{"name":"parikshit pahare","email":"p1pahare@rediffmail.com","password":"@Chalbechal55","password_confirmation":"@Chalbechal55","terms":true}',
+      headers: {
+        if (cookies != null) 'Cookie': cookies,
+        ...headerCommon,
+        "X-XSRF-TOKEN": currentToken,
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Content-Type': 'application/json',
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site',
+        'TE': 'trailers'
+      },
+    );
+
+    if (response.isOk) {
+      saveCookies(response);
+      log('Register Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    } else {
+      log('Failed: ${response.bodyString} $currentToken ${extractCSRFFromCookies(cookies)}');
+      return ApiResponse(
+        status: false,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    }
+  }
+
+  Future<ApiResponse> forgotPassword() async {
+    String? cookies = getStoredCookies();
+    final response = await post(
+      '${Values.baseUrl}/auth/forgot-password',
+      '{"email":"p1pahare@yahoo.com"}',
+      headers: {
+        if (cookies != null) 'Cookie': cookies,
+        ...headerCommon,
+        "X-XSRF-TOKEN": currentToken,
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Content-Type': 'application/json',
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site',
+        'TE': 'trailers'
+      },
+    );
+
+    if (response.isOk) {
+      saveCookies(response);
+      log('Register Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    } else {
+      log('Failed: ${response.bodyString} $currentToken ${extractCSRFFromCookies(cookies)}');
+      return ApiResponse(
+        status: false,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    }
+  }
+
+  Future<ApiResponse> getUserDetails() async {
     String? cookies = getStoredCookies();
     final response = await get(
-      'https://api.animethemes.moe/me',
+      '${Values.baseUrl}/me',
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
@@ -124,8 +213,18 @@ class PlaylistRepo extends GetConnect {
     if (response.isOk) {
       saveCookies(response);
       log('Fourth Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: "User is already logged in",
+        data: response.bodyString,
+      );
     } else {
-      log('Failed: ${response.statusText}');
+      log('Failed: ${response.statusText} ${response.bodyString}');
+      return ApiResponse(
+        status: false,
+        message: "User is not logged in",
+        data: response.body,
+      );
     }
   }
 }

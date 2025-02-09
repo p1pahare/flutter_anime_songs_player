@@ -11,6 +11,7 @@ dependencies:
   get_storage: ^2.0.3
   flutter_snake_navigationbar: ^0.6.1
   flutter_native_splash: ^2.1.6
+  url_launcher: ^6.3.1
   just_audio: ^0.9.40
   just_audio_background: ^0.0.1-beta.13
   cached_network_image: ^3.3.0
