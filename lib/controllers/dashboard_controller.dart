@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:package_info/package_info.dart';
+// import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DashboardController extends GetxController {
@@ -197,11 +197,11 @@ class DashboardController extends GetxController {
     playlistController.update();
   }
 
-  Future<String> getVersionInfo() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
-    return "V$version (Build $buildNumber)";
+  Future<String> getVersionInfo() async { return "V1.0.0 (Build 1)";
+    // PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    // String version = packageInfo.version;
+    // String buildNumber = packageInfo.buildNumber;
+    // return "V$version (Build $buildNumber)";
   }
 
   Future<void> launchURL(String url) async {
