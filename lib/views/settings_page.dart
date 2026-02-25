@@ -48,7 +48,7 @@ class SettingsPage extends StatelessWidget {
                                 ? Values.nightMode
                                 : Values.dayMode),
                             activeTrackColor:
-                                Theme.of(context).primaryColor.withOpacity(0.3),
+                                Theme.of(context).primaryColor.withOpacity(0.55),
                             trackOutlineColor: WidgetStatePropertyAll(
                                 (c.darkMode ?? false)
                                     ? Theme.of(context).primaryColorDark

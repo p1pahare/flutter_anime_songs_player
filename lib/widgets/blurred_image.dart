@@ -23,7 +23,7 @@ class BlurredImageBackground extends StatelessWidget {
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
                   (Get.isDarkMode ? Colors.black : Colors.white)
-                      .withOpacity(0.3), // Adjust opacity for tint
+                      .withOpacity(0.55), // Adjust opacity for tint
                   BlendMode.darken, // Blend mode to darken the image
                 ),
                 child: imagePath == Values.noImage

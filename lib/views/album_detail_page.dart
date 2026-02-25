@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/theme_album.dart';
+import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:anime_themes_player/widgets/see_more_less_widget.dart';
 import 'package:anime_themes_player/widgets/song_card_for_animethemes.dart';
@@ -117,112 +118,155 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 320.0; // Fixed max height for consistency
 
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // 0.0 = fully expanded, 1.0 = fully collapsed
-    final double progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    
-    // Dynamic sizes based on progress
-    final double imageWidth = (120 - (progress * 40)).clamp(60.0, 120.0);
-    final double imageHeight = (170 - (progress * 50)).clamp(80.0, 170.0);
-    
-    // Horizontal position: starts at 20, moves slightly right when collapsed
-    final double leftPosition = lerpDouble(20, 10, progress)!;
-    // Vertical position: anchored toward bottom, but adjusts with shrink
-    final double topPosition = lerpDouble(maxExtent - imageHeight - 20, minExtent / 2 - imageHeight / 2, progress)!;
+@override
+Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  final double progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+  
+  // 1. Image Size: Slightly smaller when collapsed
+  final double imageWidth = lerpDouble(120, 80, progress)!;
+  final double imageHeight = lerpDouble(170, 110, progress)!;
+  
+  // 2. Left Position: Moving from 20 (expanded) to 50 (collapsed) as requested
+  final double leftPosition = lerpDouble(20, 50, progress)!;
 
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 1. Background Blurred Image
-          Opacity(
-            opacity: (1 - progress).clamp(0.0, 1.0),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: _buildImage(BoxFit.cover),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.4),
-                        Theme.of(context).scaffoldBackgroundColor,
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+  // 3. Top Position: 
+  // We calculate safe areas to ensure it stays vertically centered in the minExtent
+  final double expandedTop = maxExtent - imageHeight - 40; 
+  final double collapsedTop = (minExtent / 2) - (imageHeight / 2) + (MediaQuery.of(context).padding.top / 2);
+  final double topPosition = lerpDouble(expandedTop, collapsedTop, progress)!;
 
-          // 2. Text Content (Titles)
-          Positioned(
-            left: leftPosition + imageWidth + 15,
-            right: 20,
-            bottom: 20,
-            top: progress > 0.5 ? null : null, // Adjust based on need
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: lerpDouble(20, 16, progress),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (progress < 0.6) ...[
-                  Text(releaseText, style: Theme.of(context).textTheme.bodyMedium),
-                  Text(studioText, style: Theme.of(context).textTheme.bodySmall),
-                ],
-              ],
-            ),
-          ),
+  return Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        // Background Blurred Image (fades out as we collapse)
+        Opacity(
+          opacity: 1,
+          child: _buildBlurredBackground(context),
+        ),
 
-          // 3. Floating Image Card (The Poster)
-          Positioned(
-            left: leftPosition,
-            top: topPosition.clamp(10.0, maxExtent), // Prevents going off-top
-            child: Container(
-              width: imageWidth,
-              height: imageHeight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: const [BoxShadow(blurRadius: 8, color: Colors.black26)],
+        // Text Content (Titles)
+        Positioned(
+          // Text starts after the image + a small gap
+          left: leftPosition + imageWidth + 15,
+          right: 20,
+          // Instead of bottom: 20, we use top: topPosition to keep it aligned with the image
+          top: topPosition, 
+          height: imageHeight, // Force the column to be the same height as the image
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center, // Center text vertically relative to the image
+            children: [
+              Text(
+                title,
+                style: Values.cdTitle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: lerpDouble(20, 15, progress),
+                ),
+                maxLines: progress > 0.5 ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              clipBehavior: Clip.antiAlias,
-              child: _buildImage(BoxFit.cover),
-            ),
+              // We use a SizeTransition-like logic: hide details as we reach collapsed state
+              ...[
+                const SizedBox(height: 4),
+                Text(
+                  releaseText, 
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 1,
+                ),
+                Text(
+                  studioText, 
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 1,
+                ),
+              ],
+            ],
           ),
+        ),
 
-          // 4. Back Button
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 5,
-            left: 10,
-            child: CircleAvatar(
-              backgroundColor: Colors.black26,
+        // Floating Image Card (The Poster)
+        Positioned(
+          left: leftPosition,
+          top: topPosition,
+          child: Container(
+            width: imageWidth,
+            height: imageHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 8, 
+                  color: Colors.black.withOpacity(lerpDouble(0.26, 0.0, progress)!)
+                )
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: _buildImage(BoxFit.cover),
+          ),
+        ),
+
+        // Back Button (Adjusted for status bar)
+        Positioned(
+          top: MediaQuery.of(context).padding.top,
+          left: 10,
+          child: SizedBox(
+            height: kToolbarHeight,
+            child: Center(
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 onPressed: () => Get.back(),
               ),
             ),
           ),
-        ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildBlurredBackground(BuildContext context) {
+  return Stack(
+    children: [
+      // 1. The Actual Image (Blurred)
+      Positioned.fill(
+        child: ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.2), // Darkens the image slightly
+              BlendMode.darken,
+            ),
+            child: _buildImage(BoxFit.cover),
+          ),
+        ),
       ),
-    );
-  }
+
+      // 2. The Gradient Overlay (Transition to Scaffold Background)
+      Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                // Top: Transparent or slightly tinted for the status bar
+                Colors.black.withOpacity(0.3),
+                // Middle: Transition
+                Colors.transparent,
+                // Bottom: Smooth fade into the rest of the page
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
+                Theme.of(context).scaffoldBackgroundColor,
+              ],
+              stops: const [0.0, 0.4, 0.8, 1.0],
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
   Widget _buildImage(BoxFit fit) {
     if (imagePath == "no_image") {
