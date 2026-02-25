@@ -1,12 +1,8 @@
-import 'dart:math';
 import 'dart:ui';
-import 'dart:developer' as dev;
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/theme_album.dart';
-import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
-import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/see_more_less_widget.dart';
 import 'package:anime_themes_player/widgets/song_card_for_animethemes.dart';
 import 'package:flutter/material.dart';
@@ -99,6 +95,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
   }
 }
 
+
 class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
   AnimeMetaHeader({
     required this.imagePath,
@@ -107,184 +104,137 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
     required this.releaseText,
     required this.studioText,
   });
-  @override
-  double get minExtent => Get.height * 0.22; // Minimum size of the header
-  @override
-  double get maxExtent => Get.height * 0.55; // Maximum size of the header
+
   final String imagePath;
   final String title;
   final String releaseText;
   final String studioText;
   final ScrollController scrollController;
-  bool scrolled = false;
+
+  // Use fixed values or media query logic for extents
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // Calculate size of Box A
-    final double sizeA = context.height * 0.44 - shrinkOffset;
-    final double scaledSizeA = max(sizeA - 26, 0);
-    if (!scrolled && shrinkOffset > 50 && shrinkOffset < 150) {
-      scrollController.animateTo(context.height * 0.33,
-          duration: const Duration(milliseconds: 1400),
-          curve: Curves.bounceOut);
-      scrolled = true;
-    }
-    if (shrinkOffset < 10) {
-      scrolled = false;
-    }
-    // Calculate Box B's position and size
-    final double boxBStartOffset = context.width * 0.25;
-    const double boxBEndOffset = 50.0;
-    final double boxBOffset = boxBStartOffset -
-        ((shrinkOffset / (maxExtent - minExtent)) *
-                (boxBStartOffset - boxBEndOffset))
-            .clamp(0.0, boxBStartOffset - boxBEndOffset);
-    dev.log("shrinkfofset = $shrinkOffset, sieA = $sizeA ${Get.size}");
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          child: SizedBox(
-            height: scaledSizeA,
+  double get minExtent => kToolbarHeight + 60; // Standard collapsed height
+  @override
+  double get maxExtent => 320.0; // Fixed max height for consistency
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 0.0 = fully expanded, 1.0 = fully collapsed
+    final double progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    
+    // Dynamic sizes based on progress
+    final double imageWidth = (120 - (progress * 40)).clamp(60.0, 120.0);
+    final double imageHeight = (170 - (progress * 50)).clamp(80.0, 170.0);
+    
+    // Horizontal position: starts at 20, moves slightly right when collapsed
+    final double leftPosition = lerpDouble(20, 10, progress)!;
+    // Vertical position: anchored toward bottom, but adjusts with shrink
+    final double topPosition = lerpDouble(maxExtent - imageHeight - 20, minExtent / 2 - imageHeight / 2, progress)!;
+
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 1. Background Blurred Image
+          Opacity(
+            opacity: (1 - progress).clamp(0.0, 1.0),
             child: Stack(
-              clipBehavior: Clip.hardEdge,
               children: [
                 Positioned.fill(
                   child: ImageFiltered(
                     imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: imagePath == Values.noImage
-                        ? Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                          )
-                        : Image.network(
-                            imagePath,
-                            fit: BoxFit.cover,
-                            alignment: Alignment.center,
-                            errorBuilder: (context, url, error) => Image.asset(
-                              imagePath,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                            ),
-                          ),
+                    child: _buildImage(BoxFit.cover),
                   ),
                 ),
                 Container(
-                  height: scaledSizeA,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Get.theme.appBarTheme.backgroundColor
-                                ?.withOpacity(0.9) ??
-                            (Get.isDarkMode ? Colors.black : Colors.white)
-                                .withOpacity(0.9),
-                        Colors.transparent,
-                      ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.4),
+                        Theme.of(context).scaffoldBackgroundColor,
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: maxExtent - scaledSizeA,
-            width: context.width,
-            color: Get.theme.canvasColor,
-            padding: EdgeInsets.only(
-              left: 14 +
-                  max(
-                      shrinkOffset < (context.width * 0.3)
-                          ? shrinkOffset
-                          : (context.width * 0.4),
-                      0),
-              right: 12,
-            ),
+
+          // 2. Text Content (Titles)
+          Positioned(
+            left: leftPosition + imageWidth + 15,
+            right: 20,
+            bottom: 20,
+            top: progress > 0.5 ? null : null, // Adjust based on need
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SizedBox(
-                    // width: context.width / 2,
-                    child: Text(
-                  title,
-                  maxLines: shrinkOffset < 40 ? 2 : 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: Get.theme.textTheme.headlineSmall,
-                )),
                 Text(
-                  releaseText,
+                  title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: lerpDouble(20, 16, progress),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Text(studioText),
+                if (progress < 0.6) ...[
+                  Text(releaseText, style: Theme.of(context).textTheme.bodyMedium),
+                  Text(studioText, style: Theme.of(context).textTheme.bodySmall),
+                ],
               ],
             ),
           ),
-        ),
-        Positioned(
-          top: boxBOffset * 0.6,
-          left: boxBOffset * 0.9,
-          child: Container(
-            height: boxBOffset * 2.5,
-            width: boxBOffset * 2.2,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-            child: imagePath == Values.noImage
-                ? Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                    height: 160,
-                    width: context.width * 0.32,
-                  )
-                : Image.network(
-                    imagePath,
-                    fit: BoxFit.contain,
-                    height: 160,
-                    width: context.width * 0.32,
-                    alignment: Alignment.center,
-                    loadingBuilder: (context, child, loadingProcess) =>
-                        loadingProcess == null
-                            ? child
-                            : const ProgressIndicatorButton(),
-                    errorBuilder: (context, url, error) => Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.topLeft,
-          child: GestureDetector(
-            onTap: () => Get.back(),
+
+          // 3. Floating Image Card (The Poster)
+          Positioned(
+            left: leftPosition,
+            top: topPosition.clamp(10.0, maxExtent), // Prevents going off-top
             child: Container(
-              margin: const EdgeInsets.only(
-                left: 15,
-                top: 15,
-              ),
-              height: 50,
-              width: 50,
+              width: imageWidth,
+              height: imageHeight,
               decoration: BoxDecoration(
-                color: Get.theme.appBarTheme.backgroundColor?.withOpacity(0.5),
-                //Get.isDarkMode ? Colors.black45 : Colors.white38,
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: const [BoxShadow(blurRadius: 8, color: Colors.black26)],
               ),
-              child: const Icon(Icons.arrow_back_ios_rounded),
+              clipBehavior: Clip.antiAlias,
+              child: _buildImage(BoxFit.cover),
             ),
           ),
-        ),
-      ],
+
+          // 4. Back Button
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 5,
+            left: 10,
+            child: CircleAvatar(
+              backgroundColor: Colors.black26,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Get.back(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImage(BoxFit fit) {
+    if (imagePath == "no_image") {
+      return Image.asset(imagePath, fit: fit);
+    }
+    return Image.network(
+      imagePath,
+      fit: fit,
+      errorBuilder: (context, _, __) => Container(color: Colors.grey),
     );
   }
 
   @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
+  bool shouldRebuild(covariant AnimeMetaHeader oldDelegate) => true;
 }
