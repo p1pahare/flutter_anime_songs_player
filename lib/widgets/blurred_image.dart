@@ -8,7 +8,7 @@ class BlurredImageBackground extends StatelessWidget {
   final String imagePath;
 
   const BlurredImageBackground({super.key, required this.imagePath});
-
+  static const posterWidth = 120.0;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -46,34 +46,26 @@ class BlurredImageBackground extends StatelessWidget {
             ),
           ),
           // Centered Smaller Image
-          Align(
-            alignment: Alignment.centerLeft,
-            child: imagePath == Values.noImage
-                ? Image.asset(
-                    imagePath,
-                    fit: BoxFit.fill,
-                    height: 160,
-                    width: context.width * 0.32,
-                  )
-                : Image.network(
-                    imagePath,
-                    fit: BoxFit.fill,
-                    height: 160,
-                    width: context.width * 0.32,
-                    alignment: Alignment.center,
-                    loadingBuilder: (context, child, loadingProcess) =>
-                        loadingProcess == null
-                            ? child
-                            : const ProgressIndicatorButton(),
-                    errorBuilder: (context, url, error) => Image.asset(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-          ),
+           SizedBox(
+          width: posterWidth,
+          height: double.infinity,
+          child: _buildImage(BoxFit.cover),
+        ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImage(BoxFit fit) {
+    if (imagePath == Values.noImage) {
+      return Image.asset(imagePath, fit: fit);
+    }
+    return Image.network(
+      imagePath,
+      fit: fit,
+      errorBuilder: (context, _, __) => Image.asset(Values.noImage, fit: fit),
+      loadingBuilder: (context, child, loading) => 
+          loading == null ? child : const Center(child: ProgressIndicatorButton()),
     );
   }
 }
