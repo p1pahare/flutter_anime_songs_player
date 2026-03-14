@@ -214,6 +214,7 @@ class AmAnimethemeentries {
 
 class AmVideos {
   AmVideos({
+        required this.id,
     required this.resolution,
     required this.nc,
     required this.subbed,
@@ -224,6 +225,7 @@ class AmVideos {
     required this.tags,
     required this.link,
   });
+  late final int? id;
   late final int resolution;
   late final bool nc;
   late final bool subbed;
@@ -236,6 +238,7 @@ class AmVideos {
   late final AmAudio audio;
 
   AmVideos.fromJson(Map<String, dynamic> json) {
+      id = json['id'];
     resolution = json['resolution'] ?? 0;
     nc = json['nc'] ?? false;
     subbed = json['subbed'] ?? false;
@@ -251,6 +254,7 @@ class AmVideos {
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['resolution'] = resolution;
+        _data['id'] = id;
     _data['nc'] = nc;
     _data['subbed'] = subbed;
     _data['lyrics'] = lyrics;

@@ -296,7 +296,7 @@ class PlaylistController extends GetxController {
     int successCount = 0;
     for (int i = 0; i < themeIds.length; i++) {
       if (box.hasData('theme_${themeIds[i]}')) {
-        listings.add(AudioEntry.fromJson(box.read('theme_${themeIds[i]}')));
+        // listings.add(AudioEntry.fromJson(box.read('theme_${themeIds[i]}')));
         successCount++;
         continue;
       }

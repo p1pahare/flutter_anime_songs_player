@@ -78,15 +78,14 @@ class SongCardForAnimethemes extends StatelessWidget {
                     });
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
-                    final Map<String, dynamic>? songmetadata = {};
-                    if (songmetadata == null) {
+                    if (animeMain == null || animethemes == null || animethemeentries == null) {
                       showMessage("Something went wrong");
                       return;
                     }
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          [AudioEntry.fromJson(songmetadata)],
+                          [AudioEntry.fromThemeEntryV2(animeMain, animethemes!, animethemeentries!)],
                           addToQueueOnly: true);
                     } else {}
                   },

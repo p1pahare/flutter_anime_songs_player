@@ -1,3 +1,4 @@
+import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/animethemes.dart';
 
 class AudioEntry {
@@ -43,6 +44,20 @@ class AudioEntry {
     artist = albumModel.song.artists.map((artst) => artst.name).join(",");
     audioUrl = entryModel.videos.first.audio.link;
     urlCover = albumModel.getImageUrl();
+    videoUrl = entryModel.videos.first.link;
+    if(urlCover?.isNotEmpty ?? false) {
+      art = Uri.parse(urlCover!);
+     }
+  }
+
+  AudioEntry.fromThemeEntryV2(Anime? animeMain, AmAnimethemes albumModel, AmAnimethemeentries entryModel) {
+     
+    id = entryModel.videos.first.id.toString();
+    album = animeMain?.getTitle().toString()??'';
+    title = albumModel.song?.title??'';
+    artist = albumModel.song?.artists.map((artst) => artst.name).join(",")??'';
+    audioUrl = entryModel.videos.first.audio.link;
+    urlCover = animeMain?.getImageUrl()??'';
     videoUrl = entryModel.videos.first.link;
     if(urlCover?.isNotEmpty ?? false) {
       art = Uri.parse(urlCover!);
