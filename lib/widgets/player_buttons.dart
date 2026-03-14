@@ -80,19 +80,19 @@ class PlayerButtons extends StatelessWidget {
     } else if (_audioPlayer.playing != true) {
       return IconButton(
         icon: const Icon(Icons.play_arrow),
-        iconSize: 38.0,
+        iconSize: 28.0,
         onPressed: _audioPlayer.play,
       );
     } else if (processingState != ProcessingState.completed) {
       return IconButton(
         icon: const Icon(Icons.pause),
-        iconSize: 38.0,
+        iconSize: 28.0,
         onPressed: _audioPlayer.pause,
       );
     } else {
       return IconButton(
         icon: const Icon(Icons.replay),
-        iconSize: 38.0,
+        iconSize: 28.0,
         onPressed: () => _audioPlayer.seek(Duration.zero,
             index: _audioPlayer.effectiveIndices?.first),
       );
@@ -106,6 +106,7 @@ class PlayerButtons extends StatelessWidget {
               Icons.shuffle_on_rounded,
             )
           : const Icon(Icons.shuffle_rounded),
+          
       onPressed: () async {
         final enable = !isEnabled;
         if (enable) {

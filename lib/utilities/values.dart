@@ -81,12 +81,12 @@ class Values {
   static const cdTitle = TextStyle(
       fontSize: 18.6,
       fontWeight: FontWeight.bold,
-      color: Color(0xffd9d6d3),
+      color: Color.fromARGB(255, 217, 217, 211),
       shadows: [Shadow(color: Colors.black, offset: Offset(0.8, 0.6))]);
   static const cdSubtitle = TextStyle(
       fontSize: 15,
       fontWeight: FontWeight.w400,
-      color: Color(0xffd9d6d3),
+      color: Color.fromARGB(255, 217, 217, 211),
       shadows: [Shadow(color: Colors.black, offset: Offset(0.8, 0.6))]);
   static final darkTheme = ThemeData(
       fontFamily: Values.fontFamilyName,

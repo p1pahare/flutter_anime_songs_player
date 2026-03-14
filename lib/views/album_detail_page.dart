@@ -173,12 +173,16 @@ Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
                 const SizedBox(height: 4),
                 Text(
                   releaseText, 
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style:Values.cdSubtitle.copyWith(
+                  fontSize: lerpDouble(14, 15, progress),
+                ),
                   maxLines: 1,
                 ),
                 Text(
                   studioText, 
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Values.cdSubtitle.copyWith(
+                  fontSize: lerpDouble(14, 15, progress),
+                ),
                   maxLines: 1,
                 ),
               ],

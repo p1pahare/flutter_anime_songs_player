@@ -45,7 +45,7 @@ class AnimeThemeRepository extends GetConnect {
     try {
       final response = await get(isUrl
           ? title
-          : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug&fields[animethemeentry]=version&fields[video]=tags,link,filename&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}');
+          : '${Values.baseUrl}/animetheme?include=animethemeentries.videos,animethemeentries.videos.audio,anime.images,song.artists&fields[anime]=name,slug,year,season&fields[animetheme]=id,type,sequence,slug&fields[animethemeentry]=version&fields[video]=tags,link,filename&fields[image]=facet,link&fields[song]=title&fields[artist]=name,slug&filter[has]=song&page[size]=15&page[number]=1&q=${percentEncode(title)}');
 //&filter[has]=song
       String body = response.bodyString ?? 'Something Went Wrong';
 

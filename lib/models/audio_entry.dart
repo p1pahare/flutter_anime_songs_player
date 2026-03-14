@@ -1,3 +1,5 @@
+import 'package:anime_themes_player/models/animethemes.dart';
+
 class AudioEntry {
   AudioEntry(
       {required this.id,
@@ -30,6 +32,21 @@ class AudioEntry {
     urlCover = json['urlCover'];
     videoUrl = json['videoUrl'];
     art = Uri.parse(json['art']);
+  }
+
+
+  AudioEntry.fromThemeEntry(Animethemes albumModel, AtmAnimethemeentries entryModel) {
+     
+    id = entryModel.videos.first.id.toString();
+    album = albumModel.getTitle();
+    title = albumModel.song.title;
+    artist = albumModel.song.artists.map((artst) => artst.name).join(",");
+    audioUrl = entryModel.videos.first.audio.link;
+    urlCover = albumModel.getImageUrl();
+    videoUrl = entryModel.videos.first.link;
+    if(urlCover?.isNotEmpty ?? false) {
+      art = Uri.parse(urlCover!);
+     }
   }
 
   Map<String, dynamic> toJson() {
