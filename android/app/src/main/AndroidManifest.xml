@@ -19,7 +19,7 @@
   </intent>
 </queries>
    <application
-        android:label="Anime Themes Player"
+        android:label="Anime Themes"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">

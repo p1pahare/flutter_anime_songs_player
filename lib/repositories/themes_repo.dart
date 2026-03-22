@@ -171,4 +171,35 @@ class ThemesRepository extends GetConnect {
       }
     }
   }
+
+    Future<ApiResponse> loadAnimeCompleteFromSlug(String slug) async {
+    try {
+      final response = await get(
+          '${Values.baseUrl}/anime/$slug?include=images,resources,studios,animethemes.animethemeentries.videos,animethemes.animethemeentries.videos.audio,animethemes.song,animethemes.song.artists&fields[animetheme]=type,sequence,slug,id');
+      //,animethemeentries.videos.audio
+      String body = response.bodyString ?? 'Something Went Wrong';
+
+      if (response.isOk) {
+        log(body);
+        return ApiResponse.fromJson({
+          "status": true,
+          "message": "Anime were retrieved successfully",
+          "data": jsonDecode(body)
+        });
+      } else {
+        String message = body;
+        log(message);
+        return ApiResponse.fromJson({"status": false, "message": message});
+      }
+    } catch (e) {
+      if (e is SocketException) {
+        return ApiResponse(
+            status: false,
+            message:
+                "Network Problem Occurred. Kindly check your internet connection.");
+      } else {
+        return ApiResponse(status: false, message: e.toString());
+      }
+    }
+  }
 }

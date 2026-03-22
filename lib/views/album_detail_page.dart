@@ -2,11 +2,13 @@ import 'dart:ui';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/theme_album.dart';
+import 'package:anime_themes_player/controllers/search_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
+import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/see_more_less_widget.dart';
 import 'package:anime_themes_player/widgets/song_card_for_animethemes.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide SearchController;
 import 'package:get/get.dart';
 
 class AlbumDetailPage extends StatefulWidget {
@@ -21,10 +23,22 @@ class AlbumDetailPage extends StatefulWidget {
 }
 
 class _AlbumDetailScreenState extends State<AlbumDetailPage> {
-  ScrollController scrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
+  final SearchController searchController = Get.find();
+  late ThemeAlbum themeAlbum;
   @override
   void initState() {
     super.initState();
+    themeAlbum = widget.themeAlbum;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      searchController.animeFullFromSlug((themeAlbum as Anime).slug, isAlreadyFetched: themeAlbum.items().isNotEmpty).then((anime) {
+        if (anime != null) {
+          setState(() {
+            themeAlbum = anime;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -53,22 +67,46 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
                   textData: widget.themeAlbum.getSynopsis(),
                 ),
               ]),
-              SliverList(
+              GetBuilder<SearchController>(
+                init: searchController,
+                builder: (controller) {
+return   (searchController.detailStatus.isLoading)?
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Center(child: ProgressIndicatorButton(radius: 20,)),
+                  ),
+                ): (themeAlbum.items().isEmpty)?
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Center(child: Text("No themes found for this anime.")),
+                  ),
+                ):(searchController.detailStatus.isError)?
+                 SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Center(child: Text(searchController.detailStatus.errorMessage ?? "An error occurred while fetching details.")),
+                  ),
+                ) :
+                SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (_, int index) {
                     return SongCardForAnimethemes(
-                      animeMain: widget.themeAlbum as Anime,
-                      animethemes: widget.themeAlbum.items()[index].key,
-                      animethemeentries: widget.themeAlbum.items()[index].value,
+                      animeMain: themeAlbum as Anime,
+                      animethemes: themeAlbum.items()[index].key,
+                      animethemeentries: themeAlbum.items()[index].value,
                     );
                   },
-                  childCount: widget.themeAlbum.items().length,
-                ),
-              ),
+                  childCount: themeAlbum.items().length,
+                ));
+                  
+              }),
+            
               SliverList.list(
                 children: List.generate(
-                  widget.themeAlbum.items().length < 12
-                      ? 12 - widget.themeAlbum.items().length
+                  themeAlbum.items().length < 12
+                      ? 12 - themeAlbum.items().length
                       : 0,
                   (i) => const SizedBox(
                     height: 50,

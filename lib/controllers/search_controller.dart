@@ -23,6 +23,7 @@ class SearchController extends GetxController {
   LinksMain? linksMain;
   RxList<dynamic> listings = RxList.empty();
   RxStatus status = RxStatus.success();
+  RxStatus detailStatus = RxStatus.success();
   List<ThemesMalAni> animeList = [];
   Map<int, String> searchValuesMap = {
     0: 'Anime Title',
@@ -234,6 +235,25 @@ class SearchController extends GetxController {
       }
     }
     return [];
+  }
+
+    Future<Anime?> animeFullFromSlug(String slug, {bool isAlreadyFetched = false}) async {
+    detailStatus = isAlreadyFetched ? RxStatus.success() : RxStatus.loading();
+      update();
+    if(!isAlreadyFetched){
+    final ApiResponse apiResponse =  await themesRepository.loadAnimeCompleteFromSlug(slug);
+
+      if (apiResponse.status && apiResponse.data['anime'] != null) {
+        detailStatus = RxStatus.success();
+        update();
+        return Anime.fromJson(apiResponse.data['anime']);
+      } else {
+        detailStatus = RxStatus.error(apiResponse.message);
+        update();
+        return null;
+      }
+    }
+    return null;
   }
 
   @override
