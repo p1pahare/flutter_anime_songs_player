@@ -19,9 +19,9 @@ dependencies:
   intl: ^0.20.2
   float_column: ^4.0.3
   implicitly_animated_reorderable_list_2: ^0.6.0
-  media_kit: ^1.1.11                             # Primary package.
-  media_kit_video: ^1.2.5                        # For video rendering.
-  media_kit_libs_video: ^1.0.4                   # Native video dependencies.
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_video: ^1.0.7
 
 dependency_overrides:
   win32: ^5.5.4

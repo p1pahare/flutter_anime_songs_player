@@ -137,7 +137,7 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
                     return InkWell(
                         onTap: () async {
                           String audioUrl =
-                              animethemeentries!.videos.first.link;
+                              animethemeentries!.videos.first.audio.link;
                           final videoUrl = animethemeentries!.videos.first.link;
                           log(audioUrl);
                           if (Platform.isIOS || Platform.isMacOS) {

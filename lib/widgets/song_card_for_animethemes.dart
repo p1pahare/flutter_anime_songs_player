@@ -124,7 +124,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                               : animethemeentries!.videos.first.audio.link;
                           log(audioUrl);
                           final videoUrl =
-                              animethemeentries!.videos.first.audio.link;
+                              animethemeentries!.videos.first.link;
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),

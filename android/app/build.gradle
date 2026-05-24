@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace "com.example.anime_themes_player"
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.example.anime_themes_player"
         minSdk 24
-        targetSdk 32
+        targetSdk 36
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
