@@ -4,7 +4,7 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
-import 'package:anime_themes_player/repositories/playlists_repo.dart';
+import 'package:anime_themes_player/repositories/users_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,9 +21,9 @@ enum LoginMode {
   updateUserDetails
 }
 
-class PlaylistController extends GetxController {
+class UsersController extends GetxController {
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
-  final PlaylistRepo playlistRepo = PlaylistRepo();
+  final UsersRepo playlistRepo = UsersRepo();
   final RxBool wait = false.obs;
   final RxString toastMessage = "".obs;
   GetStorage box = GetStorage();
@@ -45,6 +45,18 @@ class PlaylistController extends GetxController {
     update();
   }
 
+    void clearAll(){
+    usernameTec.clear();
+    emailTec.clear();
+    oldPasswordTec.clear();
+    passwordTec.clear();
+    confirmPassTec.clear();
+    agree.value = false;
+    rememberMe.value = false;
+    update();
+  }
+
+
   void setAgree(bool? agree) {
     this.agree.value = agree ?? true;
     update();
@@ -53,16 +65,19 @@ class PlaylistController extends GetxController {
   bool showEmail() =>
       mode.value == LoginMode.login ||
       mode.value == LoginMode.register ||
-      mode.value == LoginMode.forgotPassword;
+      mode.value == LoginMode.forgotPassword ||
+      mode.value == LoginMode.updateUserDetails;
 
   bool showPassoword() =>
-      mode.value == LoginMode.login || mode.value == LoginMode.register;
-
-  bool showCPassoword() => mode.value == LoginMode.register;
-
+      mode.value == LoginMode.login ||
+      mode.value == LoginMode.register ||
+      mode.value == LoginMode.changePassword;
+  bool showCPassoword() =>
+      mode.value == LoginMode.register || mode.value == LoginMode.changePassword;
   bool showAgree() => mode.value == LoginMode.register;
 
-  bool showUsername() => mode.value == LoginMode.register;
+  bool showUsername() =>
+      mode.value == LoginMode.register || mode.value == LoginMode.updateUserDetails;
 
   bool showRemember() => mode.value == LoginMode.login;
 
@@ -85,6 +100,12 @@ class PlaylistController extends GetxController {
     }
     if (mode.value == LoginMode.register) {
       return Values.registerNote;
+    }
+    if (mode.value == LoginMode.changePassword) {
+      return Values.changePasswordNote;
+    }
+    if (mode.value == LoginMode.updateUserDetails) {
+      return Values.updateUserDetailsNote;
     }
     return "";
   }
@@ -136,8 +157,21 @@ class PlaylistController extends GetxController {
           return null;
         }
       case LoginMode.changePassword:
+        if (field == Values.enterCurrentPassword) {
+          return isValidPassword(oldPasswordTec.text);
+        } else if (field == Values.enterPassword) {
+          return isValidPassword(passwordTec.text);
+        } else if (field == Values.reenterPassword) {
+          if (isValidPassword(passwordTec.text) != null) return null;
+          return isValidCPassword(passwordTec.text, confirmPassTec.text);
+        }
         return null;
       case LoginMode.updateUserDetails:
+        if (field == Values.enterUsername) {
+          return isValidUsername(usernameTec.text);
+        } else if (field == Values.enterEmail) {
+          return isValidEmail(emailTec.text);
+        }
         return null;
       case null:
         return null;
@@ -148,19 +182,10 @@ class PlaylistController extends GetxController {
     }
   }
 
-  String? isValidEmail(String email) {
-    final emailRegExp = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
-    if (email.isEmpty) {
-      return "This field cannot be left empty.";
-    }
-    if (!emailRegExp.hasMatch(email)) {
-      return "Please enter a valid email id.";
-    }
-    return null;
-  }
-
   void unifiedSubmitAction() {
+    Get.focusScope?.unfocus();
     if (formKey.currentState?.validate() == true) {
+      
       switch (mode.value) {
         case LoginMode.loggedIn:
           break;
@@ -174,8 +199,10 @@ class PlaylistController extends GetxController {
           forgotPassword();
           break;
         case LoginMode.changePassword:
-          break;
+            changePassword();
+            break;
         case LoginMode.updateUserDetails:
+            updateUserDetails();
           break;
         case null:
           break;
@@ -194,6 +221,17 @@ class PlaylistController extends GetxController {
     }
     if (!passwordRegExp.hasMatch(password)) {
       return "Password must have at least 8 characters including letter/digit/special characters.";
+    }
+    return null;
+  }
+
+  String? isValidEmail(String email) {
+    final emailRegExp = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
+    if (email.isEmpty) {
+      return "This field cannot be left empty.";
+    }
+    if (!emailRegExp.hasMatch(email)) {
+      return "Please enter a valid email id.";
     }
     return null;
   }
@@ -236,6 +274,9 @@ class PlaylistController extends GetxController {
     if (mode.value == LoginMode.register) {
       return Values.alreadyhaveAnAccount;
     }
+    if (mode.value == LoginMode.changePassword) {
+      return Values.backTo;
+    }
     return "";
   }
 
@@ -248,6 +289,12 @@ class PlaylistController extends GetxController {
     }
     if (mode.value == LoginMode.register) {
       return Values.register;
+    }
+    if (mode.value == LoginMode.changePassword) {
+      return Values.changePassword;
+    }
+    if (mode.value == LoginMode.updateUserDetails) {
+      return Values.updateUserDetails;
     }
     return "";
   }
@@ -262,6 +309,13 @@ class PlaylistController extends GetxController {
     if (mode.value == LoginMode.register) {
       return const MapEntry(Values.login1, LoginMode.login);
     }
+    if (mode.value == LoginMode.changePassword) {
+      return const MapEntry(Values.changePassword, LoginMode.login);
+    }
+    if (mode.value == LoginMode.updateUserDetails) {
+      return const MapEntry(Values.updateUserDetails, LoginMode.login);
+    }
+   
     return const MapEntry(Values.register, LoginMode.register);
   }
 
@@ -346,6 +400,33 @@ class PlaylistController extends GetxController {
     update();
   }
 
+  Future updateUserDetails() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    final response = await playlistRepo.updateUserProfile(
+      name: usernameTec.text,
+      email: emailTec.text,
+    );
+    wait.value = false;
+    toastMessage.value = response.message;
+    update();
+  }
+
+  Future changePassword() async {
+    wait.value = true;
+    await playlistRepo.getCookie();
+    await playlistRepo.getToken();
+    final response = await playlistRepo.changePassword(
+      currentPassword: oldPasswordTec.text,
+      password: passwordTec.text,
+      passwordConfirmation: confirmPassTec.text,
+    );
+    wait.value = false;
+    toastMessage.value = response.message;
+    update();
+  }
+
   Future doLogin() async {
     wait.value = true;
     await playlistRepo.getCookie();
@@ -361,8 +442,9 @@ class PlaylistController extends GetxController {
       final DashboardController dashboardController =
           Get.find<DashboardController>();
       dashboardController.me = meFromJson(isLogin.data);
+      dashboardController.isLogin();
       mode.value = LoginMode.loggedIn;
-      update();
+      clearAll();
     } else {
       toastMessage.value = isLogin.message;
     }
@@ -370,6 +452,7 @@ class PlaylistController extends GetxController {
 
   Future doLogout() async {
     wait.value = true;
+    clearAll();
     await playlistRepo.getCookie();
     await playlistRepo.getToken();
     wait.value = false;
@@ -378,7 +461,7 @@ class PlaylistController extends GetxController {
         Get.find<DashboardController>();
     toastMessage.value =
         "${dashboardController.me?.user.name} logged out successfully";
-    dashboardController.me = null;
+    await dashboardController.isLogin();
     update();
   }
 

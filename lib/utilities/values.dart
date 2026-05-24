@@ -1,3 +1,5 @@
+
+
 import 'package:anime_themes_player/widgets/round_slider_track_shape.dart';
 
 import 'package:flutter/material.dart';
@@ -20,7 +22,14 @@ class Values {
   static const registerNote = "Create an account here...";
   static const forgotNote =
       "Enter your email address and we will send a link to reset password.";
+  static const changePasswordNote =
+      "Enter your current password and choose a new password.";
   static const login = "Log in";
+  static const logout = "Log Out";
+  static const changePassword = "Change Password";
+  static const updateUserDetailsNote =
+      "Update your profile name and email address.";
+  static const updateUserDetails = "Update Profile";
   static const notHavingAnAccount = "Don't have an account?";
   static const alreadyhaveAnAccount = "Already have an account?";
   static const backTo = "Back to";
@@ -38,6 +47,7 @@ class Values {
   static const enterEmail = "Enter Email";
   static const enterUsername = "Enter Username";
   static const enterPassword = "Enter password";
+  static const enterCurrentPassword = "Enter current password";
   static const reenterPassword = "Re-enter password";
   static const rememberMe = "Remember me";
   static const forgotPassword = "Forgot Password";

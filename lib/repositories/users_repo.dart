@@ -1,11 +1,13 @@
 import 'dart:developer';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class PlaylistRepo extends GetConnect {
+class UsersRepo extends GetConnect {
   final box = GetStorage();
   String _currentToken = "";
   String get currentToken => _currentToken;
@@ -17,7 +19,7 @@ class PlaylistRepo extends GetConnect {
     }
   }
 
-  PlaylistRepo() {
+  UsersRepo() {
     currentToken = box.read("LOGIN_TOKEN") ?? "";
   }
   final headerCommon = {
@@ -80,6 +82,18 @@ class PlaylistRepo extends GetConnect {
     } else {
       log('Failed: ${response.statusText}');
     }
+  }
+
+  /// Return a Gravatar URL for the given [email]. If [email] is null/empty,
+  /// returns a generic Gravatar URL with default avatar.
+  String gravatarUrlFromEmail(String? email, {int size = 256}) {
+    if (email == null || email.trim().isEmpty) {
+      return '';
+    }
+    final normalized = email.trim().toLowerCase();
+    final bytes = utf8.encode(normalized);
+    final digest = md5.convert(bytes).toString();
+    return 'https://www.gravatar.com/avatar/$digest?s=$size&d=mp';
   }
 
   Future<ApiResponse> loginUser({
@@ -196,6 +210,73 @@ class PlaylistRepo extends GetConnect {
     if (response.isOk) {
       saveCookies(response);
       log('Register Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    } else {
+      log('Failed: ${response.bodyString} $currentToken ${extractCSRFFromCookies(cookies)}');
+      return ApiResponse(
+        status: false,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    }
+  }
+
+  Future<ApiResponse> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    String? cookies = getStoredCookies();
+    final response = await put(
+      '${Values.baseUrl}/auth/user/password',
+      '{"current_password":"$currentPassword","password":"$password","password_confirmation":"$passwordConfirmation"}',
+      headers: {
+        if (cookies != null) 'Cookie': cookies,
+        ...headerCommon,
+        "X-XSRF-TOKEN": currentToken
+      },
+    );
+
+    if (response.isOk) {
+      saveCookies(response);
+      log('Change Password Response: ${response.body}');
+      return ApiResponse(
+        status: true,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    } else {
+      log('Failed: ${response.bodyString} $currentToken ${extractCSRFFromCookies(cookies)}');
+      return ApiResponse(
+        status: false,
+        message: response.body?['message'] ?? response.statusText ?? "",
+        data: response.body,
+      );
+    }
+  }
+
+  Future<ApiResponse> updateUserProfile({
+    required String name,
+    required String email,
+  }) async {
+    String? cookies = getStoredCookies();
+    final response = await put(
+      '${Values.baseUrl}/auth/user/profile-information',
+      '{"name":"$name","email":"$email"}',
+      headers: {
+        if (cookies != null) 'Cookie': cookies,
+        ...headerCommon,
+        "X-XSRF-TOKEN": currentToken
+      },
+    );
+
+    if (response.isOk) {
+      saveCookies(response);
+      log('Update Profile Response: ${response.body}');
       return ApiResponse(
         status: true,
         message: response.body?['message'] ?? response.statusText ?? "",

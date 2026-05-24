@@ -1,5 +1,5 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,9 +9,9 @@ class PlaylistDetail extends StatelessWidget {
   static const routeName = '/PlaylistPage';
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<PlaylistController>(
+    return GetBuilder<UsersController>(
       id: "detail",
-      init: PlaylistController(),
+      init: UsersController(),
       initState: (_) {},
       builder: (_) {
         return Scaffold(

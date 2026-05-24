@@ -1,8 +1,8 @@
 import 'dart:developer';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/login_models.dart';
-import 'package:anime_themes_player/repositories/playlists_repo.dart';
+import 'package:anime_themes_player/repositories/users_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:audio_session/audio_session.dart';
@@ -16,12 +16,17 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DashboardController extends GetxController {
   var selectedIndex = 0.obs;
+  var currentTitle = Values.title.obs;
+  var currentImage = "".obs;
   GetStorage box = GetStorage();
   bool? darkMode;
   bool initializedWidgets = false;
-  Me? me;
+  final Rxn<Me> _me = Rxn<Me>();
+
+  Me? get me => _me.value;
+  set me(Me? value) => _me.value = value;
   final TextEditingController trackName = TextEditingController();
-  final PlaylistRepo playlistRepo = PlaylistRepo();
+  final UsersRepo usersRepo = UsersRepo();
   List<MediaItem> get mediaItems => _playlist.children
       .map<MediaItem>((e) => e.sequence.first.tag as MediaItem)
       .where((element) => trackName.text.isEmpty
@@ -182,19 +187,26 @@ class DashboardController extends GetxController {
   bool get playerLoaded => underPlayer != null;
 
   Future isLogin() async {
-    PlaylistController playlistController = Get.find();
+    UsersController playlistController = Get.find();
     playlistController.mode.value = LoginMode.loading;
     playlistController.update();
-    final isLogin = await playlistRepo.getUserDetails();
-    if (isLogin.data == false) {
+    final isLogin = await usersRepo.getUserDetails();
+    if (isLogin.data == false ) {
       playlistController.mode.value = LoginMode.failed;
+
     } else if (isLogin.status) {
       me = meFromJson(isLogin.data);
+      currentTitle.value = me?.user.name ?? Values.title;
+      currentImage.value = usersRepo.gravatarUrlFromEmail(me?.user.email);
       playlistController.mode.value = LoginMode.loggedIn;
     } else {
       playlistController.mode.value = LoginMode.login;
+      me = null;
+      currentTitle.value = Values.title;
+      currentImage.value = "";
     }
     playlistController.update();
+    update();
   }
 
   Future<String> getVersionInfo() async { return "V1.0.0 (Build 1)";
@@ -215,7 +227,7 @@ class DashboardController extends GetxController {
   @override
   void dispose() {
     underPlayer?.dispose();
-    playlistRepo.dispose();
+    usersRepo.dispose();
     super.dispose();
   }
 }

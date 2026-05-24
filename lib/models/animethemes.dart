@@ -69,12 +69,12 @@ class Animethemes implements ThemeAlbum {
   @override
   String getStudio() {
     String studs = "";
-    // for (int s = 0; s < anime.studios.length; s++) {
-    //   studs += anime.studios[s].name;
-    //   if (s != studios.length - 1) {
-    //     studs += ", ";
-    //   }
-    // }
+    for (int s = 0; s < anime.studios.length; s++) {
+      studs += anime.studios[s].name;
+      if (s != anime.studios.length - 1) {
+        studs += ", ";
+      }
+    }
     return studs;
   }
 
@@ -98,6 +98,7 @@ class AtmAnime {
     required this.images,
     required this.synopsis,
     required this.mediaFormat,
+    required this.studios
   });
   late final String name;
   late final String slug;
@@ -106,6 +107,7 @@ class AtmAnime {
   late final String synopsis;
   late final String season;
   late final List<AtmImages> images;
+    late final List<AtmStudios> studios;
 
   AtmAnime.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -116,6 +118,8 @@ class AtmAnime {
     synopsis = json['synopsis'] ?? "";
     images =
         List.from(json['images']).map((e) => AtmImages.fromJson(e)).toList();
+    studios =
+        List.from(json['studios']).map((e) => AtmStudios.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -127,6 +131,7 @@ class AtmAnime {
     _data['synopsis'] = synopsis;
     _data['season'] = season;
     _data['images'] = images.map((e) => e.toJson()).toList();
+    _data['studios'] = studios.map((e) => e.toJson()).toList();
     return _data;
   }
 }
@@ -148,6 +153,43 @@ class AtmImages {
     final _data = <String, dynamic>{};
     _data['facet'] = facet;
     _data['link'] = link;
+    return _data;
+  }
+}
+
+class AtmStudios {
+  AtmStudios({
+    required this.id,
+    required this.name,
+    required this.slug,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.deletedAt,
+  });
+  late final int id;
+  late final String name;
+  late final String slug;
+  late final String createdAt;
+  late final String updatedAt;
+  late final String deletedAt;
+
+  AtmStudios.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    slug = json['slug'];
+    createdAt = json['created_at'] ?? '';
+    updatedAt = json['updated_at'] ?? '';
+    deletedAt = json['deleted_at']?.toString() ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['id'] = id;
+    _data['name'] = name;
+    _data['slug'] = slug;
+    _data['created_at'] = createdAt;
+    _data['updated_at'] = updatedAt;
+    _data['deleted_at'] = deletedAt;
     return _data;
   }
 }

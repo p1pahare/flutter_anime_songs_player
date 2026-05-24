@@ -5,6 +5,7 @@ import 'package:anime_themes_player/views/playlist_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
 import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:get/get.dart';
@@ -39,21 +40,26 @@ class _DashboardPageState extends State<DashboardPage> {
         },
         dispose: (_) {},
         builder: (c) {
+          ImageProvider imageProvider =
+    c.currentImage.value.isEmpty
+        ? const AssetImage(Values.iconA) as ImageProvider
+        : CachedNetworkImageProvider(c.currentImage.value);
+
           return SafeArea(
               top: false,
               right: false,
               left: false,
               child: Scaffold(
                   appBar: AppBar(
-                    leading: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(12),
-                                bottomRight: Radius.circular(12)),
-                            color: Colors.white.withAlpha(122)),
-                        child: Image.asset(Values.iconA)),
+                    leading:  Container(
+                          clipBehavior: Clip.hardEdge,
+                          margin: const EdgeInsets.all(6),
+                          decoration:  BoxDecoration(
+                             shape: BoxShape.circle,
+                              color:(c.currentImage.value.isEmpty)? Colors.white.withAlpha(122): Colors.transparent),
+                          child: Image(image:imageProvider)),
                     title: Text(
-                      Values.title,
+                      c.currentTitle.value,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge

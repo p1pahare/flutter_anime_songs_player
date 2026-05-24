@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes.dart';
@@ -95,7 +95,7 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
               ),
               InkWell(
                   onTap: () async {
-                    PlaylistController _pc = Get.find<PlaylistController>();
+                    UsersController _pc = Get.find<UsersController>();
                     int? selectedOption = await showOptions(options: {
                       0: 'Add to Current Queue',
                       1: 'Login now to add theme'

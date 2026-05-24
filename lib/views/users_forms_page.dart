@@ -1,5 +1,5 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/animated_size_and_fade.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -7,13 +7,13 @@ import 'package:anime_themes_player/widgets/text_field_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PlaylistFormsPage extends StatelessWidget {
-  const PlaylistFormsPage({
+class UsersFormsPage extends StatelessWidget {
+  const UsersFormsPage({
     super.key,
-    required PlaylistController pc,
+    required UsersController pc,
   }) : _pc = pc;
 
-  final PlaylistController _pc;
+  final UsersController _pc;
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,11 @@ class PlaylistFormsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       controller: _pc.oldPasswordTec,
-                      validator: (str) =>
-                          _pc.unifiedValidator(Values.enterPassword),
+                        validator: (str) =>
+                          _pc.unifiedValidator(Values.enterCurrentPassword),
                       decoration:
-                          getTextFieldDecoration(context, Values.enterPassword),
+                          getTextFieldDecoration(context, Values.enterCurrentPassword),
+                      obscureText: true,
                     ),
                   ),
                 ),
@@ -151,10 +152,10 @@ class PlaylistFormsPage extends StatelessWidget {
 class AgreeTCPP extends StatelessWidget {
   const AgreeTCPP({
     super.key,
-    required PlaylistController pc,
+    required UsersController pc,
   }) : _pc = pc;
 
-  final PlaylistController _pc;
+  final UsersController _pc;
 
   @override
   Widget build(BuildContext context) {
@@ -241,10 +242,10 @@ class AgreeTCPP extends StatelessWidget {
 class RememberForgot extends StatelessWidget {
   const RememberForgot({
     super.key,
-    required PlaylistController pc,
+    required UsersController pc,
   }) : _pc = pc;
 
-  final PlaylistController _pc;
+  final UsersController _pc;
 
   @override
   Widget build(BuildContext context) {
@@ -293,8 +294,8 @@ class RememberForgot extends StatelessWidget {
 }
 
 class SignUpRow extends StatelessWidget {
-  const SignUpRow({super.key, required PlaylistController pc}) : _pc = pc;
-  final PlaylistController _pc;
+  const SignUpRow({super.key, required UsersController pc}) : _pc = pc;
+  final UsersController _pc;
   @override
   Widget build(BuildContext context) {
     return Row(

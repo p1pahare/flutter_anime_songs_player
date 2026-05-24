@@ -67,7 +67,7 @@ class User {
 class Role {
     int id;
     String name;
-    String guardName;
+    String? guardName;
     bool roleDefault;
     dynamic color;
     dynamic priority;

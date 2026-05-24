@@ -2,7 +2,7 @@ import 'package:anime_themes_player/views/playlist_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/playlist_controller.dart';
+import '../controllers/users_controller.dart';
 
 class CoverForPlaylist extends StatelessWidget {
   const CoverForPlaylist({Key? key, this.playlist, required this.playlistIndex})
@@ -11,7 +11,7 @@ class CoverForPlaylist extends StatelessWidget {
   final int playlistIndex;
   @override
   Widget build(BuildContext context) {
-    PlaylistController _pc = Get.find();
+    UsersController _pc = Get.find();
 
     return Card(
         elevation: 3.5,

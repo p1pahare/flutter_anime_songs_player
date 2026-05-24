@@ -1,7 +1,7 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/playlist_controller.dart';
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/views/playlist_forms_page.dart';
+import 'package:anime_themes_player/views/users_forms_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,10 +11,10 @@ class PlaylistPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PlaylistController _pc = Get.find();
+    UsersController _pc = Get.find();
     return Container(
         color: Colors.transparent,
-        child: GetBuilder<PlaylistController>(
+        child: GetBuilder<UsersController>(
           init: _pc,
           initState: (_) {},
           builder: (_) {
@@ -57,7 +57,7 @@ class PlaylistPage extends StatelessWidget {
                   ),
                 );
               default:
-                return PlaylistFormsPage(pc: _pc);
+                return UsersFormsPage(pc: _pc);
             }
           },
         ));
