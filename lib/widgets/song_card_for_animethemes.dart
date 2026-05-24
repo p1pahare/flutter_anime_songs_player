@@ -20,6 +20,9 @@ class SongCardForAnimethemes extends StatelessWidget {
   final AmAnimethemeentries? animethemeentries;
   @override
   Widget build(BuildContext context) {
+    if(animethemeentries?.videos.isEmpty ?? true){
+      return const SizedBox.shrink();
+    }
     return Material(
       type: MaterialType.transparency,
       child: InkWell(

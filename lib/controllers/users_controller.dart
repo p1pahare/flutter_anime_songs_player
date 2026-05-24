@@ -23,7 +23,7 @@ enum LoginMode {
 
 class UsersController extends GetxController {
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
-  final UsersRepo playlistRepo = UsersRepo();
+  final UsersRepo usersRepo = UsersRepo();
   final RxBool wait = false.obs;
   final RxString toastMessage = "".obs;
   GetStorage box = GetStorage();
@@ -376,9 +376,9 @@ class UsersController extends GetxController {
 
   Future register() async {
     wait.value = true;
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
-    final response = await playlistRepo.registerUser(
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    final response = await usersRepo.registerUser(
       userName: usernameTec.text,
       email: emailTec.text,
       password: passwordTec.text,
@@ -392,9 +392,9 @@ class UsersController extends GetxController {
 
   Future forgotPassword() async {
     wait.value = true;
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
-    final response = await playlistRepo.forgotPassword(email: emailTec.text);
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    final response = await usersRepo.forgotPassword(email: emailTec.text);
     wait.value = false;
     toastMessage.value = response.message;
     update();
@@ -402,9 +402,9 @@ class UsersController extends GetxController {
 
   Future updateUserDetails() async {
     wait.value = true;
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
-    final response = await playlistRepo.updateUserProfile(
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    final response = await usersRepo.updateUserProfile(
       name: usernameTec.text,
       email: emailTec.text,
     );
@@ -415,9 +415,9 @@ class UsersController extends GetxController {
 
   Future changePassword() async {
     wait.value = true;
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
-    final response = await playlistRepo.changePassword(
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    final response = await usersRepo.changePassword(
       currentPassword: oldPasswordTec.text,
       password: passwordTec.text,
       passwordConfirmation: confirmPassTec.text,
@@ -429,14 +429,14 @@ class UsersController extends GetxController {
 
   Future doLogin() async {
     wait.value = true;
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
-    await playlistRepo.loginUser(
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    await usersRepo.loginUser(
       email: emailTec.text,
       password: passwordTec.text,
       remember: rememberMe.value,
     );
-    final isLogin = await playlistRepo.getUserDetails();
+    final isLogin = await usersRepo.getUserDetails();
     wait.value = false;
     if (isLogin.status) {
       final DashboardController dashboardController =
@@ -453,8 +453,8 @@ class UsersController extends GetxController {
   Future doLogout() async {
     wait.value = true;
     clearAll();
-    await playlistRepo.getCookie();
-    await playlistRepo.getToken();
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
     wait.value = false;
     mode.value = LoginMode.login;
     final DashboardController dashboardController =
