@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/users_repo.dart';
@@ -27,7 +26,6 @@ class UsersController extends GetxController {
   final RxBool wait = false.obs;
   final RxString toastMessage = "".obs;
   GetStorage box = GetStorage();
-  RxList<AudioEntry> listings = RxList.empty();
   RxStatus status = RxStatus.empty();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rxn<LoginMode> mode = Rxn(LoginMode.loading);
@@ -333,46 +331,7 @@ class UsersController extends GetxController {
     update();
   }
 
-  void onCreatePlaylist() {
-    Get.focusScope?.unfocus();
 
-    if (playlistName.text.isNotEmpty) {
-      playlistName.clear();
-    }
-    update();
-  }
-
-  metadataFromThemeId(List<String> themeIds) async {
-    listings.clear();
-
-    status = listings.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
-    update(["detail"]);
-    int successCount = 0;
-    for (int i = 0; i < themeIds.length; i++) {
-      if (box.hasData('theme_${themeIds[i]}')) {
-        // listings.add(AudioEntry.fromJson(box.read('theme_${themeIds[i]}')));
-        successCount++;
-        continue;
-      }
-
-      if (successCount == 0 && i + 1 < themeIds.length) {
-        status = RxStatus.error("Something went wrong");
-        update(["detail"]);
-      }
-    }
-    if (listings.isEmpty) {
-      status = RxStatus.empty();
-    } else {
-      status = RxStatus.success();
-    }
-    update(["detail"]);
-  }
-
-  Future playCurrentListing() async {
-    if (listings.isNotEmpty) {
-      Get.find<DashboardController>().init(listings);
-    }
-  }
 
   Future register() async {
     wait.value = true;
@@ -468,7 +427,6 @@ class UsersController extends GetxController {
   @override
   void dispose() {
     scroll.dispose();
-    listings.clear();
     networkCalls.dispose();
     super.dispose();
   }

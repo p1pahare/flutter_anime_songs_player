@@ -1,29 +1,29 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/users_controller.dart';
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/views/users_forms_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PlaylistPage extends StatelessWidget {
-  const PlaylistPage({Key? key}) : super(key: key);
+class PlaylistsLoadPage extends StatelessWidget {
+  const PlaylistsLoadPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    UsersController _pc = Get.find();
+    PlaylistsController _pc = Get.find();
     return Container(
         color: Colors.transparent,
-        child: GetBuilder<UsersController>(
+        child: GetBuilder<PlaylistsController>(
           init: _pc,
           initState: (_) {},
           builder: (_) {
-            switch (_.mode.value) {
-              case LoginMode.loggedIn:
-                return Container(
-                  color: Colors.pink,
-                );
-              case LoginMode.failed:
+            if(_pc.wait.value){
+              return const Center(
+                child: ProgressIndicatorButton(
+                  radius: 20,
+                ),
+              );
+            } else {
                 return Container(
                   alignment: Alignment.topCenter,
                   child: Padding(
@@ -36,7 +36,7 @@ class PlaylistPage extends StatelessWidget {
                         ),
                         OutlinedButton(
                           onPressed: () =>
-                              Get.find<DashboardController>().isLogin(),
+                             _pc.printdata(),
                           child: const Text(Values.retry),
                           style: Theme.of(context)
                               .elevatedButtonTheme
@@ -50,14 +50,6 @@ class PlaylistPage extends StatelessWidget {
                     ),
                   ),
                 );
-              case LoginMode.loading:
-                return const Center(
-                  child: ProgressIndicatorButton(
-                    radius: 20,
-                  ),
-                );
-              default:
-                return UsersFormsPage(pc: _pc);
             }
           },
         ));

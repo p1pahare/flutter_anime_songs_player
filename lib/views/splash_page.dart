@@ -1,3 +1,4 @@
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart'
     as get_search;
 import 'package:anime_themes_player/controllers/explore_controller.dart';
@@ -28,6 +29,7 @@ class _SplashPageState extends State<SplashPage> {
     Get.lazyPut(() => ExploreController());
     Get.putAsync(() async => get_search.SearchController());
     Get.lazyPut(() => UsersController());
+    Get.putAsync(() async => PlaylistsController());
     await GetStorage.init();
     Get.find<DashboardController>().initialize();
     Get.find<UsersController>().initialize();

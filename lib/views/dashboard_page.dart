@@ -1,7 +1,7 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
-import 'package:anime_themes_player/views/playlist_page.dart';
+import 'package:anime_themes_player/views/unregistered_page.dart';
 import 'package:anime_themes_player/views/search_page.dart';
 import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
@@ -24,7 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
       case 1:
         return const SearchPage();
       case 2:
-        return const PlaylistPage();
+        return const UnregisteredPage();
       default:
         return const ExplorePage();
     }
@@ -127,18 +127,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       )
                     ],
                   ))
-              //   FancyBottomNavigation(
-              //     initialSelection: c.selectedIndex.value,
-              //     circleColor: Get.theme.primaryColor,
-              //     activeIconColor: Get.theme.textTheme.bodyMedium!.color,
-              //     barBackgroundColor:
-              //         Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-              //     tabs: [
-
-              //     ],
-              //     onTabChangedListener: c.updateIndex,
-              //   ),
-              // ),
+      
               );
         });
   }

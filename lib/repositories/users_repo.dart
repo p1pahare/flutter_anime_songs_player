@@ -93,7 +93,7 @@ class UsersRepo extends GetConnect {
     final normalized = email.trim().toLowerCase();
     final bytes = utf8.encode(normalized);
     final digest = md5.convert(bytes).toString();
-    return 'https://www.gravatar.com/avatar/$digest?s=$size&d=mp';
+    return 'https://www.gravatar.com/avatar/$digest?s=$size&d=identicon';
   }
 
   Future<ApiResponse> loginUser({
