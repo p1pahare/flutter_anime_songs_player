@@ -3,11 +3,12 @@ import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/album_detail_page.dart';
 import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/views/dashboard_page.dart';
-import 'package:anime_themes_player/views/playlist_detail.dart';
+import 'package:anime_themes_player/views/playlist_detail_page.dart';
 import 'package:anime_themes_player/views/settings_page.dart';
 import 'package:anime_themes_player/views/splash_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:anime_themes_player/models/playlists_response.dart' as plr;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -51,9 +52,9 @@ class MyApp extends StatelessWidget {
               return CupertinoPageRoute(builder: (context) {
                 return const CurrentPlaying();
               });
-            case PlaylistDetail.routeName:
+            case PlaylistDetailsPage.routeName:
               return CupertinoPageRoute(builder: (context) {
-                return const PlaylistDetail();
+                return  PlaylistDetailsPage(playlistArg: settings.arguments as plr.Playlist,);
               });
             case SettingsPage.routeName:
               return CupertinoPageRoute(builder: (context) {

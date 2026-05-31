@@ -1,8 +1,6 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
-import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -103,27 +101,6 @@ class SettingsPage extends StatelessWidget {
                       },
                       title: const Text(Values.privacyPolicy),
                     ),
-                    const DividerB(),
-                    if(Get.find<DashboardController>().me != null)
-                      GetBuilder(
-                        init: Get.find<UsersController>(),
-                        initState: (_) {},
-                        builder: (c) {
-                    if (c.wait.value) {
-                            return const ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: ProgressIndicatorButton(radius: 20,),
-                            );
-                    }
-                    return ListTile(
-                      onTap: () {
-                        Get.find<UsersController>()
-                            .doLogout().then((_) => Get.back());
-                        
-                      },
-                      title: const Text(Values.logout),
-                    );}),
-                    if(Get.find<DashboardController>().me != null)
                     const DividerB(),
                   ],
                 ),

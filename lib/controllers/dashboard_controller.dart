@@ -202,7 +202,7 @@ class DashboardController extends GetxController {
     } else {
       playlistController.mode.value = LoginMode.login;
       me = null;
-      currentTitle.value = Values.title;
+      currentTitle.value = "";
       currentImage.value = "";
     }
     playlistController.update();

@@ -1,7 +1,7 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/utilities/values.dart';
-import 'package:anime_themes_player/views/playlists_load_page.dart';
+import 'package:anime_themes_player/views/playlist_listing_page.dart';
 import 'package:anime_themes_player/views/users_forms_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class UnregisteredPage extends StatelessWidget {
           builder: (_) {
             switch (_.mode.value) {
               case LoginMode.loggedIn:
-                return const PlaylistsLoadPage();
+                return const PlaylistListingScreen();
               case LoginMode.failed:
                 return Container(
                   alignment: Alignment.topCenter,

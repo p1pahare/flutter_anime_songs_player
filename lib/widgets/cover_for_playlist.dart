@@ -1,4 +1,4 @@
-import 'package:anime_themes_player/views/playlist_detail.dart';
+import 'package:anime_themes_player/views/playlist_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +20,7 @@ class CoverForPlaylist extends StatelessWidget {
         child: ListTile(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           onTap: () {
-            Get.toNamed(PlaylistDetail.routeName,
+            Get.toNamed(PlaylistDetailsPage.routeName,
                 arguments: [playlistIndex, playlist]);
           },
           title: const Text("track name"),

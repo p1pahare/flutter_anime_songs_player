@@ -257,6 +257,7 @@ Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
             height: kToolbarHeight,
             child: Center(
               child: IconButton(
+                color: Colors.white,
                 icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 onPressed: () => Get.back(),
               ),
