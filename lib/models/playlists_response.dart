@@ -13,11 +13,11 @@ class PlaylistsResponse {
 
   factory PlaylistsResponse.fromJson(Map<String, dynamic> json) {
     return PlaylistsResponse(
-      playlists: (json['playlists'] as List)
+      playlists: ((json['playlists'] as List?) ?? [])
           .map((e) => Playlist.fromJson(e))
           .toList(),
-      links: Links.fromJson(json['links']),
-      meta: Meta.fromJson(json['meta']),
+      links: Links.fromJson(json['links'] ?? {}),
+      meta: Meta.fromJson(json['meta'] ?? {}),
     );
   }
 
@@ -45,10 +45,10 @@ class Playlist {
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
     return Playlist(
-      id: json['id'],
-      name: json['name'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
       description: json['description'],
-      visibility: json['visibility'],
+      visibility: json['visibility'] ?? 'PRIVATE',
     );
   }
 

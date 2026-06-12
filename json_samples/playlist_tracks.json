@@ -1,0 +1,339 @@
+{
+  "tracks": [
+    {
+      "id": "zMydcxRxJ",
+      "animethemeentry": {
+        "id": 11400,
+        "episodes": "2-3",
+        "notes": null,
+        "nsfw": false,
+        "spoiler": false,
+        "version": 1,
+        "animetheme": {
+          "id": 9703,
+          "sequence": null,
+          "slug": "ED1",
+          "type": "ED",
+          "anime": {
+            "id": 1387,
+            "name": "Kaguya-sama wa Kokurasetai?: Tensai-tachi no Renai Zunousen",
+            "media_format": "TV",
+            "season": "Spring",
+            "slug": "kaguya_sama_wa_kokurasetai_tensai_tachi_no_renai_zunousen_2020",
+            "synopsis": "After a slow but eventful summer vacation, Shuchiin Academy's second term is now starting in full force. As August transitions into September, Miyuki Shirogane's birthday looms ever closer, leaving Kaguya Shinomiya in a serious predicament as to how to celebrate it. Furthermore, the tenure of the school's 67th student council is coming to an end. Due to the council members being in different classes, the only time Kaguya and Miyuki have to be together will soon disappear, putting all of their cunning plans at risk. A long and difficult election that will decide the fate of the new student council awaits, as multiple challengers fight for the coveted title of president.",
+            "year": 2020,
+            "images": [
+              {
+                "id": 2765,
+                "facet": "Large Cover",
+                "path": "anime/large-cover/h0RLPV1DYQUmQ7dokdl8wcfIVXbHHs9cfTgWbRXz.jpg",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/large-cover/h0RLPV1DYQUmQ7dokdl8wcfIVXbHHs9cfTgWbRXz.jpg"
+              },
+              {
+                "id": 2766,
+                "facet": "Small Cover",
+                "path": "anime/small-cover/VekdiFC5gK0bHnxl0OEj8OfMyRmrQUBNkMmLcy0d.avif",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/small-cover/VekdiFC5gK0bHnxl0OEj8OfMyRmrQUBNkMmLcy0d.avif"
+              }
+            ]
+          },
+          "song": {
+            "id": 9704,
+            "title": "Kaze ni Fukarete",
+            "artists": []
+          }
+        }
+      },
+      "video": {
+        "id": 11617,
+        "basename": "KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.webm",
+        "filename": "KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080",
+        "lyrics": false,
+        "nc": true,
+        "overlap": null,
+        "path": "2020/Spring/KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.webm",
+        "resolution": 1080,
+        "size": 52436327,
+        "source": "BD",
+        "subbed": false,
+        "uncen": false,
+        "tags": "NCBD1080",
+        "link": "https://v.animethemes.moe/KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.webm",
+        "audio": {
+          "id": 8843,
+          "basename": "KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.ogg",
+          "filename": "KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080",
+          "path": "2020/Spring/KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.ogg",
+          "size": 3651369,
+          "link": "https://a.animethemes.moe/KaguyaSamaWaKokurasetaiS2-ED1-NCBD1080.ogg"
+        }
+      }
+    },
+    {
+      "id": "6by2hjQjr",
+      "animethemeentry": {
+        "id": 10162,
+        "episodes": "2-12",
+        "notes": null,
+        "nsfw": false,
+        "spoiler": false,
+        "version": 1,
+        "animetheme": {
+          "id": 8654,
+          "sequence": 1,
+          "slug": "ED1",
+          "type": "ED",
+          "anime": {
+            "id": 2019,
+            "name": "Nanatsu no Taizai: Imashime no Fukkatsu",
+            "media_format": "TV",
+            "season": "Winter",
+            "slug": "nanatsu_no_taizai_imashime_no_fukkatsu",
+            "synopsis": "The second season of *Nanatsu no Taizai*. Melodias, Hawk, and Elizabeth retook the Kingdom of Leones from the Holy Knights. The festival went off without a hitch and the crew enjoyed their well-earned peace. And yet, another threat looms on the horizon. The Ten Commandments, a group of elite demon clan warriors, have their sights set on the kingdom. (Source: Anime News Network)",
+            "year": 2018,
+            "images": [
+              {
+                "id": 4029,
+                "facet": "Large Cover",
+                "path": "anime/large-cover/LIavQqbjQbgRBIojULbChexoVpiByS0kuxNtaipC.jpg",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/large-cover/LIavQqbjQbgRBIojULbChexoVpiByS0kuxNtaipC.jpg"
+              },
+              {
+                "id": 4030,
+                "facet": "Small Cover",
+                "path": "anime/small-cover/TIdvovd8buYBmbfaCRAqTA9lSi4spRw46ZXlUAGu.avif",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/small-cover/TIdvovd8buYBmbfaCRAqTA9lSi4spRw46ZXlUAGu.avif"
+              }
+            ]
+          },
+          "song": {
+            "id": 8655,
+            "title": "Beautiful",
+            "artists": [
+              {
+                "id": 1464,
+                "name": "Anly",
+                "slug": "anly",
+                "information": null,
+                "artistsong": {
+                  "id": 9547,
+                  "alias": null,
+                  "as": null,
+                  "member_alias": null,
+                  "member_as": null,
+                  "relevance": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      "video": {
+        "id": 9970,
+        "basename": "NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.webm",
+        "filename": "NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080",
+        "lyrics": false,
+        "nc": true,
+        "overlap": null,
+        "path": "2018/Winter/NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.webm",
+        "resolution": 1080,
+        "size": 14169809,
+        "source": "BD",
+        "subbed": false,
+        "uncen": false,
+        "tags": "NCBD1080",
+        "link": "https://v.animethemes.moe/NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.webm",
+        "audio": {
+          "id": 7825,
+          "basename": "NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.ogg",
+          "filename": "NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080",
+          "path": "2018/Winter/NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.ogg",
+          "size": 3713339,
+          "link": "https://a.animethemes.moe/NanatsuNoTaizaiImashimeNoFukkatsu-ED1-NCBD1080.ogg"
+        }
+      }
+    },
+    {
+      "id": "jxEzuxQxe",
+      "animethemeentry": {
+        "id": 11552,
+        "episodes": "1-11",
+        "notes": null,
+        "nsfw": false,
+        "spoiler": false,
+        "version": 1,
+        "animetheme": {
+          "id": 9847,
+          "sequence": null,
+          "slug": "ED1",
+          "type": "ED",
+          "anime": {
+            "id": 3167,
+            "name": "Yakusoku no Neverland 2nd Season",
+            "media_format": "TV",
+            "season": "Winter",
+            "slug": "yakusoku_no_neverland_2nd_season",
+            "synopsis": "The second season of *Yakusoku no Neverland*. Fifteen children escape Grace Field House, a false paradise, hoping for a chance at freedom. Instead, they encounter plants and animals they have never before seen, and are chased by demons. The outside world is so beautiful, and yet is almost too cruel to face. Even so, the children refuse to give up. They are guided in their search for better lives only by a message from Minerva and a pen Norman left behind in order to fulfill their promise to return to the House to save those of their family who are still trapped within. (Source: Aniplex of America)",
+            "year": 2021,
+            "images": [
+              {
+                "id": 6319,
+                "facet": "Large Cover",
+                "path": "anime/large-cover/Gspbm1xDNeCk4H1qL6ue3LZRsjCqYRe8bTBpiL9d.jpg",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/large-cover/Gspbm1xDNeCk4H1qL6ue3LZRsjCqYRe8bTBpiL9d.jpg"
+              },
+              {
+                "id": 6320,
+                "facet": "Small Cover",
+                "path": "anime/small-cover/WVTu8k9AanWdvuL7gtPcLEIWtlNCeUNOlt29DylW.avif",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/small-cover/WVTu8k9AanWdvuL7gtPcLEIWtlNCeUNOlt29DylW.avif"
+              }
+            ]
+          },
+          "song": {
+            "id": 9848,
+            "title": "Mahou",
+            "artists": [
+              {
+                "id": 305,
+                "name": "Myuk",
+                "slug": "myuk",
+                "information": null,
+                "artistsong": {
+                  "id": 5483,
+                  "alias": null,
+                  "as": null,
+                  "member_alias": null,
+                  "member_as": null,
+                  "relevance": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      "video": {
+        "id": 12265,
+        "basename": "YakusokuNoNeverlandS2-ED1.webm",
+        "filename": "YakusokuNoNeverlandS2-ED1",
+        "lyrics": false,
+        "nc": false,
+        "overlap": null,
+        "path": "2021/Winter/YakusokuNoNeverlandS2-ED1.webm",
+        "resolution": 720,
+        "size": 36169986,
+        "source": "WEB",
+        "subbed": false,
+        "uncen": false,
+        "tags": "",
+        "link": "https://v.animethemes.moe/YakusokuNoNeverlandS2-ED1.webm",
+        "audio": {
+          "id": 9802,
+          "basename": "YakusokuNoNeverlandS2-ED1-NCBD1080.ogg",
+          "filename": "YakusokuNoNeverlandS2-ED1-NCBD1080",
+          "path": "2021/Winter/YakusokuNoNeverlandS2-ED1-NCBD1080.ogg",
+          "size": 3610107,
+          "link": "https://a.animethemes.moe/YakusokuNoNeverlandS2-ED1-NCBD1080.ogg"
+        }
+      }
+    },
+    {
+      "id": "exnYuB3Bq",
+      "animethemeentry": {
+        "id": 10322,
+        "episodes": "1-14",
+        "notes": null,
+        "nsfw": false,
+        "spoiler": false,
+        "version": 1,
+        "animetheme": {
+          "id": 8789,
+          "sequence": 1,
+          "slug": "ED1",
+          "type": "ED",
+          "anime": {
+            "id": 333,
+            "name": "Boku no Hero Academia 4th Season",
+            "media_format": "TV",
+            "season": "Fall",
+            "slug": "boku_no_hero_academia_4th_season",
+            "synopsis": "The villain world teeters on the brink of war now that All For One is out of the picture. Shigaraki of the League of Villains squares off with Overhaul of the yakuza, vying for total control of the shadows. Meanwhile, Deku gets tangled in another dangerous internship as he struggles to keep pace with his upperclassman—Mirio. (Source: Crunchyroll)",
+            "year": 2019,
+            "images": [
+              {
+                "id": 665,
+                "facet": "Large Cover",
+                "path": "anime/large-cover/ul4CrHSt4uLsP6izLqwopvkmyOQumZBuutkToYsm.jpg",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/large-cover/ul4CrHSt4uLsP6izLqwopvkmyOQumZBuutkToYsm.jpg"
+              },
+              {
+                "id": 666,
+                "facet": "Small Cover",
+                "path": "anime/small-cover/nHGkvBit4hPeYllLFqswhfmZiRpFifCuYcJnzm4n.avif",
+                "link": "https://pub-92474f7785774e91a790e086dfa6b2ef.r2.dev/anime/small-cover/nHGkvBit4hPeYllLFqswhfmZiRpFifCuYcJnzm4n.avif"
+              }
+            ]
+          },
+          "song": {
+            "id": 8790,
+            "title": "Koukai no Uta",
+            "artists": [
+              {
+                "id": 214,
+                "name": "Sayuri",
+                "slug": "sayuri",
+                "information": null,
+                "artistsong": {
+                  "id": 4165,
+                  "alias": null,
+                  "as": null,
+                  "member_alias": null,
+                  "member_as": null,
+                  "relevance": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      "video": {
+        "id": 10231,
+        "basename": "BokuNoHeroAcademiaS4-ED1-NCBD1080.webm",
+        "filename": "BokuNoHeroAcademiaS4-ED1-NCBD1080",
+        "lyrics": false,
+        "nc": true,
+        "overlap": null,
+        "path": "2019/Fall/BokuNoHeroAcademiaS4-ED1-NCBD1080.webm",
+        "resolution": 1080,
+        "size": 42826689,
+        "source": "BD",
+        "subbed": false,
+        "uncen": false,
+        "tags": "NCBD1080",
+        "link": "https://v.animethemes.moe/BokuNoHeroAcademiaS4-ED1-NCBD1080.webm",
+        "audio": {
+          "id": 7960,
+          "basename": "BokuNoHeroAcademiaS4-ED1-NCBD1080.ogg",
+          "filename": "BokuNoHeroAcademiaS4-ED1-NCBD1080",
+          "path": "2019/Fall/BokuNoHeroAcademiaS4-ED1-NCBD1080.ogg",
+          "size": 3582771,
+          "link": "https://a.animethemes.moe/BokuNoHeroAcademiaS4-ED1-NCBD1080.ogg"
+        }
+      }
+    }
+  ],
+  "links": {
+    "first": "https://api.animethemes.moe/playlist/qM3YiDJW/track?include=video.audio%2Canimethemeentry.animetheme.anime.images%2Canimethemeentry.animetheme.song.artists&page%5Bsize%5D=50&page%5Bnumber%5D=1",
+    "last": null,
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "current_page_url": "https://api.animethemes.moe/playlist/qM3YiDJW/track?include=video.audio%2Canimethemeentry.animetheme.anime.images%2Canimethemeentry.animetheme.song.artists&page%5Bsize%5D=50&page%5Bnumber%5D=1",
+    "from": 1,
+    "path": "https://api.animethemes.moe/playlist/qM3YiDJW/track",
+    "per_page": 50,
+    "to": 4
+  }
+}

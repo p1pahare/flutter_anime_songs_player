@@ -1,23 +1,23 @@
 // playlist_tracks_response.dart
 
-class PlaylistTracksResponse {
+class PlaylistTracksFileList {
   final List<Track> tracks;
   final Links links;
   final Meta meta;
 
-  PlaylistTracksResponse({
+  PlaylistTracksFileList({
     required this.tracks,
     required this.links,
     required this.meta,
   });
 
-  factory PlaylistTracksResponse.fromJson(Map<String, dynamic> json) {
-    return PlaylistTracksResponse(
-      tracks: (json['tracks'] as List)
+  factory PlaylistTracksFileList.fromJson(Map<String, dynamic> json) {
+    return PlaylistTracksFileList(
+      tracks: ((json['tracks'] as List?) ?? [])
           .map((e) => Track.fromJson(e))
           .toList(),
-      links: Links.fromJson(json['links']),
-      meta: Meta.fromJson(json['meta']),
+      links: Links.fromJson(json['links'] ?? {}),
+      meta: Meta.fromJson(json['meta'] ?? {}),
     );
   }
 
@@ -41,8 +41,8 @@ class Track {
 
   factory Track.fromJson(Map<String, dynamic> json) {
     return Track(
-      id: json['id'],
-      video: Video.fromJson(json['video']),
+      id: json['id'] ?? '',
+      video: Video.fromJson(json['video'] ?? {}),
     );
   }
 
@@ -91,21 +91,21 @@ class Video {
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(
-      id: json['id'],
-      basename: json['basename'],
-      filename: json['filename'],
-      lyrics: json['lyrics'],
-      nc: json['nc'],
+      id: json['id'] ?? 0,
+      basename: json['basename'] ?? '',
+      filename: json['filename'] ?? '',
+      lyrics: json['lyrics'] ?? false,
+      nc: json['nc'] ?? false,
       overlap: json['overlap'],
-      path: json['path'],
-      resolution: json['resolution'],
-      size: json['size'],
-      source: json['source'],
-      subbed: json['subbed'],
-      uncen: json['uncen'],
+      path: json['path'] ?? '',
+      resolution: json['resolution'] ?? 0,
+      size: json['size'] ?? 0,
+      source: json['source'] ?? '',
+      subbed: json['subbed'] ?? false,
+      uncen: json['uncen'] ?? false,
       tags: json['tags'] ?? '',
-      link: json['link'],
-      audio: Audio.fromJson(json['audio']),
+      link: json['link'] ?? '',
+      audio: Audio.fromJson(json['audio'] ?? {}),
     );
   }
 

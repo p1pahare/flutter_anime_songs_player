@@ -5,6 +5,7 @@ import 'package:anime_themes_player/models/playlists_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/playlist_detail_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +13,7 @@ class PlaylistListingScreen extends StatelessWidget {
   const PlaylistListingScreen({super.key});
  static const routeName = '/PlaylistListingScreen';
 
-
+static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
  
   @override
   Widget build(BuildContext context) {
@@ -53,12 +54,12 @@ class PlaylistListingScreen extends StatelessWidget {
                         contentPadding: EdgeInsets.zero,
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(4),
-                          child: Image.network(
-                            "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
                             width: 58,
                             height: 58,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            errorWidget: (context, error, stackTrace) {
                               return Container(
                                 width: 58,
                                 height: 58,

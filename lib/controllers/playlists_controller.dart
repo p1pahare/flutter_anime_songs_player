@@ -3,7 +3,8 @@
   import 'dart:developer';
 
 import 'package:anime_themes_player/models/api_response.dart';
-import 'package:anime_themes_player/models/playlist_tracks_response.dart';
+import 'package:anime_themes_player/models/playlist_track.dart';
+import 'package:anime_themes_player/models/playlist_tracks_file_list.dart';
 import 'package:anime_themes_player/models/playlists_response.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/playlists_repo.dart';
@@ -23,23 +24,21 @@ class PlaylistsController extends GetxController {
   // RxStatus status = RxStatus.empty();
   ScrollController scroll = ScrollController();
   RxList<dynamic> playlistList = RxList.empty();
-  RxStatus statusPlaylist = RxStatus.success();
+  RxStatus statusPlaylist = RxStatus.error("");
    RxList<dynamic> tracksList = RxList.empty();
-  RxStatus statusTracks = RxStatus.success();
+  RxStatus statusTracks = RxStatus.error("");
 
   Future printdata() async {
     wait.value = true;
-    final response = await playlistsRepo.getMyPlaylists();
-    final response2 = await playlistsRepo.getPlaylistSongs(playlistId: "qM3YiDJW");
+    final response2 = await playlistsRepo.getPlaylistData(playlistId: "qM3YiDJW");
     log(response2.data.toString());
-    log(  response.data.toString());
     wait.value = false;
-    toastMessage.value = response.message;
     update();
   }
 
 
-    fetchPlaylists() async {
+  void  fetchPlaylists() async {
+    if((statusPlaylist.isError && statusPlaylist.errorMessage?.isEmpty==true)==false)return;
     playlistList.clear();
     playlistList.refresh();
     statusPlaylist = playlistList.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
@@ -70,15 +69,15 @@ class PlaylistsController extends GetxController {
   }
 
 
-    fetchTracks(playListId) async {
+   void fetchTrackFiles(playListId) async {
     tracksList.clear();
     tracksList.refresh();
     statusTracks = tracksList.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
     update();
     ApiResponse apiResponse;
-    apiResponse = await playlistsRepo.getPlaylistData(playlistId: playListId);
+    apiResponse = await playlistsRepo.getPlaylistSongs(playlistId: playListId);
     if (apiResponse.status) {
-      final PlaylistTracksResponse tracksResponse = PlaylistTracksResponse.fromJson(apiResponse.data);
+      final PlaylistTracksFileList tracksResponse = PlaylistTracksFileList.fromJson(apiResponse.data);
       tracksList.value = tracksResponse.tracks;
     }
 
@@ -99,6 +98,38 @@ class PlaylistsController extends GetxController {
       update();
     }
   }
+
+    void  fetchTracks(playListId) async {
+      if((statusTracks.isError && statusTracks.errorMessage?.isEmpty==true)==false)return;
+    tracksList.clear();
+    tracksList.refresh();
+    statusTracks = tracksList.isEmpty ? RxStatus.loading() : RxStatus.loadingMore();
+    update();
+    ApiResponse apiResponse;
+    apiResponse = await playlistsRepo.getPlaylistData(playlistId: playListId);
+    if (apiResponse.status) {
+      final PlaylistTracksData tracksResponse = PlaylistTracksData.fromJson(apiResponse.data);
+      tracksList.value = tracksResponse.tracks;
+    }
+
+    if (apiResponse.status) {
+      if (tracksList.isEmpty) {
+        tracksList.refresh();
+        statusTracks = RxStatus.empty();
+        update();
+      } else {
+        tracksList.refresh();
+        statusTracks = RxStatus.success();
+        update();
+      }
+    } else {
+      statusTracks = RxStatus.error(apiResponse.message);
+      tracksList.clear();
+      tracksList.refresh();
+      update();
+    }
+  }
+
 
   @override
   void dispose() {

@@ -28,7 +28,7 @@ class User {
     int id;
     String name;
     String email;
-    DateTime emailVerifiedAt;
+    DateTime? emailVerifiedAt;
     dynamic twoFactorConfirmedAt;
     List<dynamic> permissions;
     List<Role> roles;
@@ -37,27 +37,27 @@ class User {
         required this.id,
         required this.name,
         required this.email,
-        required this.emailVerifiedAt,
-        required this.twoFactorConfirmedAt,
+        this.emailVerifiedAt,
+        this.twoFactorConfirmedAt,
         required this.permissions,
         required this.roles,
     });
 
     factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json["id"],
-        name: json["name"],
-        email: json["email"],
-        emailVerifiedAt: DateTime.parse(json["email_verified_at"]),
+        id: json["id"] ?? 0,
+        name: json["name"] ?? '',
+        email: json["email"] ?? '',
+        emailVerifiedAt: json["email_verified_at"] != null ? DateTime.tryParse(json["email_verified_at"]) : null,
         twoFactorConfirmedAt: json["two_factor_confirmed_at"],
-        permissions: List<dynamic>.from(json["permissions"].map((x) => x)),
-        roles: List<Role>.from(json["roles"].map((x) => Role.fromJson(x))),
+        permissions: List<dynamic>.from(json["permissions"] ?? []),
+        roles: List<Role>.from((json["roles"] ?? []).map((x) => Role.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "email": email,
-        "email_verified_at": emailVerifiedAt.toIso8601String(),
+        "email_verified_at": emailVerifiedAt?.toIso8601String(),
         "two_factor_confirmed_at": twoFactorConfirmedAt,
         "permissions": List<dynamic>.from(permissions.map((x) => x)),
         "roles": List<dynamic>.from(roles.map((x) => x.toJson())),
@@ -75,17 +75,17 @@ class Role {
     Role({
         required this.id,
         required this.name,
-        required this.guardName,
+        this.guardName,
         required this.roleDefault,
-        required this.color,
-        required this.priority,
+        this.color,
+        this.priority,
     });
 
     factory Role.fromJson(Map<String, dynamic> json) => Role(
-        id: json["id"],
-        name: json["name"],
+        id: json["id"] ?? 0,
+        name: json["name"] ?? '',
         guardName: json["guard_name"],
-        roleDefault: json["default"],
+        roleDefault: json["default"] ?? false,
         color: json["color"],
         priority: json["priority"],
     );

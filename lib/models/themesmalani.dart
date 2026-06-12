@@ -17,13 +17,15 @@ class ThemesMalAni {
   late final int year;
 
   ThemesMalAni.fromJson(Map<String, dynamic> json) {
-    malID = json['malID'];
-    name = json['name'];
+    malID = json['malID'] ?? 0;
+    name = json['name'] ?? '';
     score = json['score'] ?? 0;
-    season = json['season'];
-    themes = List.from(json['themes']).map((e) => Themes.fromJson(e)).toList();
-    watchStatus = json['watchStatus'];
-    year = json['year'];
+    season = json['season'] ?? '';
+    themes = List.from(json['themes'] ?? [])
+        .map((e) => Themes.fromJson(e))
+        .toList();
+    watchStatus = json['watchStatus'] ?? 0;
+    year = json['year'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {

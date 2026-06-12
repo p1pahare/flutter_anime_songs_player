@@ -1,20 +1,20 @@
 import 'package:anime_themes_player/controllers/playlists_controller.dart';
-import 'package:anime_themes_player/models/playlist_tracks_response.dart';
+import 'package:anime_themes_player/models/playlist_track.dart';
 import 'package:anime_themes_player/models/playlists_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PlaylistDetailsPage extends StatelessWidget {
-  const PlaylistDetailsPage({super.key, required this.playlistArg });
+  const PlaylistDetailsPage({super.key, required this.playlistArg});
   static const routeName = '/PlaylistDetailsPage';
-  final Playlist  playlistArg;
+  final Playlist playlistArg;
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<PlaylistsController>();
-    
-    
+
     // Fetch tracks for this playlist
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchTracks(playlistArg.id);
@@ -97,7 +97,8 @@ class PlaylistDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: Obx(
-                () => controller.statusTracks.isLoading || controller.statusTracks.isEmpty
+                () => controller.statusTracks.isLoading ||
+                        controller.statusTracks.isEmpty
                     ? Center(
                         child: controller.statusTracks.isLoading
                             ? const ProgressIndicatorButton(radius: 20)
@@ -110,7 +111,14 @@ class PlaylistDetailsPage extends StatelessWidget {
                           height: 1,
                         ),
                         itemBuilder: (context, index) {
-                          final track = controller.tracksList[index] as Track;
+                          final track =
+                              controller.tracksList[index] as PlaylistTrack;
+                          final imageListAvailable = track.animethemeentry
+                              .animetheme.anime.images.isNotEmpty;
+                          final String imageUrl = imageListAvailable
+                              ? track.animethemeentry.animetheme.anime.images
+                                  .first.link
+                              : "";
 
                           return ListTile(
                             leading: ClipRRect(
@@ -119,18 +127,20 @@ class PlaylistDetailsPage extends StatelessWidget {
                                 width: 56,
                                 height: 56,
                                 color: Colors.grey.shade900,
-                                child: const Icon(Icons.music_note),
+                                child: imageUrl.isNotEmpty
+                                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover)
+                                    : const Icon(Icons.music_note),
                               ),
                             ),
                             title: Text(
-                              track.video.filename,
+                              track.animethemeentry.animetheme.song.title,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
-                            subtitle:  Text(
-                              track.video.tags,
+                            subtitle: Text(
+                              track.animethemeentry.animetheme.song.artists.map((artist) => artist.name).join(","),
                               style: const TextStyle(
                                 color: Colors.grey,
                               ),
@@ -169,11 +179,10 @@ class PlaylistDetailsPage extends StatelessWidget {
                     : (_.statusTracks.isError)
                         ? Center(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     _.statusTracks.toString(),
@@ -181,7 +190,8 @@ class PlaylistDetailsPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 16),
                                   ElevatedButton(
-                                    onPressed: () => _.fetchTracks(playlistArg.id),
+                                    onPressed: () =>
+                                        _.fetchTracks(playlistArg.id),
                                     child: const Text(Values.retry),
                                   ),
                                 ],

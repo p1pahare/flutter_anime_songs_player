@@ -22,14 +22,14 @@ class Animethemes implements ThemeAlbum {
   late final List<AtmAnimethemeentries> animethemeentries;
 
   Animethemes.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    type = json['type'];
+    id = json['id'] ?? 0;
+    type = json['type'] ?? '';
     sequence = json['sequence'] ?? 0;
     group = json['group']?.toString() ?? '';
-    slug = json['slug'];
-    anime = AtmAnime.fromJson(json['anime']);
-    song = AtmSong.fromJson(json['song']);
-    animethemeentries = List.from(json['animethemeentries'])
+    slug = json['slug'] ?? '';
+    anime = AtmAnime.fromJson(json['anime'] ?? {});
+    song = AtmSong.fromJson(json['song'] ?? {});
+    animethemeentries = List.from(json['animethemeentries'] ?? [])
         .map((e) => AtmAnimethemeentries.fromJson(e))
         .toList();
   }
@@ -110,16 +110,18 @@ class AtmAnime {
     late final List<AtmStudios> studios;
 
   AtmAnime.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    slug = json['slug'];
-    year = json['year'];
-    season = json['season'];
-    mediaFormat = json['media_format'] ?? "";
-    synopsis = json['synopsis'] ?? "";
-    images =
-        List.from(json['images']).map((e) => AtmImages.fromJson(e)).toList();
-    studios =
-        List.from(json['studios']).map((e) => AtmStudios.fromJson(e)).toList();
+    name = json['name'] ?? '';
+    slug = json['slug'] ?? '';
+    year = json['year'] ?? 0;
+    season = json['season'] ?? '';
+    mediaFormat = json['media_format'] ?? '';
+    synopsis = json['synopsis'] ?? '';
+    images = List.from(json['images'] ?? [])
+        .map((e) => AtmImages.fromJson(e))
+        .toList();
+    studios = List.from(json['studios'] ?? [])
+        .map((e) => AtmStudios.fromJson(e))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -145,8 +147,8 @@ class AtmImages {
   late final String link;
 
   AtmImages.fromJson(Map<String, dynamic> json) {
-    facet = json['facet'];
-    link = json['link'];
+    facet = json['facet'] ?? '';
+    link = json['link'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

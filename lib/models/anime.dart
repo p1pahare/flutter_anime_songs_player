@@ -26,12 +26,12 @@ class Anime implements ThemeAlbum {
   late final List<AmStudios> studios;
 
   Anime.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    slug = json['slug'];
-    year = json['year'];
-    season = json['season'];
-    mediaFormat = json['media_format'] ?? "";
-    synopsis = json['synopsis'] ?? "";
+    name = json['name'] ?? '';
+    slug = json['slug'] ?? '';
+    year = json['year'] ?? 0;
+    season = json['season'] ?? '';
+    mediaFormat = json['media_format'] ?? '';
+    synopsis = json['synopsis'] ?? '';
     animethemes = List.from(json['animethemes'] ?? [])
         .map((e) => AmAnimethemes.fromJson(e))
         .toList();
