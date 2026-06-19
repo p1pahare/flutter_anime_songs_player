@@ -12,7 +12,7 @@ import media_kit_libs_macos_video
 import media_kit_video
 import package_info_plus
 import path_provider_foundation
-import sqflite
+import sqflite_darwin
 import url_launcher_macos
 import wakelock_plus
 
