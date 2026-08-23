@@ -245,13 +245,17 @@ class PlaylistsRepo extends GetConnect {
     required int entryId,
   }) async {
     String? cookies = getStoredCookies();
+    final xsrfToken = extractCSRFFromCookies(cookies);
     final response = await post(
       '${Values.baseUrl}/playlist/$playlistId/track',
-      '{"video_id":$videoId,"entry_id":$entryId}',
+      {
+        'video_id': videoId,
+        'entry_id': entryId,
+      },
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
-        'X-XSRF-TOKEN': currentToken,
+        'X-XSRF-TOKEN': xsrfToken.isNotEmpty ? xsrfToken : currentToken,
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
@@ -283,12 +287,13 @@ class PlaylistsRepo extends GetConnect {
     required String trackId,
   }) async {
     String? cookies = getStoredCookies();
+    final xsrfToken = extractCSRFFromCookies(cookies);
     final response = await delete(
       '${Values.baseUrl}/playlist/$playlistId/track/$trackId',
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
-        'X-XSRF-TOKEN': currentToken,
+        'X-XSRF-TOKEN': xsrfToken.isNotEmpty ? xsrfToken : currentToken,
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
@@ -320,13 +325,17 @@ class PlaylistsRepo extends GetConnect {
     required String visibility,
   }) async {
     String? cookies = getStoredCookies();
+    final xsrfToken = extractCSRFFromCookies(cookies);
     final response = await post(
       '${Values.baseUrl}/playlist',
-      '{"name":"$name","visibility":"$visibility"}',
+      {
+        'name': name,
+        'visibility': visibility,
+      },
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
-        'X-XSRF-TOKEN': currentToken,
+        'X-XSRF-TOKEN': xsrfToken.isNotEmpty ? xsrfToken : currentToken,
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
@@ -357,12 +366,13 @@ class PlaylistsRepo extends GetConnect {
     required String playlistId,
   }) async {
     String? cookies = getStoredCookies();
+    final xsrfToken = extractCSRFFromCookies(cookies);
     final response = await delete(
       '${Values.baseUrl}/playlist/$playlistId',
       headers: {
         if (cookies != null) 'Cookie': cookies,
         ...headerCommon,
-        'X-XSRF-TOKEN': currentToken,
+        'X-XSRF-TOKEN': xsrfToken.isNotEmpty ? xsrfToken : currentToken,
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
@@ -388,7 +398,4 @@ class PlaylistsRepo extends GetConnect {
       data: response.body,
     );
   }
-
-
-
 }

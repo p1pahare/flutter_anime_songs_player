@@ -69,7 +69,7 @@ class Values {
   static const playAll = 'Play All';
   static const audio = 'audio';
   static const video = 'video';
-  static const noResults = 'No resulting data found';
+  static const noResults = 'Your list is empty. Please add some themes to your playlist.';
   static const currentlyPlaying = 'Currently Playing';
   static const fontFamilyName = 'ptsans';
   static const searchHere = 'Search Here ...';

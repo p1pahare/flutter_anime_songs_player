@@ -1,5 +1,7 @@
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/users_controller.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/explore_page.dart';
 import 'package:anime_themes_player/views/unregistered_page.dart';
@@ -97,7 +99,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             Icons.search,
                             color: Colors.white,
                           ),
-                          onPressed: () {},
+                          onPressed: () =>
+                              _showPlaylistInputDialog(context, 'Search'),
                         ),
                       if (isLoggedIn)
                         IconButton(
@@ -105,7 +108,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             Icons.add,
                             color: Colors.white,
                           ),
-                          onPressed: () {},
+                          onPressed: () =>
+                              _showPlaylistInputDialog(context, 'Add'),
                         ),
                     ],
                   ),
@@ -138,7 +142,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     showSelectedLabels: true,
                     unselectedItemColor: Get.theme.primaryColor,
                     showUnselectedLabels: true,
-                    onTap: c.updateIndex,
+                    onTap: (index) {
+                      if (isLoggedIn && index == 2) {
+                        Get.find<UsersController>().setMode(LoginMode.loggedIn);
+                      }
+                      c.updateIndex(index);
+                    },
                     items: const [
                       BottomNavigationBarItem(
                         icon: Icon(Icons.dashboard_outlined),
@@ -196,12 +205,18 @@ void showProfileSheet(BuildContext context, DashboardController c) {
             ListTile(
               leading: const Icon(Icons.person_outline),
               title: const Text('Edit Profile'),
-              onTap: () {},
+              onTap: () => _openUserFormFromProfile(
+                c,
+                LoginMode.updateUserDetails,
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.lock_outline),
               title: const Text('Change Password'),
-              onTap: () {},
+              onTap: () => _openUserFormFromProfile(
+                c,
+                LoginMode.changePassword,
+              ),
             ),
             const Divider(),
             ListTile(
@@ -237,6 +252,24 @@ void showProfileSheet(BuildContext context, DashboardController c) {
   );
 }
 
+void _openUserFormFromProfile(
+  DashboardController dashboardController,
+  LoginMode mode,
+) {
+  final usersController = Get.find<UsersController>();
+  Get.back();
+  if (mode == LoginMode.updateUserDetails) {
+    usersController.usernameTec.text = dashboardController.me?.user.name ?? '';
+    usersController.emailTec.text = dashboardController.me?.user.email ?? '';
+  } else if (mode == LoginMode.changePassword) {
+    usersController.oldPasswordTec.clear();
+    usersController.passwordTec.clear();
+    usersController.confirmPassTec.clear();
+  }
+  usersController.setMode(mode);
+  dashboardController.updateIndex(2);
+}
+
 void _showLogoutConfirmation(BuildContext context) {
   showDialog(
     context: context,
@@ -268,4 +301,81 @@ void _showLogoutConfirmation(BuildContext context) {
       );
     },
   );
+}
+
+void _showPlaylistInputDialog(BuildContext context, String action) {
+  showDialog(
+    context: context,
+    builder: (_) => _PlaylistInputDialog(action: action),
+  );
+}
+
+class _PlaylistInputDialog extends StatefulWidget {
+  const _PlaylistInputDialog({required this.action});
+
+  final String action;
+
+  @override
+  State<_PlaylistInputDialog> createState() => _PlaylistInputDialogState();
+}
+
+class _PlaylistInputDialogState extends State<_PlaylistInputDialog> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('${widget.action} Playlist'),
+      content: TextField(
+        controller: _textController,
+        autofocus: true,
+        decoration: InputDecoration(
+          hintText:
+              widget.action == 'Add' ? 'Playlist name' : 'Search playlists',
+        ),
+      ),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.grey,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Back'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: widget.action == 'Add'
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).primaryColor,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () async {
+            final input = _textController.text.trim();
+            if (widget.action == 'Search') {
+              Navigator.of(context).pop();
+              return;
+            }
+            if (input.isEmpty) {
+              showMessage('Please enter playlist name.');
+              return;
+            }
+            if (!validPlaylist.hasMatch(input)) {
+              showMessage(
+                  'Playlist name can contain letters, numbers and spaces only.');
+              return;
+            }
+            Navigator.of(context).pop();
+            await Get.find<PlaylistsController>().createPlaylist(name: input);
+          },
+          child: Text(widget.action),
+        ),
+      ],
+    );
+  }
 }

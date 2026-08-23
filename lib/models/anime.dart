@@ -179,12 +179,14 @@ class AmSong {
 
 class AmAnimethemeentries {
   AmAnimethemeentries({
+    this.id,
     this.version,
     required this.episodes,
     required this.nsfw,
     required this.spoiler,
     required this.videos,
   });
+  late final int? id;
   late final int? version;
   late final String episodes;
   late final bool nsfw;
@@ -192,6 +194,7 @@ class AmAnimethemeentries {
   late final List<AmVideos> videos;
 
   AmAnimethemeentries.fromJson(Map<String, dynamic> json) {
+    id = int.tryParse(json['id']?.toString() ?? '');
     version = int.tryParse(json['version']?.toString() ?? '0');
     episodes = json['episodes']?.toString() ?? '';
     nsfw = json['nsfw'] ?? false;
@@ -203,6 +206,7 @@ class AmAnimethemeentries {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['id'] = id;
     _data['version'] = version;
     _data['episodes'] = episodes;
     _data['nsfw'] = nsfw;
@@ -214,7 +218,7 @@ class AmAnimethemeentries {
 
 class AmVideos {
   AmVideos({
-        required this.id,
+    required this.id,
     required this.resolution,
     required this.nc,
     required this.subbed,
@@ -238,7 +242,7 @@ class AmVideos {
   late final AmAudio audio;
 
   AmVideos.fromJson(Map<String, dynamic> json) {
-      id = json['id'];
+    id = json['id'];
     resolution = json['resolution'] ?? 0;
     nc = json['nc'] ?? false;
     subbed = json['subbed'] ?? false;
@@ -254,7 +258,7 @@ class AmVideos {
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['resolution'] = resolution;
-        _data['id'] = id;
+    _data['id'] = id;
     _data['nc'] = nc;
     _data['subbed'] = subbed;
     _data['lyrics'] = lyrics;

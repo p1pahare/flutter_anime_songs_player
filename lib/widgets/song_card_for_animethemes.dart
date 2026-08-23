@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart';
@@ -20,7 +21,7 @@ class SongCardForAnimethemes extends StatelessWidget {
   final AmAnimethemeentries? animethemeentries;
   @override
   Widget build(BuildContext context) {
-    if(animethemeentries?.videos.isEmpty ?? true){
+    if (animethemeentries?.videos.isEmpty ?? true) {
       return const SizedBox.shrink();
     }
     return Material(
@@ -75,22 +76,66 @@ class SongCardForAnimethemes extends StatelessWidget {
               InkWell(
                   onTap: () async {
                     UsersController _pc = Get.find<UsersController>();
-                    int? selectedOption = await showOptions(options: {
+                    final playlistController = Get.find<PlaylistsController>();
+                    final isLoggedIn = _pc.mode.value == LoginMode.loggedIn;
+                    final options = <int, String>{
                       0: 'Add to Current Queue',
-                      1: 'Login to Add Theme'
-                    });
+                    };
+
+                    if (isLoggedIn) {
+                      playlistController.hydratePlaylistsFromCache();
+                      await playlistController.fetchPlaylists();
+                      for (int index = 0;
+                          index < playlistController.playlistList.length;
+                          index++) {
+                        options[index + 1] =
+                            playlistController.playlistList[index].name;
+                      }
+                    } else {
+                      options[1] = 'Login to Add Theme';
+                    }
+
+                    int? selectedOption = await showOptions(options: options);
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
-                    if (animeMain == null || animethemes == null || animethemeentries == null) {
+                    if (!isLoggedIn && selectedOption == 1) {
+                      await _pc.setMode(LoginMode.login);
+                      Get.find<DashboardController>().updateIndex(2);
+                      return;
+                    }
+                    if (animeMain == null ||
+                        animethemes == null ||
+                        animethemeentries == null) {
                       showMessage("Something went wrong");
                       return;
                     }
 
                     if (selectedOption == 0) {
-                      await Get.find<DashboardController>().init(
-                          [AudioEntry.fromThemeEntryV2(animeMain, animethemes!, animethemeentries!)],
-                          addToQueueOnly: true);
-                    } else {}
+                      await Get.find<DashboardController>().init([
+                        AudioEntry.fromThemeEntryV2(
+                            animeMain, animethemes!, animethemeentries!)
+                      ], addToQueueOnly: true);
+                    } else if (isLoggedIn) {
+                      final playlistIndex = selectedOption - 1;
+                      final videoId = animethemeentries!.videos.first.id;
+                      final entryId = animethemeentries!.id;
+                      if (playlistIndex < 0 ||
+                          playlistIndex >=
+                              playlistController.playlistList.length ||
+                          videoId == null ||
+                          entryId == null) {
+                        showMessage("Something went wrong");
+                        return;
+                      }
+                      final response =
+                          await playlistController.addTrackToPlaylist(
+                        playlistId:
+                            playlistController.playlistList[playlistIndex].id,
+                        videoId: videoId,
+                        entryId: entryId,
+                      );
+                      showMessage(response.message);
+                    }
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),
@@ -126,8 +171,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                                   .data as String
                               : animethemeentries!.videos.first.audio.link;
                           log(audioUrl);
-                          final videoUrl =
-                              animethemeentries!.videos.first.link;
+                          final videoUrl = animethemeentries!.videos.first.link;
                           await Get.find<DashboardController>().init([
                             AudioEntry(
                                 id: animethemes!.id.toString(),

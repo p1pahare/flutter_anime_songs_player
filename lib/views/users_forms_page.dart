@@ -69,10 +69,10 @@ class UsersFormsPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       controller: _pc.oldPasswordTec,
-                        validator: (str) =>
+                      validator: (str) =>
                           _pc.unifiedValidator(Values.enterCurrentPassword),
-                      decoration:
-                          getTextFieldDecoration(context, Values.enterCurrentPassword),
+                      decoration: getTextFieldDecoration(
+                          context, Values.enterCurrentPassword),
                       obscureText: true,
                     ),
                   ),
@@ -298,6 +298,11 @@ class SignUpRow extends StatelessWidget {
   final UsersController _pc;
   @override
   Widget build(BuildContext context) {
+    if (_pc.mode.value == LoginMode.changePassword ||
+        _pc.mode.value == LoginMode.updateUserDetails) {
+      return const SizedBox.shrink();
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

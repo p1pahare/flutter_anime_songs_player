@@ -16,6 +16,7 @@ import 'package:get_storage/get_storage.dart';
 class PlaylistsController extends GetxController {
   static const String _playlistsCacheKey = 'cache_playlists_me';
   static const String _playlistTracksCachePrefix = 'cache_playlist_tracks_';
+  static const String _favoriteThemeIdsCacheKey = 'favorite_theme_ids';
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
   final PlaylistsRepo playlistsRepo = PlaylistsRepo();
   final RxBool wait = false.obs;
@@ -30,6 +31,8 @@ class PlaylistsController extends GetxController {
   RxStatus statusTracks = RxStatus.error("");
   final Map<String, RxList<dynamic>> tracksByPlaylistId = {};
   final Map<String, RxStatus> trackStatusByPlaylistId = {};
+  final RxSet<String> favoriteThemeIds = <String>{}.obs;
+  bool _favoriteThemeIdsHydrated = false;
 
   String _tracksCacheKey(Object playListId) =>
       '$_playlistTracksCachePrefix${playListId.toString()}';
@@ -53,6 +56,35 @@ class PlaylistsController extends GetxController {
 
   void _setTrackStatus(Object playListId, RxStatus status) {
     trackStatusByPlaylistId[playListId.toString()] = status;
+  }
+
+  void hydrateFavoriteThemeIds() {
+    if (_favoriteThemeIdsHydrated) return;
+    final cached = box.read(_favoriteThemeIdsCacheKey);
+    if (cached is List) {
+      favoriteThemeIds
+        ..clear()
+        ..addAll(cached.map((id) => id.toString()).toSet());
+    }
+    _favoriteThemeIdsHydrated = true;
+  }
+
+  bool isThemeFavorited(Object themeId) {
+    hydrateFavoriteThemeIds();
+    return favoriteThemeIds.contains(themeId.toString());
+  }
+
+  Future toggleThemeFavorite(Object themeId) async {
+    hydrateFavoriteThemeIds();
+    final themeIdText = themeId.toString();
+    if (favoriteThemeIds.contains(themeIdText)) {
+      favoriteThemeIds.remove(themeIdText);
+    } else {
+      favoriteThemeIds.add(themeIdText);
+    }
+    await box.write(_favoriteThemeIdsCacheKey, favoriteThemeIds.toList());
+    favoriteThemeIds.refresh();
+    update();
   }
 
   bool hydratePlaylistsFromCache() {
@@ -91,7 +123,98 @@ class PlaylistsController extends GetxController {
     update();
   }
 
-  void fetchPlaylists({bool forceRefresh = false}) async {
+  Future createPlaylist({required String name}) async {
+    wait.value = true;
+    toastMessage.value = "";
+    update();
+    final apiResponse = await playlistsRepo.createPlaylist(
+      name: name,
+      visibility: "Public",
+    );
+    wait.value = false;
+    toastMessage.value = apiResponse.message;
+    if (apiResponse.status) {
+      await box.remove(_playlistsCacheKey);
+      await fetchPlaylists(forceRefresh: true);
+    }
+    update();
+  }
+
+  Future<bool> deletePlaylist({required String playlistId}) async {
+    wait.value = true;
+    toastMessage.value = "";
+    update();
+    final apiResponse = await playlistsRepo.deletePlaylist(
+      playlistId: playlistId,
+    );
+    wait.value = false;
+    toastMessage.value = apiResponse.message;
+    if (apiResponse.status) {
+      playlistList.removeWhere((playlist) => playlist.id == playlistId);
+      await box.remove(_playlistsCacheKey);
+      await box.remove(_tracksCacheKey(playlistId));
+      tracksByPlaylistId.remove(playlistId);
+      trackStatusByPlaylistId.remove(playlistId);
+      playlistList.refresh();
+      statusPlaylist =
+          playlistList.isEmpty ? RxStatus.empty() : RxStatus.success();
+    }
+    update();
+    return apiResponse.status;
+  }
+
+  Future<ApiResponse> addTrackToPlaylist({
+    required String playlistId,
+    required int videoId,
+    required int entryId,
+  }) async {
+    wait.value = true;
+    toastMessage.value = "";
+    update();
+    final apiResponse = await playlistsRepo.addTrackToPlaylist(
+      playlistId: playlistId,
+      videoId: videoId,
+      entryId: entryId,
+    );
+    wait.value = false;
+    toastMessage.value = apiResponse.message;
+    if (apiResponse.status) {
+      await box.remove(_tracksCacheKey(playlistId));
+      tracksByPlaylistId.remove(playlistId);
+      trackStatusByPlaylistId.remove(playlistId);
+    }
+    update();
+    return apiResponse;
+  }
+
+  Future<bool> deleteTrackFromPlaylist({
+    required String playlistId,
+    required String trackId,
+  }) async {
+    wait.value = true;
+    toastMessage.value = "";
+    update();
+    final apiResponse = await playlistsRepo.deleteTrackFromPlaylist(
+      playlistId: playlistId,
+      trackId: trackId,
+    );
+    wait.value = false;
+    toastMessage.value = apiResponse.message;
+    if (apiResponse.status) {
+      final tracks = tracksFor(playlistId);
+      tracks.removeWhere((track) => track.id == trackId);
+      tracks.refresh();
+      await box.remove(_tracksCacheKey(playlistId));
+      _setTrackStatus(
+        playlistId,
+        tracks.isEmpty ? RxStatus.empty() : RxStatus.success(),
+      );
+    }
+    update();
+    return apiResponse.status;
+  }
+
+  Future<void> fetchPlaylists({bool forceRefresh = false}) async {
     final hasCachedPlaylists = hydratePlaylistsFromCache();
     if (hasCachedPlaylists && !forceRefresh) return;
     if (!forceRefresh &&
@@ -229,6 +352,7 @@ class PlaylistsController extends GetxController {
     tracksList.clear();
     tracksByPlaylistId.clear();
     trackStatusByPlaylistId.clear();
+    favoriteThemeIds.clear();
     super.dispose();
   }
 }
