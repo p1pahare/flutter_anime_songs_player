@@ -38,7 +38,7 @@ class ExplorePage extends StatelessWidget {
                         child: DropdownButtonFormField<int>(
                             icon: const Icon(Icons.keyboard_arrow_down),
                             decoration: getOldTextFieldDecoration(context, ""),
-                            value: _.seasonValue,
+                            initialValue: _.seasonValue,
                             items: _.seasonValuesMap.entries
                                 .map<DropdownMenuItem<int>>(
                                     (entry) => DropdownMenuItem(
@@ -53,7 +53,7 @@ class ExplorePage extends StatelessWidget {
                         child: DropdownButtonFormField<int>(
                             icon: const Icon(Icons.keyboard_arrow_down),
                             decoration: getOldTextFieldDecoration(context, ""),
-                            value: _.yearValue,
+                            initialValue: _.yearValue,
                             items: _.yearValuesMap.entries
                                 .map<DropdownMenuItem<int>>(
                                     (entry) => DropdownMenuItem(
@@ -105,7 +105,8 @@ class ExplorePage extends StatelessWidget {
                                         textAlign: TextAlign.center,
                                       ),
                                       OutlinedButton(
-                                        onPressed: controller.searchListings,
+                                        onPressed: () => controller
+                                            .searchListings(forceRefresh: true),
                                         child: const Text(Values.retry),
                                         style: Theme.of(context)
                                             .elevatedButtonTheme

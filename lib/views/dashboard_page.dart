@@ -55,8 +55,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   appBar: AppBar(
                     leading: GestureDetector(
                       onTap: () {
-                        if (c.currentImage.value.isNotEmpty)
-                          {showProfileSheet(context, c);}
+                        if (c.currentImage.value.isNotEmpty) {
+                          showProfileSheet(context, c);
+                        }
                       },
                       child: Container(
                           clipBehavior: Clip.hardEdge,
@@ -70,8 +71,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     title: GestureDetector(
                       onTap: () {
-                        if (c.currentImage.value.isNotEmpty)
-                          {showProfileSheet(context, c);}
+                        if (c.currentImage.value.isNotEmpty) {
+                          showProfileSheet(context, c);
+                        }
                       },
                       child: Text(
                         isLoggedIn ? c.currentTitle.value : Values.title,
@@ -223,11 +225,7 @@ void showProfileSheet(BuildContext context, DashboardController c) {
                     );
                   }
                   return ListTile(
-                    onTap: () {
-                      Get.find<UsersController>()
-                          .doLogout()
-                          .then((_) => Get.back());
-                    },
+                    onTap: () => _showLogoutConfirmation(context),
                     leading: const Icon(Icons.logout),
                     title: const Text(Values.logout),
                   );
@@ -236,5 +234,38 @@ void showProfileSheet(BuildContext context, DashboardController c) {
         ),
       ),
     ),
+  );
+}
+
+void _showLogoutConfirmation(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: const Text(Values.logout),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('No'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await Get.find<UsersController>().doLogout();
+              Get.back();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      );
+    },
   );
 }

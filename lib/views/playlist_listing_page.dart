@@ -11,18 +11,19 @@ import 'package:get/get.dart';
 
 class PlaylistListingScreen extends StatelessWidget {
   const PlaylistListingScreen({super.key});
- static const routeName = '/PlaylistListingScreen';
+  static const routeName = '/PlaylistListingScreen';
 
-static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
- 
+  static const imageUrl =
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<PlaylistsController>();
-    
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-       controller.fetchPlaylists();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchPlaylists();
     });
-   
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -30,7 +31,6 @@ static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f694
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-     
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -77,13 +77,14 @@ static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f694
                           ),
                         ),
                         subtitle: Text(
-                          item.description??"",
+                          item.description ?? "",
                           style: const TextStyle(
                             color: Colors.grey,
                           ),
                         ),
                         onTap: () {
-                          Get.toNamed(PlaylistDetailsPage.routeName, arguments: item);
+                          Get.toNamed(PlaylistDetailsPage.routeName,
+                              arguments: item);
                         },
                       );
                     },
@@ -94,7 +95,8 @@ static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f694
                 init: controller,
                 builder: (_) {
                   log(_.statusPlaylist.isLoadingMore.toString());
-                  return (_.statusPlaylist.isLoadingMore || _.statusPlaylist.isLoading)
+                  return (_.statusPlaylist.isLoadingMore ||
+                          _.statusPlaylist.isLoading)
                       ? const Center(
                           child: ProgressIndicatorButton(
                             radius: 20,
@@ -117,7 +119,8 @@ static const imageUrl =  "https://images.unsplash.com/photo-1511379938547-c1f694
                                         ),
                                         const SizedBox(height: 16),
                                         ElevatedButton(
-                                          onPressed: _.fetchPlaylists,
+                                          onPressed: () => _.fetchPlaylists(
+                                              forceRefresh: true),
                                           child: const Text(Values.retry),
                                         ),
                                       ],

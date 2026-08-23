@@ -96,87 +96,94 @@ class PlaylistDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: Obx(
-                () => controller.statusTracks.isLoading ||
-                        controller.statusTracks.isEmpty
-                    ? Center(
-                        child: controller.statusTracks.isLoading
-                            ? const ProgressIndicatorButton(radius: 20)
-                            : const Text(Values.noResults),
-                      )
-                    : ListView.separated(
-                        itemCount: controller.tracksList.length,
-                        separatorBuilder: (_, __) => const Divider(
-                          color: Colors.white10,
-                          height: 1,
-                        ),
-                        itemBuilder: (context, index) {
-                          final track =
-                              controller.tracksList[index] as PlaylistTrack;
-                          final imageListAvailable = track.animethemeentry
-                              .animetheme.anime.images.isNotEmpty;
-                          final String imageUrl = imageListAvailable
-                              ? track.animethemeentry.animetheme.anime.images
-                                  .first.link
-                              : "";
+              child: GetBuilder<PlaylistsController>(
+                init: controller,
+                builder: (_) {
+                  final tracks = _.tracksFor(playlistArg.id);
+                  final status = _.statusForTracks(playlistArg.id);
+                  return status.isLoading || status.isEmpty
+                      ? Center(
+                          child: status.isLoading
+                              ? const ProgressIndicatorButton(radius: 20)
+                              : const Text(Values.noResults),
+                        )
+                      : ListView.separated(
+                          itemCount: tracks.length,
+                          separatorBuilder: (_, __) => const Divider(
+                            color: Colors.white10,
+                            height: 1,
+                          ),
+                          itemBuilder: (context, index) {
+                            final track = tracks[index] as PlaylistTrack;
+                            final imageListAvailable = track.animethemeentry
+                                .animetheme.anime.images.isNotEmpty;
+                            final String imageUrl = imageListAvailable
+                                ? track.animethemeentry.animetheme.anime.images
+                                    .first.link
+                                : "";
 
-                          return ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Container(
-                                width: 56,
-                                height: 56,
-                                color: Colors.grey.shade900,
-                                child: imageUrl.isNotEmpty
-                                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover)
-                                    : const Icon(Icons.music_note),
-                              ),
-                            ),
-                            title: Text(
-                              track.animethemeentry.animetheme.song.title,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            subtitle: Text(
-                              track.animethemeentry.animetheme.song.artists.map((artist) => artist.name).join(","),
-                              style: const TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.favorite,
-                                  color: Color(0xff1ED760),
+                            return ListTile(
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: Container(
+                                  width: 56,
+                                  height: 56,
+                                  color: Colors.grey.shade900,
+                                  child: imageUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: imageUrl, fit: BoxFit.cover)
+                                      : const Icon(Icons.music_note),
                                 ),
-                                const SizedBox(width: 16),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.more_vert,
-                                    color: Colors.grey,
+                              ),
+                              title: Text(
+                                track.animethemeentry.animetheme.song.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              subtitle: Text(
+                                track.animethemeentry.animetheme.song.artists
+                                    .map((artist) => artist.name)
+                                    .join(","),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.favorite,
+                                    color: Color(0xff1ED760),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                  const SizedBox(width: 16),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.more_vert,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                },
               ),
             ),
             GetBuilder<PlaylistsController>(
               init: controller,
               builder: (_) {
-                return (_.statusTracks.isLoadingMore)
+                final status = _.statusForTracks(playlistArg.id);
+                return (status.isLoadingMore)
                     ? const Center(
                         child: ProgressIndicatorButton(
                           radius: 20,
                         ),
                       )
-                    : (_.statusTracks.isError)
+                    : (status.isError)
                         ? Center(
                             child: Padding(
                               padding:
@@ -185,13 +192,14 @@ class PlaylistDetailsPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    _.statusTracks.toString(),
+                                    status.toString(),
                                     textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: 16),
                                   ElevatedButton(
-                                    onPressed: () =>
-                                        _.fetchTracks(playlistArg.id),
+                                    onPressed: () => _.fetchTracks(
+                                        playlistArg.id,
+                                        forceRefresh: true),
                                     child: const Text(Values.retry),
                                   ),
                                 ],
