@@ -1,5 +1,6 @@
 import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/models/playlists_response.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/playlist_detail_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -28,14 +29,14 @@ class PlaylistListingScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 16),
               Row(
-                children: [
-                  _chip(context, "Playlists"),
-                  const SizedBox(width: 8),
-                  _chip(context, "Podcasts"),
-                  const SizedBox(width: 8),
-                  _chip(context, "Artists"),
-                ],
-              ),
+              children: [
+                _chip(context, "Playlists"),
+                const SizedBox(width: 8),
+                _chip(context, "Podcasts"),
+                const SizedBox(width: 8),
+                _chip(context, "Artists"),
+              ],
+                            ),
               const SizedBox(height: 16),
               Expanded(
                 child: Obx(
@@ -152,19 +153,24 @@ class PlaylistListingScreen extends StatelessWidget {
   }
 
   static Widget _chip(BuildContext context, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+    return GestureDetector(
+      onTap: () {
+        showMessage('Feature coming soon. Please check back later.');
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ),
     );

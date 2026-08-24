@@ -359,6 +359,7 @@ class _PlaylistInputDialogState extends State<_PlaylistInputDialog> {
             final input = _textController.text.trim();
             if (widget.action == 'Search') {
               Navigator.of(context).pop();
+              showMessage('Search Feature coming soon. Please check back later.');
               return;
             }
             if (input.isEmpty) {

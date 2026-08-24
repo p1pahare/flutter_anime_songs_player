@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/users_controller.dart';
-import 'package:anime_themes_player/models/audio_entry.dart';
 import 'package:anime_themes_player/models/login_models.dart';
+import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/repositories/users_repo.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
@@ -66,28 +66,28 @@ class DashboardController extends GetxController {
     update();
   }
 
-  Future<void> init(List<AudioEntry> audioEntries,
+  Future<void> init(List<PlaylistSongTrack> playlistSongs,
       {bool addToQueueOnly = false}) async {
     try {
-      for (final AudioEntry audioEntry in audioEntries) {
+      for (final PlaylistSongTrack playlistSong in playlistSongs) {
         final int isPresent = _playlist.children.lastIndexWhere((audiosoiurce) {
           final MediaItem mediaItem =
               audiosoiurce.sequence.first.tag as MediaItem;
-          return mediaItem.id == audioEntry.id.toString();
+          return mediaItem.id == playlistSong.id;
         });
         log("${_playlist.length} is current playlist length");
-        if (isPresent == -1 && audioEntry.audioUrl != null) {
+        if (isPresent == -1 && playlistSong.audioUrl.isNotEmpty) {
           _playlist.add(AudioSource.uri(
-            Uri.parse(audioEntry.audioUrl!),
+            Uri.parse(playlistSong.audioUrl),
             tag: MediaItem(
-                id: audioEntry.id,
-                album: audioEntry.album,
-                artist: audioEntry.artist,
-                title: audioEntry.title,
-                artUri: audioEntry.art,
+                id: playlistSong.id,
+                album: playlistSong.album,
+                artist: playlistSong.artist,
+                title: playlistSong.displayTitle,
+                artUri: playlistSong.artUri,
                 extras: {
-                  Values.audio: audioEntry.audioUrl,
-                  Values.video: audioEntry.videoUrl,
+                  Values.audio: playlistSong.audioUrl,
+                  Values.video: playlistSong.videoUrl,
                 }),
           ));
         }
@@ -191,9 +191,8 @@ class DashboardController extends GetxController {
     playlistController.mode.value = LoginMode.loading;
     playlistController.update();
     final isLogin = await usersRepo.getUserDetails();
-    if (isLogin.data == false ) {
+    if (isLogin.data == false) {
       playlistController.mode.value = LoginMode.failed;
-
     } else if (isLogin.status) {
       me = meFromJson(isLogin.data);
       currentTitle.value = me?.user.name ?? Values.title;
@@ -209,7 +208,8 @@ class DashboardController extends GetxController {
     update();
   }
 
-  Future<String> getVersionInfo() async { return "V1.0.0 (Build 1)";
+  Future<String> getVersionInfo() async {
+    return "V1.0.0 (Build 1)";
     // PackageInfo packageInfo = await PackageInfo.fromPlatform();
     // String version = packageInfo.version;
     // String buildNumber = packageInfo.buildNumber;

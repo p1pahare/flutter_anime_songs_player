@@ -6,7 +6,7 @@ import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart';
-import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:flutter/material.dart';
@@ -112,8 +112,19 @@ class SongCardForAnimethemes extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init([
-                        AudioEntry.fromThemeEntryV2(
-                            animeMain, animethemes!, animethemeentries!)
+                        PlaylistSongTrack.queue(
+                          id: animethemes!.id.toString(),
+                          videoId: animethemeentries!.videos.first.id ?? 0,
+                          audioUrl: animethemeentries!.videos.first.audio.link,
+                          videoUrl: animethemeentries!.videos.first.link,
+                          album: animeMain!.getTitle().toString(),
+                          title: animethemes!.song?.title ?? '',
+                          artist: animethemes?.song?.artists
+                                  .map((artst) => artst.name)
+                                  .join(",") ??
+                              '',
+                          coverUrl: animeMain!.getImageUrl(),
+                        )
                       ], addToQueueOnly: true);
                     } else if (isLoggedIn) {
                       final playlistIndex = selectedOption - 1;
@@ -173,19 +184,21 @@ class SongCardForAnimethemes extends StatelessWidget {
                           log(audioUrl);
                           final videoUrl = animethemeentries!.videos.first.link;
                           await Get.find<DashboardController>().init([
-                            AudioEntry(
-                                id: animethemes!.id.toString(),
-                                album: animeMain!.name,
-                                title: animethemes!.song?.title ?? '',
-                                audioUrl: audioUrl,
-                                videoUrl: videoUrl,
-                                artist: animethemes?.song?.artists
-                                        .map((artst) => artst.name)
-                                        .join(",") ??
-                                    "",
-                                urlCover: animeMain!.images.isEmpty
-                                    ? ''
-                                    : animeMain!.images.first.link)
+                            PlaylistSongTrack.queue(
+                              id: animethemes!.id.toString(),
+                                  videoId: animethemeentries!.videos.first.id ?? 0,
+                              audioUrl: audioUrl,
+                              videoUrl: videoUrl,
+                              album: animeMain!.name,
+                              title: animethemes!.song?.title ?? '',
+                              artist: animethemes?.song?.artists
+                                      .map((artst) => artst.name)
+                                      .join(",") ??
+                                  '',
+                              coverUrl: animeMain!.images.isEmpty
+                                  ? null
+                                  : animeMain!.images.first.link,
+                            )
                           ]);
                         },
                         child: const Padding(

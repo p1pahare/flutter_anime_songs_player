@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/api_response.dart';
 import 'package:anime_themes_player/models/playlist_track.dart';
 import 'package:anime_themes_player/models/playlist_tracks_file_list.dart';
+import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/models/playlists_response.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/playlists_repo.dart';
+import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_notifier.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -22,7 +26,6 @@ class PlaylistsController extends GetxController {
   final RxBool wait = false.obs;
   final RxString toastMessage = "".obs;
   GetStorage box = GetStorage();
-  // RxList<AudioEntry> listings = RxList.empty();
   // RxStatus status = RxStatus.empty();
   ScrollController scroll = ScrollController();
   RxList<dynamic> playlistList = RxList.empty();
@@ -120,11 +123,11 @@ class PlaylistsController extends GetxController {
     final tracksResponse = PlaylistTracksData.fromJson(cached);
     tracks.value = tracksResponse.tracks;
     trackNextLinkByPlaylistId[playListId.toString()] =
-      cached['links']?['next']?.toString();
+        cached['links']?['next']?.toString();
     trackPageByPlaylistId[playListId.toString()] =
-      cached['meta']?['current_page'] is int
-        ? cached['meta']['current_page'] as int
-        : 1;
+        cached['meta']?['current_page'] is int
+            ? cached['meta']['current_page'] as int
+            : 1;
     _setTrackStatus(
         playListId, tracks.isEmpty ? RxStatus.empty() : RxStatus.success());
     tracks.refresh();
@@ -173,8 +176,8 @@ class PlaylistsController extends GetxController {
       await box.remove(_tracksCacheKey(playlistId));
       tracksByPlaylistId.remove(playlistId);
       trackStatusByPlaylistId.remove(playlistId);
-        trackNextLinkByPlaylistId.remove(playlistId);
-        trackPageByPlaylistId.remove(playlistId);
+      trackNextLinkByPlaylistId.remove(playlistId);
+      trackPageByPlaylistId.remove(playlistId);
       playlistList.refresh();
       statusPlaylist =
           playlistList.isEmpty ? RxStatus.empty() : RxStatus.success();
@@ -351,6 +354,55 @@ class PlaylistsController extends GetxController {
     }
   }
 
+  Future<PlaylistSongsResponse?> getPlaylistSongsResponse({
+    required String playlistId,
+  }) async {
+    final response =
+        await playlistsRepo.getPlaylistSongs(playlistId: playlistId);
+    if (!response.status || response.data is! Map<String, dynamic>) {
+      return null;
+    }
+
+    final playlistSongsResponse = PlaylistSongsResponse.fromJson(
+        Map<String, dynamic>.from(response.data));
+    log('getPlaylistSongsResponse: ${playlistSongsResponse.toJson()}');
+    return playlistSongsResponse;
+  }
+
+  Future<void> loadPlaylistSongsToCurrentPlaying({
+    required String playlistId,
+    required String playlistName,
+  }) async {
+    final playlistSongsResponse = await getPlaylistSongsResponse(
+      playlistId: playlistId,
+    );
+    if (playlistSongsResponse == null || playlistSongsResponse.tracks.isEmpty) {
+      return;
+    }
+
+    final queue = playlistSongsResponse.tracks.map((track) {
+      final video = track.video;
+      return PlaylistSongTrack.queue(
+        id: track.id,
+        videoId: video.id,
+        basename: video.basename,
+        filename: video.filename,
+        audioUrl: video.audio.link,
+        videoUrl: video.link,
+        album: playlistName,
+        title: video.filename.isNotEmpty ? video.filename : video.basename,
+      );
+    }).toList();
+
+    queue.shuffle();
+    final dashboardController = Get.find<DashboardController>();
+    if (dashboardController.playerLoaded) {
+      await dashboardController.stopPlayer();
+    }
+    await dashboardController.init(queue);
+    Get.toNamed(CurrentPlaying.routeName);
+  }
+
   void fetchTracks(playListId, {bool forceRefresh = false}) async {
     final tracks = tracksFor(playListId);
     final hasCachedTracks = hydrateTracksFromCache(playListId);
@@ -434,7 +486,8 @@ class PlaylistsController extends GetxController {
       trackNextLinkByPlaylistId[playlistId] =
           apiResponse.data?['links']?['next']?.toString();
       await box.write(_tracksCacheKey(playlistId), {
-        'tracks': tracks.map((track) => (track as PlaylistTrack).toJson()).toList(),
+        'tracks':
+            tracks.map((track) => (track as PlaylistTrack).toJson()).toList(),
         'links': apiResponse.data['links'],
         'meta': apiResponse.data['meta'],
       });

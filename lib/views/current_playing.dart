@@ -12,6 +12,7 @@ import 'package:implicitly_animated_reorderable_list_2/implicitly_animated_reord
 import 'package:implicitly_animated_reorderable_list_2/transitions.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:random_gradient_image/random_gradient_image.dart';
 
 class CurrentPlaying extends StatefulWidget {
   const CurrentPlaying({Key? key}) : super(key: key);
@@ -313,6 +314,7 @@ class MediaInfoFromMediaItem extends StatelessWidget {
   final bool showVideo;
   @override
   Widget build(BuildContext context) {
+    final artUrl = mediaItem.artUri?.toString();
     return Material(
       key: ValueKey(mediaItem.id),
       type: MaterialType.transparency,
@@ -324,16 +326,12 @@ class MediaInfoFromMediaItem extends StatelessWidget {
             child: ListTile(
               onTap: () {},
               leading: Handle(
-                child: Container(
+                child: TrackArtwork(
+                  seed: mediaItem.id,
+                  imageUrl: artUrl,
                   width: 60,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          mediaItem.artUri.toString(),
-                        ),
-                        fit: BoxFit.cover,
-                      )),
+                  height: 60,
+                  borderRadius: 6,
                 ),
               ),
               title: Text(mediaItem.title),
@@ -443,23 +441,19 @@ class MediaInfo extends StatelessWidget {
               );
             }
             final mediaItem = _currentSource.sequence.first.tag as MediaItem;
+            final artUrl = mediaItem.artUri?.toString();
             return Padding(
               padding: EdgeInsets.zero,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!noThumb)
-                    Container(
+                    TrackArtwork(
+                      seed: mediaItem.id,
+                      imageUrl: artUrl,
                       width: context.width * 0.38,
                       height: context.height * 0.28,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          image: DecorationImage(
-                            image: CachedNetworkImageProvider(
-                              mediaItem.artUri.toString(),
-                            ),
-                            fit: BoxFit.cover,
-                          )),
+                      borderRadius: 6,
                     ),
                   Expanded(
                       child: Padding(
@@ -474,6 +468,54 @@ class MediaInfo extends StatelessWidget {
             );
           }
         });
+  }
+}
+
+class TrackArtwork extends StatelessWidget {
+  const TrackArtwork({
+    super.key,
+    required this.seed,
+    required this.imageUrl,
+    required this.width,
+    required this.height,
+    required this.borderRadius,
+  });
+
+  final String seed;
+  final String? imageUrl;
+  final double width;
+  final double height;
+  final double borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.18),
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (hasImage)
+              Image(
+                image: CachedNetworkImageProvider(imageUrl!),
+                fit: BoxFit.cover,
+              )
+            else
+              RandomGradientImage(seed: seed),
+          ],
+        ),
+      ),
+    );
   }
 }
 

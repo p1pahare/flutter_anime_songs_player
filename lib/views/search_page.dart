@@ -63,8 +63,7 @@ class SearchPage extends StatelessWidget {
                           child: TextField(
                             controller: _.search,
                             onSubmitted: (str) {
-                              Get.find<UsersController>().doLogout();
-                              // _.onSearch();
+                              _.onSearch();
                             },
                             onChanged: (s) {
                               _.update();

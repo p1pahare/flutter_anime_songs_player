@@ -127,19 +127,27 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                 ],
               ),
               child: ClipOval(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    RandomGradientImage(seed: widget.playlistArg.id),
-                    Container(
-                      color: Colors.black.withValues(alpha: 0.18),
-                    ),
-                    Icon(
-                      Icons.shuffle,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      size: 42,
-                    ),
-                  ],
+                child: InkWell(
+                  onTap: () async {
+                    await _controller.loadPlaylistSongsToCurrentPlaying(
+                      playlistId: widget.playlistArg.id,
+                      playlistName: widget.playlistArg.name,
+                    );
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      RandomGradientImage(seed: widget.playlistArg.id),
+                      Container(
+                        color: Colors.black.withValues(alpha: 0.18),
+                      ),
+                      Icon(
+                        Icons.shuffle,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 42,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -158,7 +166,10 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                   const Spacer(),
                   Switch(
                     value: false,
-                    onChanged: (_) {},
+                    onChanged: (_) {
+                      showMessage(
+                          'Download Feature coming soon. Please check back later.');
+                    },
                     activeThumbColor: Theme.of(context).colorScheme.primary,
                   ),
                 ],

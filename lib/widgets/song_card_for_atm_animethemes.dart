@@ -2,11 +2,10 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
-import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes.dart';
-import 'package:anime_themes_player/models/audio_entry.dart';
+import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
@@ -95,7 +94,6 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
               ),
               InkWell(
                   onTap: () async {
-                    UsersController _pc = Get.find<UsersController>();
                     int? selectedOption = await showOptions(options: {
                       0: 'Add to Current Queue',
                       1: 'Login now to add theme'
@@ -109,8 +107,24 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
 
                     if (selectedOption == 0) {
                       await Get.find<DashboardController>().init(
-                          [AudioEntry.fromThemeEntry(animethemesMain!, animethemeentries!)],
-                          addToQueueOnly: true);
+                        [
+                          PlaylistSongTrack.queue(
+                            id: animethemesMain!.id.toString(),
+                            videoId: animethemeentries!.videos.first.id ?? 0,
+                            audioUrl: animethemeentries!.videos.first.audio.link,
+                            videoUrl: animethemeentries!.videos.first.link,
+                            album: animethemesMain!.anime.name,
+                            title: animethemesMain!.song.title,
+                            artist: animethemesMain!.song.artists
+                                .map((artst) => artst.name)
+                                .join(","),
+                            coverUrl: animethemesMain!.anime.images.isEmpty
+                                ? null
+                                : animethemesMain!.anime.images.first.link,
+                          )
+                        ],
+                        addToQueueOnly: true,
+                      );
                     } else {}
                   },
                   child: const Padding(
@@ -153,19 +167,20 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
                             }
                           }
                           await Get.find<DashboardController>().init([
-                            AudioEntry(
-                                id: animethemesMain!.id.toString(),
-                                album: animethemesMain!.anime.name,
-                                title: animethemesMain!.song.title,
-                                audioUrl: audioUrl,
-                                artist: animethemesMain?.song.artists
-                                        .map((artst) => artst.name)
-                                        .join(",") ??
-                                    "",
-                                videoUrl: videoUrl,
-                                urlCover: animethemesMain!.anime.images.isEmpty
-                                    ? ''
-                                    : animethemesMain!.anime.images.first.link)
+                            PlaylistSongTrack.queue(
+                              id: animethemesMain!.id.toString(),
+                              videoId: animethemeentries!.videos.first.id ?? 0,
+                              audioUrl: audioUrl,
+                              videoUrl: videoUrl,
+                              album: animethemesMain!.anime.name,
+                              title: animethemesMain!.song.title,
+                              artist: animethemesMain!.song.artists
+                                  .map((artst) => artst.name)
+                                  .join(","),
+                              coverUrl: animethemesMain!.anime.images.isEmpty
+                                  ? null
+                                  : animethemesMain!.anime.images.first.link,
+                            )
                           ]);
                         },
                         child: const Padding(
