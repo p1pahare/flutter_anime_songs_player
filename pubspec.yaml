@@ -15,6 +15,7 @@ dependencies:
   just_audio: ^0.9.40
   just_audio_background: ^0.0.1-beta.13
   cached_network_image: ^3.3.0
+  random_gradient_image: ^0.0.2
   #package_info_plus: ^10.1.0
   intl: ^0.20.2
   float_column: ^4.0.3

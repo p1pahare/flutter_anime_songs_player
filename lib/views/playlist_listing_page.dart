@@ -1,20 +1,15 @@
-import 'dart:developer';
-
 import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/models/playlists_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/playlist_detail_page.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:random_gradient_image/random_gradient_image.dart';
 
 class PlaylistListingScreen extends StatelessWidget {
   const PlaylistListingScreen({super.key});
   static const routeName = '/PlaylistListingScreen';
-
-  static const imageUrl =
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d";
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +20,7 @@ class PlaylistListingScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -34,11 +29,11 @@ class PlaylistListingScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  _chip("Playlists"),
+                  _chip(context, "Playlists"),
                   const SizedBox(width: 8),
-                  _chip("Podcasts"),
+                  _chip(context, "Podcasts"),
                   const SizedBox(width: 8),
-                  _chip("Artists"),
+                  _chip(context, "Artists"),
                 ],
               ),
               const SizedBox(height: 16),
@@ -53,33 +48,53 @@ class PlaylistListingScreen extends StatelessWidget {
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            width: 58,
-                            height: 58,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, error, stackTrace) {
-                              return Container(
-                                width: 58,
-                                height: 58,
-                                color: Colors.grey.shade900,
-                                child: const Icon(Icons.music_note),
-                              );
-                            },
+                          borderRadius: BorderRadius.circular(16),
+                          child: SizedBox(
+                            width: 66,
+                            height: 66,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                RandomGradientImage(
+                                  seed: item.id.toString(),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.18),
+                                    ),
+                                  ),
+                                ),
+                                const Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(6),
+                                    child: Icon(
+                                      Icons.playlist_play,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         title: Text(
                           item.name,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         subtitle: Text(
                           item.description ?? "",
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         onTap: () {
@@ -94,7 +109,6 @@ class PlaylistListingScreen extends StatelessWidget {
               GetBuilder<PlaylistsController>(
                 init: controller,
                 builder: (_) {
-                  log(_.statusPlaylist.isLoadingMore.toString());
                   return (_.statusPlaylist.isLoadingMore ||
                           _.statusPlaylist.isLoading)
                       ? const Center(
@@ -137,19 +151,21 @@ class PlaylistListingScreen extends StatelessWidget {
     );
   }
 
-  static Widget _chip(String text) {
+  static Widget _chip(BuildContext context, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 14,
         vertical: 8,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey.shade900,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }

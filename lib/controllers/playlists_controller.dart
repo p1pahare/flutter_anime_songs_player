@@ -31,6 +31,9 @@ class PlaylistsController extends GetxController {
   RxStatus statusTracks = RxStatus.error("");
   final Map<String, RxList<dynamic>> tracksByPlaylistId = {};
   final Map<String, RxStatus> trackStatusByPlaylistId = {};
+  final Map<String, String?> trackNextLinkByPlaylistId = {};
+  final Map<String, int> trackPageByPlaylistId = {};
+  final RxSet<String> loadingMoreTrackPlaylistIds = <String>{}.obs;
   final RxSet<String> favoriteThemeIds = <String>{}.obs;
   bool _favoriteThemeIdsHydrated = false;
 
@@ -56,6 +59,15 @@ class PlaylistsController extends GetxController {
 
   void _setTrackStatus(Object playListId, RxStatus status) {
     trackStatusByPlaylistId[playListId.toString()] = status;
+  }
+
+  bool hasMoreTracks(Object playListId) {
+    final playlistId = playListId.toString();
+    return trackNextLinkByPlaylistId[playlistId] != null;
+  }
+
+  bool isLoadingMoreTracks(Object playListId) {
+    return loadingMoreTrackPlaylistIds.contains(playListId.toString());
   }
 
   void hydrateFavoriteThemeIds() {
@@ -107,6 +119,12 @@ class PlaylistsController extends GetxController {
     if (cached == null) return false;
     final tracksResponse = PlaylistTracksData.fromJson(cached);
     tracks.value = tracksResponse.tracks;
+    trackNextLinkByPlaylistId[playListId.toString()] =
+      cached['links']?['next']?.toString();
+    trackPageByPlaylistId[playListId.toString()] =
+      cached['meta']?['current_page'] is int
+        ? cached['meta']['current_page'] as int
+        : 1;
     _setTrackStatus(
         playListId, tracks.isEmpty ? RxStatus.empty() : RxStatus.success());
     tracks.refresh();
@@ -155,6 +173,8 @@ class PlaylistsController extends GetxController {
       await box.remove(_tracksCacheKey(playlistId));
       tracksByPlaylistId.remove(playlistId);
       trackStatusByPlaylistId.remove(playlistId);
+        trackNextLinkByPlaylistId.remove(playlistId);
+        trackPageByPlaylistId.remove(playlistId);
       playlistList.refresh();
       statusPlaylist =
           playlistList.isEmpty ? RxStatus.empty() : RxStatus.success();
@@ -171,6 +191,44 @@ class PlaylistsController extends GetxController {
     wait.value = true;
     toastMessage.value = "";
     update();
+
+    final checkResponse = await playlistsRepo.checkTrackOnPlaylist(
+      videoId: videoId,
+    );
+    if (checkResponse.status) {
+      final data = checkResponse.data;
+      if (data is Map<String, dynamic>) {
+        final rawPlaylists = data['playlists'];
+        if (rawPlaylists is List) {
+          final selectedPlaylist = rawPlaylists.cast<dynamic>().firstWhere(
+                (playlist) =>
+                    playlist is Map && playlist['id']?.toString() == playlistId,
+                orElse: () => null,
+              );
+          final tracksCount = int.tryParse(
+                selectedPlaylist is Map
+                    ? selectedPlaylist['tracks_count']?.toString() ?? '0'
+                    : '0',
+              ) ??
+              0;
+          final tracks =
+              selectedPlaylist is Map ? selectedPlaylist['tracks'] : null;
+          final hasTrackList = tracks is List && tracks.isNotEmpty;
+          final alreadyInPlaylist = tracksCount > 0 || hasTrackList;
+          if (alreadyInPlaylist) {
+            wait.value = false;
+            toastMessage.value = 'Theme already exists in this playlist.';
+            update();
+            return ApiResponse(
+              status: false,
+              message: toastMessage.value,
+              data: checkResponse.data,
+            );
+          }
+        }
+      }
+    }
+
     final apiResponse = await playlistsRepo.addTrackToPlaylist(
       playlistId: playlistId,
       videoId: videoId,
@@ -182,6 +240,8 @@ class PlaylistsController extends GetxController {
       await box.remove(_tracksCacheKey(playlistId));
       tracksByPlaylistId.remove(playlistId);
       trackStatusByPlaylistId.remove(playlistId);
+      trackNextLinkByPlaylistId.remove(playlistId);
+      trackPageByPlaylistId.remove(playlistId);
     }
     update();
     return apiResponse;
@@ -321,6 +381,9 @@ class PlaylistsController extends GetxController {
     }
 
     if (apiResponse.status) {
+      trackPageByPlaylistId[playListId.toString()] = 1;
+      trackNextLinkByPlaylistId[playListId.toString()] =
+          apiResponse.data?['links']?['next']?.toString();
       if (tracks.isEmpty) {
         tracks.refresh();
         _setTrackStatus(playListId, RxStatus.empty());
@@ -341,6 +404,48 @@ class PlaylistsController extends GetxController {
       }
       update();
     }
+  }
+
+  Future<ApiResponse> fetchMoreTracks({required String playlistId}) async {
+    final tracks = tracksFor(playlistId);
+    final nextLink = trackNextLinkByPlaylistId[playlistId];
+    if (nextLink == null) {
+      return ApiResponse(
+        status: false,
+        message: 'No more tracks',
+        data: false,
+      );
+    }
+
+    loadingMoreTrackPlaylistIds.add(playlistId);
+    update();
+
+    final currentPage = trackPageByPlaylistId[playlistId] ?? 1;
+    final apiResponse = await playlistsRepo.getPlaylistData(
+      playlistId: playlistId,
+      pageNumber: currentPage + 1,
+    );
+
+    if (apiResponse.status) {
+      final tracksResponse = PlaylistTracksData.fromJson(apiResponse.data);
+      tracks.addAll(tracksResponse.tracks);
+      tracks.refresh();
+      trackPageByPlaylistId[playlistId] = currentPage + 1;
+      trackNextLinkByPlaylistId[playlistId] =
+          apiResponse.data?['links']?['next']?.toString();
+      await box.write(_tracksCacheKey(playlistId), {
+        'tracks': tracks.map((track) => (track as PlaylistTrack).toJson()).toList(),
+        'links': apiResponse.data['links'],
+        'meta': apiResponse.data['meta'],
+      });
+    } else {
+      toastMessage.value = apiResponse.message;
+    }
+
+    loadingMoreTrackPlaylistIds.remove(playlistId);
+    update();
+
+    return apiResponse;
   }
 
   @override

@@ -7,22 +7,58 @@ import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:random_gradient_image/random_gradient_image.dart';
 
-class PlaylistDetailsPage extends StatelessWidget {
+class PlaylistDetailsPage extends StatefulWidget {
   const PlaylistDetailsPage({super.key, required this.playlistArg});
   static const routeName = '/PlaylistDetailsPage';
   final Playlist playlistArg;
+
+  @override
+  State<PlaylistDetailsPage> createState() => _PlaylistDetailsPageState();
+}
+
+class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  PlaylistsController get _controller => Get.find<PlaylistsController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_handleScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final tracks = _controller.tracksFor(widget.playlistArg.id);
+      final status = _controller.statusForTracks(widget.playlistArg.id);
+      if (tracks.isEmpty && !status.isLoading) {
+        _controller.fetchTracks(widget.playlistArg.id);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _handleScroll() {
+    if (!_scrollController.hasClients) return;
+    if (!_controller.hasMoreTracks(widget.playlistArg.id)) return;
+    if (_controller.isLoadingMoreTracks(widget.playlistArg.id)) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+    if (position.pixels >= position.maxScrollExtent - 240) {
+      _controller.fetchMoreTracks(playlistId: widget.playlistArg.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<PlaylistsController>();
-
-    // Fetch tracks for this playlist
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchTracks(playlistArg.id);
-    });
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -31,20 +67,18 @@ class PlaylistDetailsPage extends StatelessWidget {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: const Icon(
+                    onPressed: Get.back,
+                    icon: Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Expanded(
                     child: Center(
                       child: Text(
-                        playlistArg.name,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        widget.playlistArg.name,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -52,16 +86,16 @@ class PlaylistDetailsPage extends StatelessWidget {
                     ),
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.more_vert,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     onSelected: (value) {
                       if (value == 'delete') {
                         _showDeletePlaylistConfirmation(
                           context,
-                          controller,
-                          playlistArg,
+                          _controller,
+                          widget.playlistArg,
                         );
                       }
                     },
@@ -77,16 +111,36 @@ class PlaylistDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Container(
-              width: 90,
-              height: 90,
-              decoration: const BoxDecoration(
-                color: Color(0xff1ED760),
+              width: 108,
+              height: 108,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.14),
+                    blurRadius: 26,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              child: const Icon(
-                Icons.shuffle,
-                color: Colors.black,
-                size: 42,
+              child: ClipOval(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    RandomGradientImage(seed: widget.playlistArg.id),
+                    Container(
+                      color: Colors.black.withValues(alpha: 0.18),
+                    ),
+                    Icon(
+                      Icons.shuffle,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 42,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -94,10 +148,10 @@ class PlaylistDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  const Text(
-                    "Downloaded",
+                  Text(
+                    'Downloaded',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 18,
                     ),
                   ),
@@ -105,6 +159,7 @@ class PlaylistDetailsPage extends StatelessWidget {
                   Switch(
                     value: false,
                     onChanged: (_) {},
+                    activeThumbColor: Theme.of(context).colorScheme.primary,
                   ),
                 ],
               ),
@@ -112,10 +167,10 @@ class PlaylistDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: GetBuilder<PlaylistsController>(
-                init: controller,
+                init: _controller,
                 builder: (_) {
-                  final tracks = _.tracksFor(playlistArg.id);
-                  final status = _.statusForTracks(playlistArg.id);
+                  final tracks = _.tracksFor(widget.playlistArg.id);
+                  final status = _.statusForTracks(widget.playlistArg.id);
                   return status.isLoading || status.isEmpty
                       ? Center(
                           child: status.isLoading
@@ -123,12 +178,53 @@ class PlaylistDetailsPage extends StatelessWidget {
                               : const Text(Values.noResults),
                         )
                       : ListView.separated(
-                          itemCount: tracks.length,
-                          separatorBuilder: (_, __) => const Divider(
-                            color: Colors.white10,
-                            height: 1,
-                          ),
+                          controller: _scrollController,
+                          padding: const EdgeInsets.only(bottom: 16),
+                          itemCount: tracks.length + 1,
+                          separatorBuilder: (_, index) {
+                            if (index >= tracks.length - 1) {
+                              return const SizedBox(height: 12);
+                            }
+                            return Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withValues(alpha: 0.18),
+                              height: 1,
+                            );
+                          },
                           itemBuilder: (context, index) {
+                            if (index == tracks.length) {
+                              if (_
+                                  .isLoadingMoreTracks(widget.playlistArg.id)) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(
+                                    child: ProgressIndicatorButton(
+                                      radius: 18,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (_.hasMoreTracks(widget.playlistArg.id)) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 8,
+                                  ),
+                                  child: OutlinedButton(
+                                    onPressed: () => _.fetchMoreTracks(
+                                      playlistId: widget.playlistArg.id,
+                                    ),
+                                    child: const Text('Load more'),
+                                  ),
+                                );
+                              }
+
+                              return const SizedBox.shrink();
+                            }
+
                             final track = tracks[index] as PlaylistTrack;
                             final imageListAvailable = track.animethemeentry
                                 .animetheme.anime.images.isNotEmpty;
@@ -145,17 +241,25 @@ class PlaylistDetailsPage extends StatelessWidget {
                                 child: Container(
                                   width: 56,
                                   height: 56,
-                                  color: Colors.grey.shade900,
+                                  color: Theme.of(context).cardColor,
                                   child: imageUrl.isNotEmpty
                                       ? CachedNetworkImage(
-                                          imageUrl: imageUrl, fit: BoxFit.cover)
-                                      : const Icon(Icons.music_note),
+                                          imageUrl: imageUrl,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Icon(
+                                          Icons.music_note,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
                                 ),
                               ),
                               title: Text(
                                 track.animethemeentry.animetheme.song.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
                                 ),
                               ),
@@ -163,8 +267,10 @@ class PlaylistDetailsPage extends StatelessWidget {
                                 track.animethemeentry.animetheme.song.artists
                                     .map((artist) => artist.name)
                                     .join(","),
-                                style: const TextStyle(
-                                  color: Colors.grey,
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
                                 ),
                               ),
                               trailing: Row(
@@ -178,21 +284,25 @@ class PlaylistDetailsPage extends StatelessWidget {
                                           ? Icons.favorite
                                           : Icons.favorite_border,
                                       color: isFavorite
-                                          ? const Color(0xff1ED760)
-                                          : Colors.grey,
+                                          ? Theme.of(context).primaryColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                     ),
                                   ),
                                   PopupMenuButton<String>(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.more_vert,
-                                      color: Colors.grey,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                     ),
                                     onSelected: (value) {
                                       if (value == 'delete') {
                                         _showDeleteTrackConfirmation(
                                           context,
                                           _,
-                                          playlistArg.id,
+                                          widget.playlistArg.id,
                                           track,
                                         );
                                       }
@@ -211,42 +321,6 @@ class PlaylistDetailsPage extends StatelessWidget {
                         );
                 },
               ),
-            ),
-            GetBuilder<PlaylistsController>(
-              init: controller,
-              builder: (_) {
-                final status = _.statusForTracks(playlistArg.id);
-                return (status.isLoadingMore)
-                    ? const Center(
-                        child: ProgressIndicatorButton(
-                          radius: 20,
-                        ),
-                      )
-                    : (status.isError)
-                        ? Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    status.toString(),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton(
-                                    onPressed: () => _.fetchTracks(
-                                        playlistArg.id,
-                                        forceRefresh: true),
-                                    child: const Text(Values.retry),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink();
-              },
             ),
           ],
         ),
