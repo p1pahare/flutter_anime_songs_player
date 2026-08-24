@@ -3,7 +3,9 @@ import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/theme_album.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart';
+import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/utilities/values.dart';
+import 'package:anime_themes_player/views/current_playing.dart';
 import 'package:anime_themes_player/widgets/player_current.dart';
 import 'package:anime_themes_player/widgets/progress_indicator_button.dart';
 import 'package:anime_themes_player/widgets/see_more_less_widget.dart';
@@ -26,15 +28,63 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
   final ScrollController scrollController = ScrollController();
   final SearchController searchController = Get.find();
   late ThemeAlbum themeAlbum;
+  List<MapEntry<AmAnimethemes, AmAnimethemeentries>> displayedTracks = [];
+
+  List<MapEntry<AmAnimethemes, AmAnimethemeentries>> _tracksFromThemeAlbum() {
+    return themeAlbum
+        .items()
+        .cast<MapEntry<AmAnimethemes, AmAnimethemeentries>>();
+  }
+
+  void _syncDisplayedTracks() {
+    displayedTracks = _tracksFromThemeAlbum();
+  }
+
+  Future<void> _playAllTracks() async {
+    if (displayedTracks.isEmpty) return;
+
+    final dashboardController = Get.find<DashboardController>();
+    final queue = displayedTracks
+        .map(
+          (track) => PlaylistSongTrack.queue(
+            id: track.key.id.toString(),
+            videoId: track.value.videos.first.id ?? 0,
+            audioUrl: track.value.videos.first.audio.link,
+            videoUrl: track.value.videos.first.link,
+            album: (themeAlbum as Anime).getTitle(),
+            title: track.key.song?.title ?? '',
+            artist: track.key.song?.artists
+                    .map((artist) => artist.name)
+                    .join(',') ??
+                '',
+            coverUrl: themeAlbum.getImageUrl(),
+          ),
+        )
+        .toList();
+
+    if (dashboardController.playerLoaded) {
+      await dashboardController.stopPlayer();
+    }
+    await dashboardController.init(queue);
+    if (mounted) {
+      Get.toNamed(CurrentPlaying.routeName);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     themeAlbum = widget.themeAlbum;
+    _syncDisplayedTracks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      searchController.animeFullFromSlug((themeAlbum as Anime).slug, isAlreadyFetched: themeAlbum.items().isNotEmpty).then((anime) {
+      searchController
+          .animeFullFromSlug((themeAlbum as Anime).slug,
+              isAlreadyFetched: themeAlbum.items().isNotEmpty)
+          .then((anime) {
         if (anime != null) {
           setState(() {
             themeAlbum = anime;
+            _syncDisplayedTracks();
           });
         }
       });
@@ -65,49 +115,65 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
               SliverList.list(children: [
                 SeeMoreLessWidget(
                   textData: widget.themeAlbum.getSynopsis(),
+                  onShufflePressed: displayedTracks.isEmpty
+                      ? null
+                      : () {
+                          setState(() {
+                            displayedTracks.shuffle();
+                          });
+                        },
+                  onPlayPressed:
+                      displayedTracks.isEmpty ? null : _playAllTracks,
                 ),
               ]),
               GetBuilder<SearchController>(
-                init: searchController,
-                builder: (controller) {
-return   (searchController.detailStatus.isLoading)?
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Center(child: ProgressIndicatorButton(radius: 20,)),
-                  ),
-                ): (themeAlbum.items().isEmpty)?
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Center(child: Text("No themes found for this anime.")),
-                  ),
-                ):(searchController.detailStatus.isError)?
-                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Center(child: Text(searchController.detailStatus.errorMessage ?? "An error occurred while fetching details.")),
-                  ),
-                ) :
-                SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, int index) {
-                    return SongCardForAnimethemes(
-                      animeMain: themeAlbum as Anime,
-                      animethemes: themeAlbum.items()[index].key,
-                      animethemeentries: themeAlbum.items()[index].value,
-                    );
-                  },
-                  childCount: themeAlbum.items().length,
-                ));
-                  
-              }),
-            
+                  init: searchController,
+                  builder: (controller) {
+                    return (searchController.detailStatus.isLoading)
+                        ? const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: Center(
+                                  child: ProgressIndicatorButton(
+                                radius: 20,
+                              )),
+                            ),
+                          )
+                        : (themeAlbum.items().isEmpty)
+                            ? const SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: Center(
+                                      child: Text(
+                                          "No themes found for this anime.")),
+                                ),
+                              )
+                            : (searchController.detailStatus.isError)
+                                ? SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Center(
+                                          child: Text(searchController
+                                                  .detailStatus.errorMessage ??
+                                              "An error occurred while fetching details.")),
+                                    ),
+                                  )
+                                : SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                    (_, int index) {
+                                      return SongCardForAnimethemes(
+                                        animeMain: themeAlbum as Anime,
+                                        animethemes: displayedTracks[index].key,
+                                        animethemeentries:
+                                            displayedTracks[index].value,
+                                      );
+                                    },
+                                    childCount: displayedTracks.length,
+                                  ));
+                  }),
               SliverList.list(
                 children: List.generate(
-                  themeAlbum.items().length < 12
-                      ? 12 - themeAlbum.items().length
-                      : 0,
+                  displayedTracks.length < 12 ? 12 - displayedTracks.length : 0,
                   (i) => const SizedBox(
                     height: 50,
                   ),
@@ -134,7 +200,6 @@ return   (searchController.detailStatus.isLoading)?
   }
 }
 
-
 class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
   AnimeMetaHeader({
     required this.imagePath,
@@ -156,160 +221,166 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
   @override
   double get maxExtent => 320.0; // Fixed max height for consistency
 
-@override
-Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-  final double progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-  
-  // 1. Image Size: Slightly smaller when collapsed
-  final double imageWidth = lerpDouble(120, 80, progress)!;
-  final double imageHeight = lerpDouble(170, 110, progress)!;
-  
-  // 2. Left Position: Moving from 20 (expanded) to 50 (collapsed) as requested
-  final double leftPosition = lerpDouble(20, 50, progress)!;
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final double progress =
+        (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
 
-  // 3. Top Position: 
-  // We calculate safe areas to ensure it stays vertically centered in the minExtent
-  final double expandedTop = maxExtent - imageHeight - 40; 
-  final double collapsedTop = (minExtent / 2) - (imageHeight / 2) + (MediaQuery.of(context).padding.top / 2);
-  final double topPosition = lerpDouble(expandedTop, collapsedTop, progress)!;
+    // 1. Image Size: Slightly smaller when collapsed
+    final double imageWidth = lerpDouble(120, 80, progress)!;
+    final double imageHeight = lerpDouble(170, 110, progress)!;
 
-  return Container(
-    color: Theme.of(context).scaffoldBackgroundColor,
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        // Background Blurred Image (fades out as we collapse)
-        Opacity(
-          opacity: 1,
-          child: _buildBlurredBackground(context),
-        ),
+    // 2. Left Position: Moving from 20 (expanded) to 50 (collapsed) as requested
+    final double leftPosition = lerpDouble(20, 50, progress)!;
 
-        // Text Content (Titles)
-        Positioned(
-          // Text starts after the image + a small gap
-          left: leftPosition + imageWidth + 15,
-          right: 20,
-          // Instead of bottom: 20, we use top: topPosition to keep it aligned with the image
-          top: topPosition, 
-          height: imageHeight, // Force the column to be the same height as the image
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center, // Center text vertically relative to the image
-            children: [
-              Text(
-                title,
-                style: Values.cdTitle.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: lerpDouble(20, 15, progress),
-                ),
-                maxLines: progress > 0.5 ? 1 : 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              // We use a SizeTransition-like logic: hide details as we reach collapsed state
-              ...[
-                const SizedBox(height: 4),
-                Text(
-                  releaseText, 
-                  style:Values.cdSubtitle.copyWith(
-                  fontSize: lerpDouble(14, 15, progress),
-                ),
-                  maxLines: 1,
-                ),
-                Text(
-                  studioText, 
-                  style: Values.cdSubtitle.copyWith(
-                  fontSize: lerpDouble(14, 15, progress),
-                ),
-                  maxLines: 1,
-                ),
-              ],
-            ],
+    // 3. Top Position:
+    // We calculate safe areas to ensure it stays vertically centered in the minExtent
+    final double expandedTop = maxExtent - imageHeight - 40;
+    final double collapsedTop = (minExtent / 2) -
+        (imageHeight / 2) +
+        (MediaQuery.of(context).padding.top / 2);
+    final double topPosition = lerpDouble(expandedTop, collapsedTop, progress)!;
+
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background Blurred Image (fades out as we collapse)
+          Opacity(
+            opacity: 1,
+            child: _buildBlurredBackground(context),
           ),
-        ),
 
-        // Floating Image Card (The Poster)
-        Positioned(
-          left: leftPosition,
-          top: topPosition,
-          child: Container(
-            width: imageWidth,
-            height: imageHeight,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 8, 
-                  color: Colors.black.withOpacity(lerpDouble(0.26, 0.0, progress)!)
-                )
+          // Text Content (Titles)
+          Positioned(
+            // Text starts after the image + a small gap
+            left: leftPosition + imageWidth + 15,
+            right: 20,
+            // Instead of bottom: 20, we use top: topPosition to keep it aligned with the image
+            top: topPosition,
+            height:
+                imageHeight, // Force the column to be the same height as the image
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment
+                  .center, // Center text vertically relative to the image
+              children: [
+                Text(
+                  title,
+                  style: Values.cdTitle.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: lerpDouble(20, 15, progress),
+                  ),
+                  maxLines: progress > 0.5 ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                // We use a SizeTransition-like logic: hide details as we reach collapsed state
+                ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    releaseText,
+                    style: Values.cdSubtitle.copyWith(
+                      fontSize: lerpDouble(14, 15, progress),
+                    ),
+                    maxLines: 1,
+                  ),
+                  Text(
+                    studioText,
+                    style: Values.cdSubtitle.copyWith(
+                      fontSize: lerpDouble(14, 15, progress),
+                    ),
+                    maxLines: 1,
+                  ),
+                ],
               ],
             ),
-            clipBehavior: Clip.antiAlias,
-            child: _buildImage(BoxFit.cover),
+          ),
+
+          // Floating Image Card (The Poster)
+          Positioned(
+            left: leftPosition,
+            top: topPosition,
+            child: Container(
+              width: imageWidth,
+              height: imageHeight,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 8,
+                      color: Colors.black
+                          .withOpacity(lerpDouble(0.26, 0.0, progress)!))
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: _buildImage(BoxFit.cover),
+            ),
+          ),
+
+          // Back Button (Adjusted for status bar)
+          Positioned(
+            top: MediaQuery.of(context).padding.top,
+            left: 10,
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Center(
+                child: IconButton(
+                  color: Colors.white,
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlurredBackground(BuildContext context) {
+    return Stack(
+      children: [
+        // 1. The Actual Image (Blurred)
+        Positioned.fill(
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.2), // Darkens the image slightly
+                BlendMode.darken,
+              ),
+              child: _buildImage(BoxFit.cover),
+            ),
           ),
         ),
 
-        // Back Button (Adjusted for status bar)
-        Positioned(
-          top: MediaQuery.of(context).padding.top,
-          left: 10,
-          child: SizedBox(
-            height: kToolbarHeight,
-            child: Center(
-              child: IconButton(
-                color: Colors.white,
-                icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                onPressed: () => Get.back(),
+        // 2. The Gradient Overlay (Transition to Scaffold Background)
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  // Top: Transparent or slightly tinted for the status bar
+                  Colors.black.withOpacity(0.3),
+                  // Middle: Transition
+                  Colors.transparent,
+                  // Bottom: Smooth fade into the rest of the page
+                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
+                  Theme.of(context).scaffoldBackgroundColor,
+                ],
+                stops: const [0.0, 0.4, 0.8, 1.0],
               ),
             ),
           ),
         ),
       ],
-    ),
-  );
-}
-
-Widget _buildBlurredBackground(BuildContext context) {
-  return Stack(
-    children: [
-      // 1. The Actual Image (Blurred)
-      Positioned.fill(
-        child: ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2), // Darkens the image slightly
-              BlendMode.darken,
-            ),
-            child: _buildImage(BoxFit.cover),
-          ),
-        ),
-      ),
-
-      // 2. The Gradient Overlay (Transition to Scaffold Background)
-      Positioned.fill(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                // Top: Transparent or slightly tinted for the status bar
-                Colors.black.withOpacity(0.3),
-                // Middle: Transition
-                Colors.transparent,
-                // Bottom: Smooth fade into the rest of the page
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
-                Theme.of(context).scaffoldBackgroundColor,
-              ],
-              stops: const [0.0, 0.4, 0.8, 1.0],
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
-}
+    );
+  }
 
   Widget _buildImage(BoxFit fit) {
     if (imagePath == "no_image") {

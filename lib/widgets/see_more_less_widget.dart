@@ -6,10 +6,14 @@ import 'package:get/get.dart';
 
 class SeeMoreLessWidget extends StatefulWidget {
   final String? textData;
+  final VoidCallback? onShufflePressed;
+  final VoidCallback? onPlayPressed;
 
   const SeeMoreLessWidget({
     super.key,
     required this.textData,
+    this.onShufflePressed,
+    this.onPlayPressed,
   });
 
   @override
@@ -57,7 +61,7 @@ class _SeeMoreLessWidgetState extends State<SeeMoreLessWidget> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          onPressed: () {},
+                          onPressed: widget.onShufflePressed,
                           icon: const Icon(
                             Icons.shuffle,
                           ),
@@ -66,7 +70,7 @@ class _SeeMoreLessWidgetState extends State<SeeMoreLessWidget> {
                           radius: 24,
                           child: IconButton(
                             iconSize: 28,
-                            onPressed: () {},
+                            onPressed: widget.onPlayPressed,
                             icon: const Icon(
                               Icons.play_arrow_outlined,
                             ),
