@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/models/anime.dart';
 import 'package:anime_themes_player/models/animethemes.dart';

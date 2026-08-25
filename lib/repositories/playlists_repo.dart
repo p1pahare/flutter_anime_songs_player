@@ -10,6 +10,13 @@ class PlaylistsRepo extends GetConnect {
   String _currentToken = "";
   String get currentToken => _currentToken;
 
+  String _responseMessage(dynamic body, String fallback) {
+    if (body is Map) {
+      return body['message']?.toString() ?? fallback;
+    }
+    return fallback;
+  }
+
   set currentToken(String value) {
     if (value.isNotEmpty) {
       _currentToken = value;
@@ -43,6 +50,39 @@ class PlaylistsRepo extends GetConnect {
 
   String? getStoredCookies() {
     return box.read('cookies');
+  }
+
+  Future<ApiResponse> _getJson(String url) async {
+    String? cookies = getStoredCookies();
+    final response = await get(
+      url,
+      headers: {
+        if (cookies != null) 'Cookie': cookies,
+        ...headerCommon,
+        'X-XSRF-TOKEN': currentToken,
+        'Accept': 'application/json, text/plain, */*',
+      },
+    );
+
+    if (response.status.connectionError) {
+      return ApiResponse(
+        status: false,
+        message: 'No internet connection',
+        data: false,
+      );
+    } else if (response.isOk) {
+      saveCookies(response);
+      return ApiResponse(
+        status: true,
+        message: _responseMessage(response.body, response.statusText ?? ''),
+        data: response.body,
+      );
+    }
+    return ApiResponse(
+      status: false,
+      message: _responseMessage(response.body, response.statusText ?? ''),
+      data: response.body,
+    );
   }
 
   Future<void> getCookie() async {
@@ -104,51 +144,77 @@ class PlaylistsRepo extends GetConnect {
       saveCookies(response);
       return ApiResponse(
         status: true,
-        message: response.body?['message'] ?? response.statusText ?? '',
+        message: _responseMessage(response.body, response.statusText ?? ''),
         data: response.body,
       );
     }
     return ApiResponse(
       status: false,
-      message: response.body?['message'] ?? response.statusText ?? '',
+      message: _responseMessage(response.body, response.statusText ?? ''),
       data: response.body,
     );
   }
 
   Future<ApiResponse> getPlaylistSongs({
     required String playlistId,
-    String include = 'video,video.audio',
+    int pageSize = 100,
+    int pageNumber = 1,
+    String include = '',
   }) async {
-    String? cookies = getStoredCookies();
-    final response = await get(
-      '${Values.baseUrl}/playlist/$playlistId/track?include=${Uri.encodeQueryComponent(include)}',
-      headers: {
-        if (cookies != null) 'Cookie': cookies,
-        ...headerCommon,
-        'X-XSRF-TOKEN': currentToken,
-        'Accept': 'application/json, text/plain, */*',
-      },
-    );
+    final queryParameters = <String, String>{
+      'page[size]': '$pageSize',
+      'page[number]': '$pageNumber',
+      if (include.isNotEmpty) 'include': include,
+    };
+    final url = Uri.parse('${Values.baseUrl}/playlist/$playlistId/track')
+        .replace(queryParameters: queryParameters)
+        .toString();
+    return _getJson(url);
+  }
 
-    if (response.status.connectionError) {
-      return ApiResponse(
-        status: false,
-        message: 'No internet connection',
-        data: false,
-      );
-    } else if (response.isOk) {
-      saveCookies(response);
-      return ApiResponse(
-        status: true,
-        message: response.body?['message'] ?? response.statusText ?? '',
-        data: response.body,
-      );
+  Future<ApiResponse> getPlaylistSongsByUrl(
+    String url, {
+    String include = '',
+  }) async {
+    if (include.isNotEmpty &&
+        !Uri.parse(url).queryParameters.containsKey('include')) {
+      final uri = Uri.parse(url);
+      url = uri.replace(queryParameters: {
+        ...uri.queryParameters,
+        'include': include,
+      }).toString();
     }
-    return ApiResponse(
-      status: false,
-      message: response.body?['message'] ?? response.statusText ?? '',
-      data: response.body,
-    );
+    return _getJson(url);
+  }
+
+  Future<ApiResponse> getPlaylistSongDetails({
+    required String playlistId,
+    required String trackId,
+    String include =
+        'video.audio,animethemeentry.animetheme.anime.images,animethemeentry.animetheme.song.artists',
+  }) async {
+    final url =
+        Uri.parse('${Values.baseUrl}/playlist/$playlistId/track/$trackId')
+            .replace(
+                queryParameters: include.isNotEmpty ? {'include': include} : {})
+            .toString();
+    return _getJson(url);
+  }
+
+  Future<ApiResponse> getPlaylistSongDetailsByUrl(
+    String url, {
+    String include =
+        'video.audio,animethemeentry.animetheme.anime.images,animethemeentry.animetheme.song.artists',
+  }) async {
+    if (include.isNotEmpty &&
+        !Uri.parse(url).queryParameters.containsKey('include')) {
+      final uri = Uri.parse(url);
+      url = uri.replace(queryParameters: {
+        ...uri.queryParameters,
+        'include': include,
+      }).toString();
+    }
+    return _getJson(url);
   }
 
   Future<ApiResponse> getPlaylistData({
@@ -184,13 +250,13 @@ class PlaylistsRepo extends GetConnect {
       saveCookies(response);
       return ApiResponse(
         status: true,
-        message: response.body?['message'] ?? response.statusText ?? '',
+        message: _responseMessage(response.body, response.statusText ?? ''),
         data: response.body,
       );
     }
     return ApiResponse(
       status: false,
-      message: response.body?['message'] ?? response.statusText ?? '',
+      message: _responseMessage(response.body, response.statusText ?? ''),
       data: response.body,
     );
   }

@@ -28,9 +28,29 @@ class PlaylistSongsResponse {
   }
 }
 
+class PlaylistSongDetailResponse {
+  final PlaylistSongTrack track;
+
+  PlaylistSongDetailResponse({required this.track});
+
+  factory PlaylistSongDetailResponse.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongDetailResponse(
+      track: PlaylistSongTrack.fromJson(json['track'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'track': track.toJson(),
+    };
+  }
+}
+
 class PlaylistSongTrack {
   final String id;
   final PlaylistSongVideo video;
+  final PlaylistSongAnimeThemeEntry? animethemeentry;
+  final PlaylistSongPlaylist? playlist;
   final String album;
   final String title;
   final String artist;
@@ -39,6 +59,8 @@ class PlaylistSongTrack {
   PlaylistSongTrack({
     required this.id,
     required this.video,
+    this.animethemeentry,
+    this.playlist,
     this.album = '',
     this.title = '',
     this.artist = '',
@@ -109,7 +131,19 @@ class PlaylistSongTrack {
   factory PlaylistSongTrack.fromJson(Map<String, dynamic> json) {
     return PlaylistSongTrack(
       id: json['id'] ?? '',
-      video: PlaylistSongVideo.fromJson(json['video'] ?? {}),
+      video: json['video'] is Map<String, dynamic>
+          ? PlaylistSongVideo.fromJson(Map<String, dynamic>.from(json['video']))
+          : PlaylistSongVideo.empty(),
+      animethemeentry: json['animethemeentry'] is Map<String, dynamic>
+          ? PlaylistSongAnimeThemeEntry.fromJson(
+              Map<String, dynamic>.from(json['animethemeentry']),
+            )
+          : null,
+      playlist: json['playlist'] is Map<String, dynamic>
+          ? PlaylistSongPlaylist.fromJson(
+              Map<String, dynamic>.from(json['playlist']),
+            )
+          : null,
       album: json['album'] ?? '',
       title: json['title'] ?? '',
       artist: json['artist'] ?? '',
@@ -121,6 +155,8 @@ class PlaylistSongTrack {
     return {
       'id': id,
       'video': video.toJson(),
+      'animethemeentry': animethemeentry?.toJson(),
+      'playlist': playlist?.toJson(),
       'album': album,
       'title': title,
       'artist': artist,
@@ -132,9 +168,315 @@ class PlaylistSongTrack {
 
   String get videoUrl => video.link;
 
-  String get displayTitle => title.isNotEmpty ? title : video.filename;
+  String get resolvedTitle {
+    if (title.isNotEmpty) return title;
+    final nestedTitle = animethemeentry?.animetheme.song.title;
+    if (nestedTitle?.isNotEmpty == true) {
+      return nestedTitle!;
+    }
+    return video.filename;
+  }
 
-  Uri? get artUri => coverUrl?.isNotEmpty == true ? Uri.parse(coverUrl!) : null;
+  String get resolvedArtist {
+    if (artist.isNotEmpty) return artist;
+    final nestedArtists = animethemeentry?.animetheme.song.artists
+        .map((artist) => artist.name)
+        .join(',');
+    return nestedArtists ?? '';
+  }
+
+  String get resolvedAlbum {
+    final nestedAlbum = animethemeentry?.animetheme.anime.name;
+    if (nestedAlbum?.isNotEmpty == true) return nestedAlbum!;
+    if (album.isNotEmpty) return album;
+    return '';
+  }
+
+  String? get resolvedCoverUrl {
+    if (coverUrl?.isNotEmpty == true) return coverUrl;
+    final images = animethemeentry?.animetheme.anime.images;
+    if (images != null && images.isNotEmpty) {
+      return images.first.link;
+    }
+    return null;
+  }
+
+  String get displayTitle => resolvedTitle;
+
+  Uri? get artUri => resolvedCoverUrl?.isNotEmpty == true
+      ? Uri.parse(resolvedCoverUrl!)
+      : null;
+}
+
+class PlaylistSongAnimeThemeEntry {
+  final int id;
+  final String episodes;
+  final String? notes;
+  final bool nsfw;
+  final bool spoiler;
+  final int version;
+  final int? tracksCount;
+  final PlaylistSongAnimeTheme animetheme;
+
+  PlaylistSongAnimeThemeEntry({
+    required this.id,
+    required this.episodes,
+    required this.notes,
+    required this.nsfw,
+    required this.spoiler,
+    required this.version,
+    required this.tracksCount,
+    required this.animetheme,
+  });
+
+  factory PlaylistSongAnimeThemeEntry.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongAnimeThemeEntry(
+      id: json['id'] ?? 0,
+      episodes: json['episodes'] ?? '',
+      notes: json['notes'],
+      nsfw: json['nsfw'] ?? false,
+      spoiler: json['spoiler'] ?? false,
+      version: json['version'] ?? 0,
+      tracksCount: json['tracks_count'] is int
+          ? json['tracks_count'] as int
+          : int.tryParse(json['tracks_count']?.toString() ?? ''),
+      animetheme: PlaylistSongAnimeTheme.fromJson(
+        Map<String, dynamic>.from(json['animetheme'] ?? {}),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'episodes': episodes,
+      'notes': notes,
+      'nsfw': nsfw,
+      'spoiler': spoiler,
+      'version': version,
+      'tracks_count': tracksCount,
+      'animetheme': animetheme.toJson(),
+    };
+  }
+}
+
+class PlaylistSongAnimeTheme {
+  final int id;
+  final int? sequence;
+  final String slug;
+  final String type;
+  final PlaylistSongAnime anime;
+  final PlaylistSongSong song;
+
+  PlaylistSongAnimeTheme({
+    required this.id,
+    required this.sequence,
+    required this.slug,
+    required this.type,
+    required this.anime,
+    required this.song,
+  });
+
+  factory PlaylistSongAnimeTheme.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongAnimeTheme(
+      id: json['id'] ?? 0,
+      sequence: json['sequence'],
+      slug: json['slug'] ?? '',
+      type: json['type'] ?? '',
+      anime: PlaylistSongAnime.fromJson(
+          Map<String, dynamic>.from(json['anime'] ?? {})),
+      song: PlaylistSongSong.fromJson(
+          Map<String, dynamic>.from(json['song'] ?? {})),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'sequence': sequence,
+      'slug': slug,
+      'type': type,
+      'anime': anime.toJson(),
+      'song': song.toJson(),
+    };
+  }
+}
+
+class PlaylistSongAnime {
+  final int id;
+  final String name;
+  final String mediaFormat;
+  final String season;
+  final String slug;
+  final String synopsis;
+  final int year;
+  final List<PlaylistSongAnimeImage> images;
+
+  PlaylistSongAnime({
+    required this.id,
+    required this.name,
+    required this.mediaFormat,
+    required this.season,
+    required this.slug,
+    required this.synopsis,
+    required this.year,
+    required this.images,
+  });
+
+  factory PlaylistSongAnime.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongAnime(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      mediaFormat: json['media_format'] ?? '',
+      season: json['season'] ?? '',
+      slug: json['slug'] ?? '',
+      synopsis: json['synopsis'] ?? '',
+      year: json['year'] ?? 0,
+      images: ((json['images'] as List?) ?? [])
+          .map((e) =>
+              PlaylistSongAnimeImage.fromJson(Map<String, dynamic>.from(e)))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'media_format': mediaFormat,
+      'season': season,
+      'slug': slug,
+      'synopsis': synopsis,
+      'year': year,
+      'images': images.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class PlaylistSongAnimeImage {
+  final int id;
+  final String facet;
+  final String path;
+  final String link;
+
+  PlaylistSongAnimeImage({
+    required this.id,
+    required this.facet,
+    required this.path,
+    required this.link,
+  });
+
+  factory PlaylistSongAnimeImage.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongAnimeImage(
+      id: json['id'] ?? 0,
+      facet: json['facet'] ?? '',
+      path: json['path'] ?? '',
+      link: json['link'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'facet': facet,
+      'path': path,
+      'link': link,
+    };
+  }
+}
+
+class PlaylistSongSong {
+  final int id;
+  final String title;
+  final List<PlaylistSongArtist> artists;
+
+  PlaylistSongSong({
+    required this.id,
+    required this.title,
+    required this.artists,
+  });
+
+  factory PlaylistSongSong.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongSong(
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      artists: ((json['artists'] as List?) ?? [])
+          .map((e) => PlaylistSongArtist.fromJson(Map<String, dynamic>.from(e)))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'artists': artists.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class PlaylistSongArtist {
+  final int id;
+  final String name;
+  final String slug;
+  final String? information;
+
+  PlaylistSongArtist({
+    required this.id,
+    required this.name,
+    required this.slug,
+    this.information,
+  });
+
+  factory PlaylistSongArtist.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongArtist(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      slug: json['slug'] ?? '',
+      information: json['information'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'slug': slug,
+      'information': information,
+    };
+  }
+}
+
+class PlaylistSongPlaylist {
+  final String id;
+  final String name;
+  final String? description;
+  final String visibility;
+
+  PlaylistSongPlaylist({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.visibility,
+  });
+
+  factory PlaylistSongPlaylist.fromJson(Map<String, dynamic> json) {
+    return PlaylistSongPlaylist(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'],
+      visibility: json['visibility'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'visibility': visibility,
+    };
+  }
 }
 
 class PlaylistSongVideo {
@@ -171,6 +513,26 @@ class PlaylistSongVideo {
     required this.link,
     required this.audio,
   });
+
+  factory PlaylistSongVideo.empty() {
+    return PlaylistSongVideo(
+      id: 0,
+      basename: '',
+      filename: '',
+      lyrics: false,
+      nc: false,
+      overlap: null,
+      path: '',
+      resolution: 0,
+      size: 0,
+      source: '',
+      subbed: false,
+      uncen: false,
+      tags: '',
+      link: '',
+      audio: PlaylistSongAudio.empty(),
+    );
+  }
 
   factory PlaylistSongVideo.fromJson(Map<String, dynamic> json) {
     return PlaylistSongVideo(
@@ -229,6 +591,17 @@ class PlaylistSongAudio {
     required this.size,
     required this.link,
   });
+
+  factory PlaylistSongAudio.empty() {
+    return PlaylistSongAudio(
+      id: 0,
+      basename: '',
+      filename: '',
+      path: '',
+      size: 0,
+      link: '',
+    );
+  }
 
   factory PlaylistSongAudio.fromJson(Map<String, dynamic> json) {
     return PlaylistSongAudio(

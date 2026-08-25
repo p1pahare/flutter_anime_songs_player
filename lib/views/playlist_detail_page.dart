@@ -110,45 +110,77 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
               ),
             ),
             const SizedBox(height: 12),
-            Container(
-              width: 108,
-              height: 108,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.14),
-                    blurRadius: 26,
-                    offset: const Offset(0, 10),
+            InkWell(
+              onTap: _controller.isSyncingPlaylist(widget.playlistArg.id)
+                  ? null
+                  : () async {
+                      if (_controller
+                          .isSyncingPlaylist(widget.playlistArg.id)) {
+                        return;
+                      }
+                      await _controller.syncPlaylistTrackDetails(
+                        playlistId: widget.playlistArg.id,
+                        playlistName: widget.playlistArg.name,
+                      );
+                    },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 108,
+                    height: 108,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.14),
+                          blurRadius: 26,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          RandomGradientImage(seed: widget.playlistArg.id),
+                          Container(
+                            color: Colors.black.withValues(alpha: 0.18),
+                          ),
+                          Center(
+                            child: Obx(
+                              () => _controller
+                                      .isSyncingPlaylist(widget.playlistArg.id)
+                                  ? const ProgressIndicatorButton(radius: 16)
+                                  : Icon(
+                                      _controller.hasFailedPlaylistSync(
+                                              widget.playlistArg.id)
+                                          ? Icons.replay
+                                          : Icons.shuffle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      size: 42,
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Obx(
+                    () => Text(
+                      _controller.hasFailedPlaylistSync(widget.playlistArg.id)
+                          ? 'Sync failed. Tap retry.'
+                          : _controller.playlistSyncProgress.value,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ),
                 ],
-              ),
-              child: ClipOval(
-                child: InkWell(
-                  onTap: () async {
-                    await _controller.loadPlaylistSongsToCurrentPlaying(
-                      playlistId: widget.playlistArg.id,
-                      playlistName: widget.playlistArg.name,
-                    );
-                  },
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      RandomGradientImage(seed: widget.playlistArg.id),
-                      Container(
-                        color: Colors.black.withValues(alpha: 0.18),
-                      ),
-                      Icon(
-                        Icons.shuffle,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        size: 42,
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -247,6 +279,12 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
                             final isFavorite = _.isThemeFavorited(themeId);
 
                             return ListTile(
+                              onTap: () async {
+                                await _.playPlaylistTrackNow(
+                                  track: track,
+                                  playlistName: widget.playlistArg.name,
+                                );
+                              },
                               leading: ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: Container(
