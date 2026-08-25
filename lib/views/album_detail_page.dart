@@ -65,7 +65,9 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
     if (dashboardController.playerLoaded) {
       await dashboardController.stopPlayer();
     }
-    await dashboardController.init(queue);
+    await dashboardController.init(queue, addToQueueOnly: true);
+    await dashboardController.playFromPlayer(queue.first.id.toString());
+    await dashboardController.underPlayer?.play();
     if (mounted) {
       Get.toNamed(CurrentPlaying.routeName);
     }
