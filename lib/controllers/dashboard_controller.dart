@@ -87,7 +87,7 @@ class DashboardController extends GetxController {
         });
         log("${_playlist.length} is current playlist length");
         if (isPresent == -1 && playlistSong.audioUrl.isNotEmpty) {
-          _playlist.add(AudioSource.uri(
+          await _playlist.add(AudioSource.uri(
             Uri.parse(playlistSong.audioUrl),
             tag: MediaItem(
                 id: playlistSong.id,
@@ -106,8 +106,6 @@ class DashboardController extends GetxController {
       if (!playerLoaded) {
         underPlayer = AudioPlayer();
       } else {
-        // await underPlayer?.stop();
-
         if (!addToQueueOnly) {
           await underPlayer?.seek(Duration.zero, index: _playlist.length - 1);
           await underPlayer?.play();
@@ -202,6 +200,15 @@ class DashboardController extends GetxController {
     playlistController.update();
     final isLogin = await usersRepo.getUserDetails();
     if (isLogin.data == false) {
+      final savedEmail = box.read<String>('SAVED_LOGIN_EMAIL');
+      final savedPassword = box.read<String>('SAVED_LOGIN_PASSWORD');
+      if (savedEmail != null && savedPassword != null) {
+        final usersController = Get.find<UsersController>();
+        final autoLoggedIn = await usersController.loginWithSavedCredentials();
+        if (autoLoggedIn) {
+          return;
+        }
+      }
       playlistController.mode.value = LoginMode.failed;
     } else if (isLogin.status) {
       me = meFromJson(isLogin.data);

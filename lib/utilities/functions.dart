@@ -19,6 +19,45 @@ String percentEncode(String input) {
   return input;
 }
 
+String encryptText(String input) {
+  final reversed = input.split('').reversed.join();
+  final buffer = StringBuffer();
+
+  for (int index = 0; index < reversed.length; index++) {
+    final codeUnit = reversed.codeUnitAt(index);
+    if (codeUnit < 32 || codeUnit > 126) {
+      buffer.writeCharCode(codeUnit);
+      continue;
+    }
+
+    final shift = index.isEven ? 3 : -3;
+    final normalized = codeUnit - 32;
+    final shifted = (normalized + shift) % 95;
+    buffer.writeCharCode(shifted < 0 ? shifted + 95 + 32 : shifted + 32);
+  }
+
+  return buffer.toString();
+}
+
+String decryptText(String input) {
+  final buffer = StringBuffer();
+
+  for (int index = 0; index < input.length; index++) {
+    final codeUnit = input.codeUnitAt(index);
+    if (codeUnit < 32 || codeUnit > 126) {
+      buffer.writeCharCode(codeUnit);
+      continue;
+    }
+
+    final shift = index.isEven ? -3 : 3;
+    final normalized = codeUnit - 32;
+    final shifted = (normalized + shift) % 95;
+    buffer.writeCharCode(shifted < 0 ? shifted + 95 + 32 : shifted + 32);
+  }
+
+  return buffer.toString().split('').reversed.join();
+}
+
 final validPlaylist = RegExp(r'^[a-zA-Z0-9 ]+$');
 
 showMessage(String message) {

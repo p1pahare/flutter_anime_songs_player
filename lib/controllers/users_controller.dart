@@ -5,6 +5,7 @@ import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/users_repo.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,9 @@ enum LoginMode {
 }
 
 class UsersController extends GetxController {
+  static const String _savedEmailKey = 'SAVED_LOGIN_EMAIL';
+  static const String _savedPasswordKey = 'SAVED_LOGIN_PASSWORD';
+
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
   final UsersRepo usersRepo = UsersRepo();
   final RxBool wait = false.obs;
@@ -332,6 +336,59 @@ class UsersController extends GetxController {
     update();
   }
 
+  Future<void> saveLoginCredentials({
+    required String email,
+    required String password,
+  }) async {
+    await box.write(_savedEmailKey, encryptText(email));
+    await box.write(_savedPasswordKey, encryptText(password));
+  }
+
+  String? _readSavedCredential(String key) {
+    final value = box.read<String>(key);
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    return decryptText(value);
+  }
+
+  Future<void> clearSavedLoginCredentials() async {
+    await box.remove(_savedEmailKey);
+    await box.remove(_savedPasswordKey);
+  }
+
+  Future<bool> loginWithSavedCredentials() async {
+    final savedEmail = _readSavedCredential(_savedEmailKey);
+    final savedPassword = _readSavedCredential(_savedPasswordKey);
+    if (savedEmail == null || savedPassword == null) {
+      return false;
+    }
+
+    wait.value = true;
+    update();
+    await usersRepo.getCookie();
+    await usersRepo.getToken();
+    await usersRepo.loginUser(
+      email: savedEmail,
+      password: savedPassword,
+      remember: true,
+    );
+    final isLogin = await usersRepo.getUserDetails();
+    wait.value = false;
+
+    if (!isLogin.status) {
+      update();
+      return false;
+    }
+
+    final DashboardController dashboardController = Get.find<DashboardController>();
+    dashboardController.me = meFromJson(isLogin.data);
+    dashboardController.isLogin();
+    mode.value = LoginMode.loggedIn;
+    clearAll();
+    return true;
+  }
+
 
 
   Future register() async {
@@ -403,6 +460,10 @@ class UsersController extends GetxController {
           Get.find<DashboardController>();
       dashboardController.me = meFromJson(isLogin.data);
       dashboardController.isLogin();
+      await saveLoginCredentials(
+        email: emailTec.text,
+        password: passwordTec.text,
+      );
       mode.value = LoginMode.loggedIn;
       clearAll();
     } else {
@@ -412,6 +473,7 @@ class UsersController extends GetxController {
 
   Future doLogout() async {
     wait.value = true;
+    await clearSavedLoginCredentials();
     clearAll();
     await usersRepo.getCookie();
     await usersRepo.getToken();
