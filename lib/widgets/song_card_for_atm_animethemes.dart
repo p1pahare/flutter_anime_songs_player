@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
+import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/models/anime.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/models/playlist_songs_response.dart';
@@ -94,10 +96,28 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
               ),
               InkWell(
                   onTap: () async {
-                    int? selectedOption = await showOptions(options: {
+                    final usersController = Get.find<UsersController>();
+                    final playlistController = Get.find<PlaylistsController>();
+                    final isLoggedIn =
+                        usersController.mode.value == LoginMode.loggedIn;
+                    final options = <int, String>{
                       0: 'Add to Current Queue',
-                      1: 'Login now to add theme'
-                    });
+                    };
+
+                    if (isLoggedIn) {
+                      playlistController.hydratePlaylistsFromCache();
+                      await playlistController.fetchPlaylists();
+                      for (int index = 0;
+                          index < playlistController.playlistList.length;
+                          index++) {
+                        options[index + 1] =
+                            playlistController.playlistList[index].name;
+                      }
+                    } else {
+                      options[1] = 'Login to Add Theme';
+                    }
+
+                    int? selectedOption = await showOptions(options: options);
                     log("Selected Option is $selectedOption");
                     if (selectedOption == null) return;
                     if (animethemeentries == null || animethemesMain == null) {
@@ -125,7 +145,29 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
                         ],
                         addToQueueOnly: true,
                       );
-                    } else {}
+                    } else if (isLoggedIn) {
+                      final playlistIndex = selectedOption - 1;
+                      final videoId = animethemeentries!.videos.first.id;
+                      final entryId = animethemeentries!.id;
+                      if (playlistIndex < 0 ||
+                          playlistIndex >= playlistController.playlistList.length ||
+                          videoId == null ||
+                          entryId <= 0) {
+                        showMessage("Something went wrong");
+                        return;
+                      }
+
+                      final response = await playlistController.addTrackToPlaylist(
+                        playlistId:
+                            playlistController.playlistList[playlistIndex].id,
+                        videoId: videoId,
+                        entryId: entryId,
+                      );
+                      showMessage(response.message);
+                    } else if (selectedOption == 1) {
+                      await usersController.setMode(LoginMode.login);
+                      Get.find<DashboardController>().updateIndex(2);
+                    }
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8),

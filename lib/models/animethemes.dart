@@ -245,13 +245,16 @@ class AtmArtists {
 
 class AtmAnimethemeentries {
   AtmAnimethemeentries({
+    required this.id,
     required this.version,
     required this.videos,
   });
+  late final int id;
   late final int version;
   late final List<AtmVideos> videos;
 
   AtmAnimethemeentries.fromJson(Map<String, dynamic> json) {
+    id = int.tryParse(json['id']?.toString() ?? '0') ?? 0;
     version = int.tryParse(json['version']?.toString() ?? '0') ?? 0;
     videos =
         List.from(json['videos']).map((e) => AtmVideos.fromJson(e)).toList();
@@ -259,6 +262,7 @@ class AtmAnimethemeentries {
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
+    _data['id'] = id;
     _data['version'] = version;
     _data['videos'] = videos.map((e) => e.toJson()).toList();
     return _data;

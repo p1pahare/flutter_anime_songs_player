@@ -16,11 +16,13 @@ import 'package:get_storage/get_storage.dart';
 
 class PlaylistsController extends GetxController {
   static const String _playlistsCacheKey = 'cache_playlists_me';
+  static const String _refreshMetadataCacheKey = 'cache_playlist_refresh_metadata';
   static const String _playlistTracksCachePrefix = 'cache_playlist_tracks_';
   static const String _playlistTrackDetailsCachePrefix =
       'cache_playlist_track_details_';
   static const String _playlistTrackInclude =
       'video.audio,animethemeentry.animetheme.anime.images,animethemeentry.animetheme.song.artists';
+  static const Duration _refreshAfter = Duration(hours: 6);
   static const String _favoriteThemeIdsCacheKey = 'favorite_theme_ids';
   AnimeThemeRepository networkCalls = AnimeThemeRepository();
   final PlaylistsRepo playlistsRepo = PlaylistsRepo();
@@ -50,6 +52,53 @@ class PlaylistsController extends GetxController {
 
   String _trackDetailsCacheKey(Object playListId) =>
       '$_playlistTrackDetailsCachePrefix${playListId.toString()}';
+
+  String _refreshKeyForPlaylists() => 'playlists';
+
+  String _refreshKeyForTracks(Object playListId) =>
+      'tracks_${playListId.toString()}';
+
+  Map<String, dynamic> _readRefreshMetadata() {
+    final cached = box.read(_refreshMetadataCacheKey);
+    if (cached is Map) {
+      return Map<String, dynamic>.from(jsonDecode(jsonEncode(cached)));
+    }
+    return <String, dynamic>{};
+  }
+
+  DateTime? _readRefreshTimestamp(String refreshKey) {
+    final metadata = _readRefreshMetadata();
+    final value = metadata[refreshKey];
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      if (parsed != null) {
+        return DateTime.fromMillisecondsSinceEpoch(parsed);
+      }
+      return DateTime.tryParse(value);
+    }
+    return null;
+  }
+
+  bool _isRefreshDue(String refreshKey) {
+    final lastRefresh = _readRefreshTimestamp(refreshKey);
+    if (lastRefresh == null) {
+      return true;
+    }
+    return DateTime.now().difference(lastRefresh) > _refreshAfter;
+  }
+
+  Future<void> _writeRefreshTimestamp(String refreshKey) async {
+    final metadata = _readRefreshMetadata();
+    metadata[refreshKey] = DateTime.now().millisecondsSinceEpoch;
+    await box.write(_refreshMetadataCacheKey, metadata);
+  }
+
+  Future<void> clearRefreshMetadata() async {
+    await box.remove(_refreshMetadataCacheKey);
+  }
 
   Map<String, dynamic>? _readCachedMap(String key) {
     final cached = box.read(key);
@@ -136,6 +185,11 @@ class PlaylistsController extends GetxController {
     return playlistList.isNotEmpty;
   }
 
+  bool shouldRefreshPlaylistsFromServer({bool forceRefresh = false}) {
+    if (forceRefresh) return true;
+    return _isRefreshDue(_refreshKeyForPlaylists());
+  }
+
   bool hydrateTracksFromCache(Object playListId) {
     final tracks = tracksFor(playListId);
     if (tracks.isNotEmpty) return true;
@@ -154,6 +208,14 @@ class PlaylistsController extends GetxController {
     tracks.refresh();
     update();
     return tracks.isNotEmpty;
+  }
+
+  bool shouldRefreshTracksFromServer(
+    Object playListId, {
+    bool forceRefresh = false,
+  }) {
+    if (forceRefresh) return true;
+    return _isRefreshDue(_refreshKeyForTracks(playListId));
   }
 
   bool hydrateTrackDetailsFromCache(Object playListId) {
@@ -381,7 +443,10 @@ class PlaylistsController extends GetxController {
 
   Future<void> fetchPlaylists({bool forceRefresh = false}) async {
     final hasCachedPlaylists = hydratePlaylistsFromCache();
-    if (hasCachedPlaylists && !forceRefresh) return;
+    if (hasCachedPlaylists &&
+        !shouldRefreshPlaylistsFromServer(forceRefresh: forceRefresh)) {
+      return;
+    }
     if (!forceRefresh &&
         (statusPlaylist.isError &&
                 statusPlaylist.errorMessage?.isEmpty == true) ==
@@ -399,6 +464,7 @@ class PlaylistsController extends GetxController {
     apiResponse = await playlistsRepo.getMyPlaylists();
     if (apiResponse.status) {
       await box.write(_playlistsCacheKey, apiResponse.data);
+      await _writeRefreshTimestamp(_refreshKeyForPlaylists());
       final PlaylistsResponse playlistsResponse =
           PlaylistsResponse.fromJson(apiResponse.data);
       playlistList.value = playlistsResponse.playlists;
@@ -415,10 +481,12 @@ class PlaylistsController extends GetxController {
         update();
       }
     } else {
-      statusPlaylist = RxStatus.error(apiResponse.message);
       if (playlistList.isEmpty) {
+        statusPlaylist = RxStatus.error(apiResponse.message);
         playlistList.clear();
         playlistList.refresh();
+      } else {
+        statusPlaylist = RxStatus.success();
       }
       update();
     }
@@ -639,10 +707,13 @@ class PlaylistsController extends GetxController {
     ]);
   }
 
-  void fetchTracks(playListId, {bool forceRefresh = false}) async {
+  Future<void> fetchTracks(playListId, {bool forceRefresh = false}) async {
     final tracks = tracksFor(playListId);
     final hasCachedTracks = hydrateTracksFromCache(playListId);
-    if (hasCachedTracks && !forceRefresh) return;
+    if (hasCachedTracks &&
+        !shouldRefreshTracksFromServer(playListId, forceRefresh: forceRefresh)) {
+      return;
+    }
     final currentStatus = statusForTracks(playListId);
     if (!forceRefresh &&
         (currentStatus.isError &&
@@ -662,6 +733,7 @@ class PlaylistsController extends GetxController {
     apiResponse = await playlistsRepo.getPlaylistData(playlistId: playListId);
     if (apiResponse.status) {
       await box.write(_tracksCacheKey(playListId), apiResponse.data);
+      await _writeRefreshTimestamp(_refreshKeyForTracks(playListId));
       final PlaylistTracksData tracksResponse =
           PlaylistTracksData.fromJson(apiResponse.data);
       tracks.value = tracksResponse.tracks;
@@ -684,12 +756,14 @@ class PlaylistsController extends GetxController {
         update();
       }
     } else {
-      _setTrackStatus(playListId, RxStatus.error(apiResponse.message));
-      statusTracks = statusForTracks(playListId);
       if (tracks.isEmpty) {
+        _setTrackStatus(playListId, RxStatus.error(apiResponse.message));
         tracks.clear();
         tracks.refresh();
+      } else {
+        _setTrackStatus(playListId, RxStatus.success());
       }
+      statusTracks = statusForTracks(playListId);
       update();
     }
   }
@@ -727,6 +801,7 @@ class PlaylistsController extends GetxController {
         'links': apiResponse.data['links'],
         'meta': apiResponse.data['meta'],
       });
+      await _writeRefreshTimestamp(_refreshKeyForTracks(playlistId));
     } else {
       toastMessage.value = apiResponse.message;
     }

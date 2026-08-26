@@ -8,18 +8,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:random_gradient_image/random_gradient_image.dart';
 
-class PlaylistListingScreen extends StatelessWidget {
+class PlaylistListingScreen extends StatefulWidget {
   const PlaylistListingScreen({super.key});
   static const routeName = '/PlaylistListingScreen';
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<PlaylistsController>();
+  State<PlaylistListingScreen> createState() => _PlaylistListingScreenState();
+}
 
+class _PlaylistListingScreenState extends State<PlaylistListingScreen> {
+  final PlaylistsController _controller = Get.find<PlaylistsController>();
+
+  @override
+  void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchPlaylists();
+      _controller.fetchPlaylists();
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -39,76 +48,82 @@ class PlaylistListingScreen extends StatelessWidget {
                             ),
               const SizedBox(height: 16),
               Expanded(
-                child: Obx(
-                  () => ListView.separated(
-                    itemCount: controller.playlistList.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      final item = controller.playlistList[index] as Playlist;
+                child: RefreshIndicator(
+                  color: Theme.of(context).colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  onRefresh: () => _controller.fetchPlaylists(forceRefresh: true),
+                  child: Obx(
+                    () => ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: _controller.playlistList.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final item = _controller.playlistList[index] as Playlist;
 
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: SizedBox(
-                            width: 66,
-                            height: 66,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                RandomGradientImage(
-                                  seed: item.id.toString(),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.18),
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: SizedBox(
+                              width: 66,
+                              height: 66,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  RandomGradientImage(
+                                    seed: item.id.toString(),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withValues(alpha: 0.18),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(6),
-                                    child: Icon(
-                                      Icons.playlist_play,
-                                      size: 18,
-                                      color: Colors.white,
+                                  const Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(6),
+                                      child: Icon(
+                                        Icons.playlist_play,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        title: Text(
-                          item.name,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                          title: Text(
+                            item.name,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          item.description ?? "",
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          subtitle: Text(
+                            item.description ?? "",
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                        onTap: () {
-                          Get.toNamed(PlaylistDetailsPage.routeName,
-                              arguments: item);
-                        },
-                      );
-                    },
+                          onTap: () {
+                            Get.toNamed(PlaylistDetailsPage.routeName,
+                                arguments: item);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
               GetBuilder<PlaylistsController>(
-                init: controller,
+                init: _controller,
                 builder: (_) {
                   return (_.statusPlaylist.isLoadingMore ||
                           _.statusPlaylist.isLoading)

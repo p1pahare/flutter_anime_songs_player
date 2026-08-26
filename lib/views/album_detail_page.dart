@@ -65,9 +65,7 @@ class _AlbumDetailScreenState extends State<AlbumDetailPage> {
     if (dashboardController.playerLoaded) {
       await dashboardController.stopPlayer();
     }
-    await dashboardController.init(queue, addToQueueOnly: true);
-    await dashboardController.playFromPlayer(queue.first.id.toString());
-    await dashboardController.underPlayer?.play();
+    await dashboardController.init(queue);
     if (mounted) {
       Get.toNamed(CurrentPlaying.routeName);
     }
@@ -314,7 +312,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                   BoxShadow(
                       blurRadius: 8,
                       color: Colors.black
-                          .withOpacity(lerpDouble(0.26, 0.0, progress)!))
+                        .withValues(alpha: lerpDouble(0.26, 0.0, progress)!))
                 ],
               ),
               clipBehavior: Clip.antiAlias,
@@ -351,7 +349,7 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
             imageFilter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.2), // Darkens the image slightly
+                Colors.black.withValues(alpha: 0.2), // Darkens the image slightly
                 BlendMode.darken,
               ),
               child: _buildImage(BoxFit.cover),
@@ -368,11 +366,11 @@ class AnimeMetaHeader extends SliverPersistentHeaderDelegate {
                 end: Alignment.bottomCenter,
                 colors: [
                   // Top: Transparent or slightly tinted for the status bar
-                  Colors.black.withOpacity(0.3),
+                  Colors.black.withValues(alpha: 0.3),
                   // Middle: Transition
                   Colors.transparent,
                   // Bottom: Smooth fade into the rest of the page
-                  Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
+                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.8),
                   Theme.of(context).scaffoldBackgroundColor,
                 ],
                 stops: const [0.0, 0.4, 0.8, 1.0],

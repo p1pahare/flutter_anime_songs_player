@@ -40,9 +40,19 @@ class DashboardController extends GetxController {
                   false)))
       .toList();
   final GlobalKey<OnlineVideoPlayerState> videoPlayerKey = GlobalKey();
+
+  bool? _systemDarkMode() {
+    try {
+      return WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark;
+    } catch (_) {
+      return null;
+    }
+  }
+
   initialize() {
     box = GetStorage();
-    darkMode = box.read<bool>('dark_mode') ?? false;
+    darkMode = _systemDarkMode() ?? true;
     selectedIndex.value = box.read<int>('selected_index') ?? 0;
     changeDarkMode(darkMode);
     initializedWidgets = true;

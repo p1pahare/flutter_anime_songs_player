@@ -28,11 +28,7 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
     super.initState();
     _scrollController.addListener(_handleScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final tracks = _controller.tracksFor(widget.playlistArg.id);
-      final status = _controller.statusForTracks(widget.playlistArg.id);
-      if (tracks.isEmpty && !status.isLoading) {
-        _controller.fetchTracks(widget.playlistArg.id);
-      }
+      _controller.fetchTracks(widget.playlistArg.id);
     });
   }
 
@@ -209,166 +205,212 @@ class _PlaylistDetailsPageState extends State<PlaylistDetailsPage> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: GetBuilder<PlaylistsController>(
-                init: _controller,
-                builder: (_) {
-                  final tracks = _.tracksFor(widget.playlistArg.id);
-                  final status = _.statusForTracks(widget.playlistArg.id);
-                  return status.isLoading || status.isEmpty
-                      ? Center(
-                          child: status.isLoading
-                              ? const ProgressIndicatorButton(radius: 20)
-                              : const Text(Values.noResults),
-                        )
-                      : ListView.separated(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.only(bottom: 16),
-                          itemCount: tracks.length + 1,
-                          separatorBuilder: (_, index) {
-                            if (index >= tracks.length - 1) {
-                              return const SizedBox(height: 12);
-                            }
-                            return Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withValues(alpha: 0.18),
-                              height: 1,
+              child: RefreshIndicator(
+                color: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                onRefresh: () => _controller.fetchTracks(
+                  widget.playlistArg.id,
+                  forceRefresh: true,
+                ),
+                child: GetBuilder<PlaylistsController>(
+                  init: _controller,
+                  builder: (_) {
+                    final tracks = _.tracksFor(widget.playlistArg.id);
+                    final status = _.statusForTracks(widget.playlistArg.id);
+                    final hasContent = tracks.isNotEmpty;
+
+                    return ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(bottom: 16),
+                      itemCount: status.isLoading || status.isEmpty || status.isError
+                          ? 1
+                          : tracks.length + 1,
+                      separatorBuilder: (_, index) {
+                        if (!hasContent || index >= tracks.length - 1) {
+                          return const SizedBox(height: 12);
+                        }
+                        return Divider(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant
+                              .withValues(alpha: 0.18),
+                          height: 1,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        if (status.isLoading || status.isEmpty || status.isError) {
+                          if (status.isLoading) {
+                            return const SizedBox(
+                              height: 240,
+                              child: Center(
+                                child: ProgressIndicatorButton(radius: 20),
+                              ),
+                            );
+                          }
+
+                          if (status.isError) {
+                            return SizedBox(
+                              height: 240,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        status.errorMessage ?? Values.noResults,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      OutlinedButton(
+                                        onPressed: () => _.fetchTracks(
+                                          widget.playlistArg.id,
+                                          forceRefresh: true,
+                                        ),
+                                        child: const Text(Values.retry),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return const SizedBox(
+                            height: 240,
+                            child: Center(child: Text(Values.noResults)),
+                          );
+                        }
+
+                        if (index == tracks.length) {
+                          if (_
+                              .isLoadingMoreTracks(widget.playlistArg.id)) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: ProgressIndicatorButton(
+                                  radius: 18,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (_.hasMoreTracks(widget.playlistArg.id)) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 8,
+                              ),
+                              child: OutlinedButton(
+                                onPressed: () => _.fetchMoreTracks(
+                                  playlistId: widget.playlistArg.id,
+                                ),
+                                child: const Text('Load more'),
+                              ),
+                            );
+                          }
+
+                          return const SizedBox.shrink();
+                        }
+
+                        final track = tracks[index] as PlaylistTrack;
+                        final imageListAvailable = track.animethemeentry
+                            .animetheme.anime.images.isNotEmpty;
+                        final String imageUrl = imageListAvailable
+                            ? track.animethemeentry.animetheme.anime.images.first.link
+                            : "";
+                        final themeId = track.animethemeentry.animetheme.id;
+                        final isFavorite = _.isThemeFavorited(themeId);
+
+                        return ListTile(
+                          onTap: () async {
+                            await _.playPlaylistTrackNow(
+                              track: track,
+                              playlistName: widget.playlistArg.name,
                             );
                           },
-                          itemBuilder: (context, index) {
-                            if (index == tracks.length) {
-                              if (_
-                                  .isLoadingMoreTracks(widget.playlistArg.id)) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  child: Center(
-                                    child: ProgressIndicatorButton(
-                                      radius: 18,
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (_.hasMoreTracks(widget.playlistArg.id)) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 8,
-                                  ),
-                                  child: OutlinedButton(
-                                    onPressed: () => _.fetchMoreTracks(
-                                      playlistId: widget.playlistArg.id,
-                                    ),
-                                    child: const Text('Load more'),
-                                  ),
-                                );
-                              }
-
-                              return const SizedBox.shrink();
-                            }
-
-                            final track = tracks[index] as PlaylistTrack;
-                            final imageListAvailable = track.animethemeentry
-                                .animetheme.anime.images.isNotEmpty;
-                            final String imageUrl = imageListAvailable
-                                ? track.animethemeentry.animetheme.anime.images
-                                    .first.link
-                                : "";
-                            final themeId = track.animethemeentry.animetheme.id;
-                            final isFavorite = _.isThemeFavorited(themeId);
-
-                            return ListTile(
-                              onTap: () async {
-                                await _.playPlaylistTrackNow(
-                                  track: track,
-                                  playlistName: widget.playlistArg.name,
-                                );
-                              },
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: Container(
-                                  width: 56,
-                                  height: 56,
-                                  color: Theme.of(context).cardColor,
-                                  child: imageUrl.isNotEmpty
-                                      ? CachedNetworkImage(
-                                          imageUrl: imageUrl,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Icon(
-                                          Icons.music_note,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                        ),
-                                ),
-                              ),
-                              title: Text(
-                                track.animethemeentry.animetheme.song.title,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              subtitle: Text(
-                                track.animethemeentry.animetheme.song.artists
-                                    .map((artist) => artist.name)
-                                    .join(","),
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () =>
-                                        _.toggleThemeFavorite(themeId),
-                                    icon: Icon(
-                                      isFavorite
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isFavorite
-                                          ? Theme.of(context).primaryColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
-                                    ),
-                                  ),
-                                  PopupMenuButton<String>(
-                                    icon: Icon(
-                                      Icons.more_vert,
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              color: Theme.of(context).cardColor,
+                              child: imageUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.music_note,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface,
                                     ),
-                                    onSelected: (value) {
-                                      if (value == 'delete') {
-                                        _showDeleteTrackConfirmation(
-                                          context,
-                                          _,
-                                          widget.playlistArg.id,
-                                          track,
-                                        );
-                                      }
-                                    },
-                                    itemBuilder: (context) => const [
-                                      PopupMenuItem<String>(
-                                        value: 'delete',
-                                        child: Text('Delete'),
-                                      ),
-                                    ],
+                            ),
+                          ),
+                          title: Text(
+                            track.animethemeentry.animetheme.song.title,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 16,
+                            ),
+                          ),
+                          subtitle: Text(
+                            track.animethemeentry.animetheme.song.artists
+                                .map((artist) => artist.name)
+                                .join(","),
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () => _.toggleThemeFavorite(themeId),
+                                icon: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite
+                                      ? Theme.of(context).primaryColor
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                ),
+                              ),
+                              PopupMenuButton<String>(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                                onSelected: (value) {
+                                  if (value == 'delete') {
+                                    _showDeleteTrackConfirmation(
+                                      context,
+                                      _,
+                                      widget.playlistArg.id,
+                                      track,
+                                    );
+                                  }
+                                },
+                                itemBuilder: (context) => const [
+                                  PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Text('Delete'),
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         );
-                },
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
+import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/repositories/anime_theme_repo.dart';
 import 'package:anime_themes_player/repositories/users_repo.dart';
@@ -414,6 +415,9 @@ class UsersController extends GetxController {
     clearAll();
     await usersRepo.getCookie();
     await usersRepo.getToken();
+    if (Get.isRegistered<PlaylistsController>()) {
+      await Get.find<PlaylistsController>().clearRefreshMetadata();
+    }
     wait.value = false;
     mode.value = LoginMode.login;
     final DashboardController dashboardController =
