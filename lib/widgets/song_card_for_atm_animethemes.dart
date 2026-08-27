@@ -1,11 +1,9 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlists_controller.dart';
 import 'package:anime_themes_player/controllers/search_controller.dart' as sc;
 import 'package:anime_themes_player/controllers/users_controller.dart';
-import 'package:anime_themes_player/models/anime.dart' as animemain;
 import 'package:anime_themes_player/models/animethemes.dart';
 import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/utilities/functions.dart';
@@ -196,18 +194,7 @@ class SongCardForAtmAnimethemes extends StatelessWidget {
                               animethemeentries!.videos.first.audio.link;
                           final videoUrl = animethemeentries!.videos.first.link;
                           log(audioUrl);
-                          if (Platform.isIOS || Platform.isMacOS) {
-                            animemain.Anime? animeMain = await _
-                                .slugToMalId(animethemesMain!.anime.slug);
-                            if (animeMain != null) {
-                              audioUrl = (await _.webmToMp3(
-                                      animeMain.resources.first.externalId
-                                          .toString(),
-                                      "${animethemesMain?.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
-                                      animethemeentries!.videos.first.link))
-                                  .data as String;
-                            }
-                          }
+                
                           await Get.find<DashboardController>().init([
                             PlaylistSongTrack.queue(
                               id: animethemesMain!.id.toString(),

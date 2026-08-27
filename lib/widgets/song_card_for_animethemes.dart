@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:anime_themes_player/controllers/dashboard_controller.dart';
 import 'package:anime_themes_player/controllers/playlists_controller.dart';
@@ -173,14 +172,7 @@ class SongCardForAnimethemes extends StatelessWidget {
                         onTap: () async {
                           log("malId ${animeMain!.resources.length} themeId ${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'} ${animethemeentries!.videos.length}");
 
-                          final audioUrl = Platform.isIOS || Platform.isMacOS
-                              ? (await _.webmToMp3(
-                                      animeMain!.resources.first.externalId
-                                          .toString(),
-                                      "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
-                                      animethemeentries!.videos.first.link))
-                                  .data as String
-                              : animethemeentries!.videos.first.audio.link;
+                          final audioUrl =  animethemeentries!.videos.first.audio.link;
                           log(audioUrl);
                           final videoUrl = animethemeentries!.videos.first.link;
                           await Get.find<DashboardController>().init([

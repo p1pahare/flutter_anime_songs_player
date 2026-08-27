@@ -183,22 +183,6 @@ class SearchController extends GetxController {
     update();
   }
 
-/* Usage
-           ApiResponse apiResponse = await _.webmToMp3(
-                              animeMain!.resources.first.externalId.toString(),
-                              "${animethemes!.slug}${animethemeentries!.version == 0 ? '' : ' V${animethemeentries!.version}'}",
-                              animethemeentries!.videos.first.link);
-*/
-  Future<ApiResponse> webmToMp3(
-      String malId, String themeId, String videoUrl) async {
-    loadingSong = true;
-    update();
-    ApiResponse apiResponse =
-        await themesRepository.getMP3VersionOfSong(malId, themeId, videoUrl);
-    loadingSong = false;
-    update();
-    return apiResponse;
-  }
 
   Future<Anime?> slugToMalId(String slug) async {
     loadingSong = true;
