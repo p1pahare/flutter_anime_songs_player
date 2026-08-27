@@ -3,6 +3,7 @@ import 'package:anime_themes_player/controllers/users_controller.dart';
 import 'package:anime_themes_player/models/login_models.dart';
 import 'package:anime_themes_player/models/playlist_songs_response.dart';
 import 'package:anime_themes_player/repositories/users_repo.dart';
+import 'package:anime_themes_player/utilities/functions.dart';
 import 'package:anime_themes_player/utilities/values.dart';
 import 'package:anime_themes_player/views/online_video_player.dart';
 import 'package:audio_session/audio_session.dart';
@@ -199,27 +200,32 @@ class DashboardController extends GetxController {
     playlistController.mode.value = LoginMode.loading;
     playlistController.update();
     final isLogin = await usersRepo.getUserDetails();
-    if (isLogin.data == false) {
+    if (isLogin.status) {
+      me = meFromJson(isLogin.data);
+      currentTitle.value = me?.user.name ?? Values.title;
+      currentImage.value = usersRepo.gravatarUrlFromEmail(me?.user.email);
+      playlistController.mode.value = LoginMode.loggedIn;
+    } else {
       final savedEmail = box.read<String>('SAVED_LOGIN_EMAIL');
       final savedPassword = box.read<String>('SAVED_LOGIN_PASSWORD');
       if (savedEmail != null && savedPassword != null) {
         final usersController = Get.find<UsersController>();
         final autoLoggedIn = await usersController.loginWithSavedCredentials();
         if (autoLoggedIn) {
+          playlistController.update();
+          update();
           return;
         }
       }
-      playlistController.mode.value = LoginMode.failed;
-    } else if (isLogin.status) {
-      me = meFromJson(isLogin.data);
-      currentTitle.value = me?.user.name ?? Values.title;
-      currentImage.value = usersRepo.gravatarUrlFromEmail(me?.user.email);
-      playlistController.mode.value = LoginMode.loggedIn;
-    } else {
-      playlistController.mode.value = LoginMode.login;
-      me = null;
-      currentTitle.value = "";
-      currentImage.value = "";
+      if (isLogin.data == false) {
+        showMessage(Values.noInternetMessage);
+        playlistController.mode.value = LoginMode.failed;
+      } else {
+        playlistController.mode.value = LoginMode.login;
+        me = null;
+        currentTitle.value = "";
+        currentImage.value = "";
+      }
     }
     playlistController.update();
     update();

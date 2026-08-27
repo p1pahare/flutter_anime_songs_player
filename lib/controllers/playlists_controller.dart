@@ -448,9 +448,7 @@ class PlaylistsController extends GetxController {
       return;
     }
     if (!forceRefresh &&
-        (statusPlaylist.isError &&
-                statusPlaylist.errorMessage?.isEmpty == true) ==
-            false) {
+        (statusPlaylist.isLoading || statusPlaylist.isLoadingMore)) {
       return;
     }
     if (!hasCachedPlaylists) {
@@ -716,9 +714,7 @@ class PlaylistsController extends GetxController {
     }
     final currentStatus = statusForTracks(playListId);
     if (!forceRefresh &&
-        (currentStatus.isError &&
-                currentStatus.errorMessage?.isEmpty == true) ==
-            false) {
+        (currentStatus.isLoading || currentStatus.isLoadingMore)) {
       return;
     }
     if (!hasCachedTracks) {
